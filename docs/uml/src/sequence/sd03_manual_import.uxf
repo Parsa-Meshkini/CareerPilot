@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>3620</w>
+      <h>1520</h>
+    </coordinates>
+    <panel_attributes>title=SD03 Import a Job Manually, e.g. pasted LinkedIn posting (F05, F06 / UC05, UC06)
+obj=Student~Student ACTOR
+obj=:JobsPage~JPG
+obj=:JobImportAPI~API
+obj=:JobImportService~JIS
+obj=:JobSourceRegistry~REG
+obj=:ManualJobImportAdapter~MA
+obj=:LLMClient~LLM
+obj=:JobNormalizer~JN
+obj=:DuplicateDetector~DD
+obj=:JobRepository~JR
+
+Student-&gt;&gt;&gt;JPG : 1: pasteJob(text, LINKEDIN)
+text=Student:The student copies the posting\ntext themselves\;\nCareerPilot never fetches LinkedIn\npages.
+JPG-&gt;&gt;&gt;API : 2: importManual(req); on=API
+API-&gt;&gt;&gt;JIS : 3: importManual(userId, payload); on=JIS
+JIS-&gt;&gt;&gt;REG : 4: getAdapter(MANUAL); on=REG
+REG.&gt;JIS : 5: ManualJobImportAdapter; off=REG
+JIS-&gt;&gt;&gt;MA : 6: parse(payload); on=MA
+MA-&gt;&gt;&gt;LLM : 7: generateStructured("job.structure_paste",\nvars, rawJobSchema, userId); on=LLM
+combinedFragment=alt~f1 JIS LLM; REG:[LLM unavailable or budget exceeded]
+LLM.&gt;MA : 8: LLMUnavailableError
+MA.&gt;JIS : 9: RawJobRecord(description = raw text, other\nfields empty)
+text=JIS:GUI shows an editable form so the\nstudent completes title/company\nmanually
+..=f1; REG:[success]
+LLM.&gt;MA : 10: {title, company, location,\ndeadline, ...}; off=LLM
+MA.&gt;JIS : 11: List&lt;RawJobRecord&gt; (sourceType label = LINKEDIN); off=MA
+--=f1
+JIS-&gt;&gt;&gt;MA : 12: validate(record)
+JIS-&gt;&gt;&gt;JN : 13: normalize(raw, userId); on=JN
+JN.&gt;JIS : 14: job (completeness = FULL); off=JN
+JIS-&gt;&gt;&gt;DD : 15: findDuplicate(job); on=DD
+DD-&gt;&gt;&gt;JR : 16: findByFingerprint(userId,\nfingerprint)
+DD.&gt;JIS : 17: existing or null; off=DD
+combinedFragment=alt~f2 JPG JR; API:[already imported]
+JIS.&gt;API : 18: existing JobPosting (flag\nduplicate = true)
+API.&gt;JPG : 19: 200 OK "already in your jobs"
+..=f2; API:[new]
+JIS-&gt;&gt;&gt;JR : 20: save(job)
+JIS.&gt;API : 21: JobPosting; off=JIS
+API.&gt;JPG : 22: 201 Created; off=API
+--=f2
+</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+</diagram>

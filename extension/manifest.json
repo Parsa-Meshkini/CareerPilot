@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "CareerPilot Importer (Stage 1 scaffold)",
+  "version": "0.0.1",
+  "description": "Imports job postings from the page you are viewing into CareerPilot, only when you click Import. Stage 1 scaffold; implemented in Stage 2.",
+  "action": { "default_popup": "popup/popup.html" },
+  "background": { "service_worker": "background/service_worker.js", "type": "module" },
+  "permissions": ["activeTab", "storage", "scripting"],
+  "optional_host_permissions": ["https://experience.yorku.ca/*"],
+  "host_permissions": ["http://localhost:8000/*"]
+}

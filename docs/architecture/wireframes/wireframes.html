@@ -1,0 +1,77 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{font-family:Helvetica,Arial,sans-serif;background:#fff;margin:0;padding:20px;color:#222}
+.wf{width:1100px;border:2px solid #333;margin-bottom:40px;background:#fafafa}
+.top{display:flex;align-items:center;justify-content:space-between;background:#e6e9ee;border-bottom:1px solid #999;padding:8px 14px;font-weight:bold}
+.top span{font-weight:normal;font-size:13px;color:#555}
+.body{display:flex}
+.nav{width:170px;border-right:1px solid #bbb;padding:10px;font-size:13px;background:#f0f1f4}
+.nav div{padding:6px 8px;margin:2px 0;border-radius:4px}.nav .on{background:#cfd6e3;font-weight:bold}
+.main{flex:1;padding:14px}
+.row{display:flex;gap:12px;margin-bottom:12px}
+.card{border:1px solid #999;background:#fff;padding:10px;border-radius:4px;flex:1;font-size:13px}
+.card h4{margin:0 0 6px 0;font-size:13px;text-transform:uppercase;color:#444}
+.big{font-size:26px;font-weight:bold}
+.btn{display:inline-block;border:1px solid #333;padding:3px 10px;border-radius:3px;font-size:12px;margin:2px;background:#fff}
+.btn.p{background:#333;color:#fff}
+table{border-collapse:collapse;width:100%;font-size:12px}td,th{border:1px solid #bbb;padding:4px 6px;text-align:left}th{background:#eee}
+.bar{height:10px;background:#ddd;border:1px solid #999;margin:4px 0}.bar i{display:block;height:100%;background:#666}
+.chip{display:inline-block;border:1px solid #777;border-radius:10px;padding:1px 8px;margin:2px;font-size:11px}
+.chip.miss{border-style:dashed;color:#777}
+.col{flex:1;border:1px dashed #999;background:#fff;padding:6px;min-height:230px;font-size:12px}
+.col h5{margin:0 0 6px 0;font-size:12px;text-align:center;background:#eee;padding:3px}
+.item{border:1px solid #888;padding:5px;margin-bottom:6px;border-radius:3px;background:#fcfcfc}
+.step{border:1px solid #999;padding:6px;margin:4px 0;border-radius:3px;font-size:12px;background:#fff}
+.step.done{color:#555}.step.wait{border:2px solid #333}
+.caption{font-size:12px;color:#555;padding:6px 14px;border-top:1px solid #bbb;background:#eee}
+.pop{width:340px;border:2px solid #333;background:#fff;font-size:13px}
+</style></head><body>
+
+<div class="wf" id="dashboard"><div class="top">CareerPilot <span>Dashboard · student@yorku.ca</span></div>
+<div class="body"><div class="nav"><div class="on">Dashboard</div><div>Profile</div><div>Jobs</div><div>Applications</div><div>Documents</div><div>Interview prep</div><div>Agent workspace</div><div>Insights</div><div>Review queue (2)</div><div>Settings</div></div>
+<div class="main">
+<div class="row"><div class="card"><h4>Shortlisted jobs</h4><div class="big">12</div>from last import (47)</div><div class="card"><h4>Deadlines ≤ 3 days</h4><div class="big">3</div></div><div class="card"><h4>Applications</h4>APPLIED 9 · INTERVIEW 2 · OFFER 0</div><div class="card"><h4>Needs review</h4><div class="big">2</div>uncertain email events</div></div>
+<div class="row"><div class="card"><h4>Agent activity</h4>✔ Triage of batch #14 finished — 12 of 47 shortlisted <span class="btn">View reasoning</span><br>⏸ "Prepare Acme application" waiting for your approval <span class="btn p">Review step</span></div>
+<div class="card"><h4>Notifications</h4>• Interview invite detected: Northwind (Oct 8, 2:00 PM) → moved to INTERVIEW <span class="btn">Undo</span><br>• Deadline tomorrow: Contoso Data Intern<br>• Gmail needs reconnecting <span class="btn">Reconnect</span></div></div>
+<div class="card"><h4>Top matches</h4><table><tr><th>Job</th><th>Company</th><th>Source</th><th>Score</th><th>Deadline</th><th></th></tr>
+<tr><td>Backend Developer Co-op</td><td>Acme</td><td>YORK</td><td>82</td><td>Oct 12</td><td><span class="btn">Open</span><span class="btn p">Package</span></td></tr>
+<tr><td>DevOps Intern</td><td>Northwind</td><td>LINKEDIN (pasted)</td><td>77</td><td>Oct 20</td><td><span class="btn">Open</span></td></tr>
+<tr><td>Software QA Co-op</td><td>Fabrikam</td><td>YORK · summary only</td><td>64*</td><td>Oct 9</td><td><span class="btn">Import full</span></td></tr></table></div>
+</div></div><div class="caption">W1 Dashboard — aggregates triage results (F09), deadlines and notifications (F15), review queue (F14), agent runs awaiting approval (F16).</div></div>
+
+<div class="wf" id="jobdetail"><div class="top">CareerPilot <span>Jobs › Backend Developer Co-op — Acme</span></div>
+<div class="body"><div class="nav"><div>Dashboard</div><div>Profile</div><div class="on">Jobs</div><div>Applications</div><div>Documents</div><div>Interview prep</div><div>Agent workspace</div><div>Insights</div><div>Settings</div></div>
+<div class="main">
+<div class="card" style="margin-bottom:12px"><h4>Import batch #14 (Experience York)</h4><div class="bar"><i style="width:100%"></i></div>47 received · 44 imported · 3 duplicates merged · 0 failed</div>
+<div class="row"><div class="card" style="flex:1.3"><h4>Posting</h4><b>Backend Developer Co-op</b> · Acme · Toronto (hybrid) · Summer 2027 · deadline Oct 12<br><br>Description … (full, imported via extension)<br><br><span class="btn">Open original</span> <span class="btn">Edit</span></div>
+<div class="card"><h4>AI analysis (F07)</h4>Required: <span class="chip">Python</span><span class="chip">Django</span><span class="chip">SQL</span><span class="chip">Git</span><br>Preferred: <span class="chip">Docker</span><span class="chip">AWS</span><br>Seniority: intern · Red flags: none</div></div>
+<div class="row"><div class="card"><h4>Match (F08) — strategy: Co-op/Internship</h4><div class="big">82 / 100</div>Skills 0.88 · Experience 0.70 · Preferences 0.90 · Constraints ✔ work term<div class="bar"><i style="width:82%"></i></div>Missing: <span class="chip miss">AWS</span> → suggestion: complete AWS Cloud Practitioner labs (≈10 h)</div>
+<div class="card"><h4>Actions</h4><span class="btn p">Create application</span> <span class="btn">Generate package</span> <span class="btn">Compare with…</span> <span class="btn">Re-analyze</span></div></div>
+</div></div><div class="caption">W2 Jobs / Job detail — batch progress (F04/F06), analysis (F07), strategy-based match and gap suggestions (F08).</div></div>
+
+<div class="wf" id="tracker"><div class="top">CareerPilot <span>Applications</span></div>
+<div class="body"><div class="nav"><div>Dashboard</div><div>Profile</div><div>Jobs</div><div class="on">Applications</div><div>Documents</div><div>Interview prep</div><div>Agent workspace</div><div>Insights</div><div>Settings</div></div>
+<div class="main"><div class="row">
+<div class="col"><h5>SAVED</h5><div class="item">Contoso · Data Intern<br>due tomorrow<br><span class="btn">Package</span></div></div>
+<div class="col"><h5>PREPARED</h5><div class="item">Acme · Backend Co-op<br>package ✔ (1 bullet flagged)<br><span class="btn p">Mark submitted</span><span class="btn">Download ZIP</span></div></div>
+<div class="col"><h5>APPLIED</h5><div class="item">Tailspin · SRE Intern</div><div class="item">Fabrikam · QA Co-op</div></div>
+<div class="col"><h5>INTERVIEW</h5><div class="item">Northwind · DevOps Intern<br>Oct 8 2:00 PM (from email)<br><span class="btn">Prep</span></div></div>
+<div class="col"><h5>OFFER</h5></div><div class="col"><h5>CLOSED</h5><div class="item">Litware · rejected</div></div></div>
+<div class="card"><h4>Timeline — Northwind · DevOps Intern</h4><table><tr><th>When</th><th>From → To</th><th>Source</th><th>Evidence</th><th></th></tr>
+<tr><td>Oct 1 09:14</td><td>APPLIED → INTERVIEW</td><td>EMAIL_EVENT (0.93)</td><td>"Invitation to interview" email</td><td><span class="btn">Undo</span></td></tr>
+<tr><td>Sep 24 17:02</td><td>PREPARED → APPLIED</td><td>USER</td><td>—</td><td></td></tr></table>
+Only legal actions are shown (ApplicationState.allowedActions()).</div>
+</div></div><div class="caption">W3 Application tracker — State-pattern Kanban (F13), package generation/download (F12), email-driven changes with undo (F14/F15).</div></div>
+
+<div class="wf" id="agent"><div class="top">CareerPilot <span>Agent workspace</span></div>
+<div class="body"><div class="nav"><div>Dashboard</div><div>Profile</div><div>Jobs</div><div>Applications</div><div>Documents</div><div>Interview prep</div><div class="on">Agent workspace</div><div>Insights</div><div>Settings</div></div>
+<div class="main"><div class="card" style="margin-bottom:12px"><h4>Goal</h4>[ Prepare my application for the Acme backend co-op ] <span class="btn p">Run</span> &nbsp; budget: 40k tokens · max 8 steps</div>
+<div class="row"><div class="card"><h4>Plan (source: LLM, validated)</h4>
+<div class="step done">✔ 1 SearchJobs("Acme backend") — 1 match</div><div class="step done">✔ 2 RetrieveContext — 14 verified facts</div><div class="step done">✔ 3 AnalyzeJob — cached</div><div class="step done">✔ 4 MatchJob(deep) — 82</div>
+<div class="step wait">⏸ 5 BuildPackage — "Generate resume + cover letter and ZIP for Acme (≈6k tokens)" <span class="btn p">Approve</span><span class="btn">Reject</span></div><div class="step">6 UpdateApplicationStatus(markPrepared) — needs approval</div></div>
+<div class="card"><h4>Reasoning trace</h4>step 4 → CONTINUE (score ≥ min 65)<br>step 3 → CONTINUE<br>memory used: "prefers backend roles", "weak: quantifying impact"<br><br><h4>Action log</h4>#231 MatchJobCommand ✔<br>#232 … <span class="btn">Undo</span> (reversible only)</div></div>
+<div class="card">CareerPilot never submits applications — you submit on the employer site, then mark it submitted.</div>
+</div></div><div class="caption">W4 Agent workspace — visible plan, approval gate, reasoning trace, action log with undo (F16, F09).</div></div>
+
+<div style="display:flex;gap:30px" id="extension"><div class="pop"><div class="top">CareerPilot extension</div><div style="padding:12px">Page: Experience York — job postings list<br><b>47 postings detected</b><br><br>Fields: title, organization, deadline, work term, posting id<br><span style="font-size:11px;color:#666">Only this page is read, only when you click Import. Open a posting and import again for full details.</span><br><br><span class="btn p">Import 47 jobs</span> <span class="btn">Paste job text instead</span></div><div class="caption">W5 Extension popup (F04)</div></div>
+<div class="pop" style="width:600px"><div class="top">Insights (F19)</div><div style="padding:12px">Applications with outcome: 14 · response rate 36% · interview rate 21%<br><table><tr><th>Score band</th><th>n</th><th>responses</th></tr><tr><td>&lt; 60</td><td>9</td><td>0</td></tr><tr><td>60–75</td><td>11</td><td>4</td></tr><tr><td>&gt; 75</td><td>6</td><td>3</td></tr></table><br><b>Proposed adjustment</b>: raise minimum match score 60 → 65 (evidence: 0/9 responses below 60)<br><span class="btn p">Accept</span><span class="btn">Reject</span></div><div class="caption">W6 Insights and adaptive strategy (F19)</div></div></div>
+</body></html>

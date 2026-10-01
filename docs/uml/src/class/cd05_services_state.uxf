@@ -1,0 +1,1074 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <help_text>fontsize=12
+</help_text>
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>20</x>
+      <y>10</y>
+      <w>760</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*CD-5 Application Services, Matching Strategies, Application State and Infrastructure*
+fontsize=16
+style=wordwrap</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>530</x>
+      <y>180</y>
+      <w>2150</w>
+      <h>1160</h>
+    </coordinates>
+    <panel_attributes>applications (State)
+--
+layer=-20</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>630</x>
+      <y>1700</y>
+      <w>2130</w>
+      <h>450</h>
+    </coordinates>
+    <panel_attributes>jobs
+--
+layer=-19</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>750</x>
+      <y>2270</y>
+      <w>1230</w>
+      <h>260</h>
+    </coordinates>
+    <panel_attributes>infrastructure
+--
+layer=-18</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>20</x>
+      <y>1420</y>
+      <w>1160</w>
+      <h>270</h>
+    </coordinates>
+    <panel_attributes>candidates
+--
+layer=-17</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>40</x>
+      <y>1480</y>
+      <w>450</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;service&gt;&gt;
+*CandidateService*
+--
+--
++getProfile(userId: UUID): CandidateProfile
++updateProfile(userId: UUID, data: Map): CandidateProfile
++addFact(userId: UUID, fact: ProfileFact): ProfileFact
++importResume(userId: UUID, file: File): UploadedResume
++parseResume(resumeId: UUID)
++verifyFacts(userId: UUID, factIds: List&lt;UUID&gt;, edits: Map): int
++updateCareerGoal(userId: UUID, goal: CareerGoal): CareerGoal
++exportAllUserData(userId: UUID): Bytes
++deleteAllUserData(userId: UUID)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>740</x>
+      <y>1600</y>
+      <w>410</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>*ResumeParser*
+--
+--
++extractText(data: Bytes, mimeType: String): String
++extractFacts(text: String, userId: UUID): List&lt;ProfileFact&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>740</x>
+      <y>1450</y>
+      <w>420</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;repository&gt;&gt;
+*CandidateRepository*
+--
+--
++findProfileByUser(userId: UUID): CandidateProfile
++saveProfile(profile: CandidateProfile)
++saveFacts(facts: List&lt;ProfileFact&gt;)
++findFacts(userId: UUID, ids: List&lt;UUID&gt;): List&lt;ProfileFact&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>710</x>
+      <y>1850</y>
+      <w>480</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;service&gt;&gt;
+*JobImportService*
+--
+--
++createBatch(userId: UUID, payload: ImportPayload): ImportBatch
++processBatch(batchId: UUID)
++importManual(userId: UUID, payload: ImportPayload): JobPosting
++getBatchStatus(userId: UUID, batchId: UUID): ImportBatch
+-importRecord(raw: RawJobRecord, batch: ImportBatch): ImportResult</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>760</x>
+      <y>1740</y>
+      <w>380</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;service&gt;&gt;
+*JobAnalysisService*
+--
+--
++analyzeJob(userId: UUID, jobId: UUID): JobAnalysis
+-fallbackKeywordAnalysis(job: JobPosting): JobAnalysis</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>650</x>
+      <y>2010</y>
+      <w>590</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;service&gt;&gt;
+*MatchingService*
+--
+--
++matchJob(userId: UUID, jobId: UUID, deep: bool): JobMatch
++selectStrategy(goal: CareerGoal): MatchScoringStrategy
++explainMatch(match: JobMatch, analysis: JobAnalysis, ctx: CandidateContext): String
++rankJobs(userId: UUID, jobIds: List&lt;UUID&gt;): List&lt;JobMatch&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1500</x>
+      <y>1940</y>
+      <w>550</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+/MatchScoringStrategy/
+--
+--
++key(): String
++score(ctx: CandidateContext, job: JobPosting, analysis: JobAnalysis): JobMatch</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2200</x>
+      <y>2030</y>
+      <w>540</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;strategy&gt;&gt;
+*CoopInternshipStrategy*
+--
+--
++key(): String
++score(ctx: CandidateContext, job: JobPosting, analysis: JobAnalysis): JobMatch
+-checkWorkTerm(ctx: CandidateContext, job: JobPosting): bool</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2200</x>
+      <y>1910</y>
+      <w>540</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;strategy&gt;&gt;
+*EntryLevelStrategy*
+--
+--
++key(): String
++score(ctx: CandidateContext, job: JobPosting, analysis: JobAnalysis): JobMatch</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2200</x>
+      <y>1760</y>
+      <w>540</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;strategy&gt;&gt;
+*CareerSwitchStrategy*
+--
+-llmClient: LLMClient
+--
++key(): String
++score(ctx: CandidateContext, job: JobPosting, analysis: JobAnalysis): JobMatch
+-mapTransferableSkills(ctx: CandidateContext, analysis: JobAnalysis): Map</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1690</x>
+      <y>2050</y>
+      <w>170</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;exception&gt;&gt;
+*ProfileIncompleteError*
+--
+-missing: String
+--</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1470</x>
+      <y>1750</y>
+      <w>610</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;repository&gt;&gt;
+*JobRepository*
+--
+--
++save(job: JobPosting)
++findById(id: UUID, userId: UUID): JobPosting
++findByExternalId(userId: UUID, sourceType: SourceType, externalId: String): JobPosting
++findByFingerprint(userId: UUID, fingerprint: String): JobPosting
++listByUser(userId: UUID, filters: Map): List&lt;JobPosting&gt;
++saveAnalysis(analysis: JobAnalysis)
++saveMatch(match: JobMatch)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>550</x>
+      <y>1180</y>
+      <w>800</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;service&gt;&gt;
+*ApplicationService*
+--
+--
++createApplication(userId: UUID, jobId: UUID): Application
++transition(userId: UUID, applicationId: UUID, action: String, source: ChangeSource, evidenceId: UUID): StatusChange
++undoTransition(userId: UUID, changeId: UUID): Application
++addInterview(userId: UUID, applicationId: UUID, details: Map): Interview
++listApplications(userId: UUID, filters: Map): List&lt;Application&gt;
++getTimeline(userId: UUID, applicationId: UUID): List&lt;StatusChange&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1570</x>
+      <y>1180</y>
+      <w>410</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;repository&gt;&gt;
+*ApplicationRepository*
+--
+--
++findById(id: UUID, userId: UUID): Application
++findByUser(userId: UUID, filters: Map): List&lt;Application&gt;
++findOpenByUser(userId: UUID): List&lt;Application&gt;
++save(app: Application)
++saveChange(change: StatusChange)
++findChange(changeId: UUID, userId: UUID): StatusChange</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>840</x>
+      <y>560</y>
+      <w>220</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;context&gt;&gt;
+*Application*
+--
+-state: ApplicationState
+--
++submit()
++setState(s: ApplicationState)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1580</x>
+      <y>510</y>
+      <w>390</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;state&gt;&gt;
+/ApplicationState/
+--
+--
+/+name(): String/
++markPrepared(app: Application)
++submit(app: Application)
++scheduleInterview(app: Application, when: DateTime)
++receiveOffer(app: Application)
++reject(app: Application)
++accept(app: Application)
++decline(app: Application)
++withdraw(app: Application)
++allowedActions(): List&lt;String&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2350</x>
+      <y>1100</y>
+      <w>240</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>*SavedState*
+--
+--
++name(): String
++markPrepared(app: Application)
++submit(app: Application)
++withdraw(app: Application)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2350</x>
+      <y>970</y>
+      <w>240</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>*PreparedState*
+--
+--
++name(): String
++markPrepared(app: Application)
++submit(app: Application)
++withdraw(app: Application)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2280</x>
+      <y>830</y>
+      <w>380</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>*AppliedState*
+--
+--
++name(): String
++scheduleInterview(app: Application, when: DateTime)
++receiveOffer(app: Application)
++reject(app: Application)
++withdraw(app: Application)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2280</x>
+      <y>680</y>
+      <w>380</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>*InterviewState*
+--
+--
++name(): String
++scheduleInterview(app: Application, when: DateTime)
++receiveOffer(app: Application)
++reject(app: Application)
++withdraw(app: Application)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2370</x>
+      <y>560</y>
+      <w>200</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>*OfferState*
+--
+--
++name(): String
++accept(app: Application)
++decline(app: Application)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2410</x>
+      <y>480</y>
+      <w>120</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>*AcceptedState*
+--
+--
++name(): String</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2410</x>
+      <y>390</y>
+      <w>120</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>*DeclinedState*
+--
+--
++name(): String</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2410</x>
+      <y>300</y>
+      <w>120</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>*RejectedState*
+--
+--
++name(): String</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2410</x>
+      <y>210</y>
+      <w>120</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>*WithdrawnState*
+--
+--
++name(): String</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2390</x>
+      <y>1230</y>
+      <w>160</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;exception&gt;&gt;
+*InvalidTransitionError*
+--
+-fromState: String
+-action: String
+--</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1590</x>
+      <y>2300</y>
+      <w>370</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;infrastructure&gt;&gt;
+*TaskQueue*
+--
+--
++enqueue(taskName: String, args: Map): TaskHandle</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>810</x>
+      <y>2300</y>
+      <w>280</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;infrastructure&gt;&gt;
+*BackgroundWorker*
+--
+--
++runTask(taskName: String, args: Map)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>770</x>
+      <y>2410</y>
+      <w>350</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;infrastructure&gt;&gt;
+*StorageService*
+--
+--
++put(key: String, data: Bytes): String
++getSignedUrl(key: String, ttlSeconds: int): String
++delete(key: String)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1730</x>
+      <y>1420</y>
+      <w>90</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*LLMClient*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1720</x>
+      <y>1650</y>
+      <w>110</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*ContextBuilder*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1710</x>
+      <y>1350</y>
+      <w>130</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*DomainEventBus*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1710</x>
+      <y>1570</y>
+      <w>130</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*JobSourceRegistry*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1720</x>
+      <y>1500</y>
+      <w>110</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*JobNormalizer*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>880</x>
+      <y>2160</y>
+      <w>140</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*DuplicateDetector*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>480</x>
+      <y>1520</y>
+      <w>270</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;37.5;260;12.5</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>480</x>
+      <y>1580</y>
+      <w>270</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;17.2;260;38.2</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>270</x>
+      <y>1660</y>
+      <w>510</w>
+      <h>820</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10.3;10;101.3;407.1;256.0;734.3;371.5;791.1;500;809.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>250</x>
+      <y>1660</y>
+      <w>1350</w>
+      <h>670</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>19.9;10;81.7;288.3;276.0;560.3;670.8;626.9;1093.1;631.3;1340;658.7</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1140</x>
+      <y>1420</y>
+      <w>600</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;228.6;113.0;210.3;203.1;163.3;235.9;36.3;403.0;11.2;590;23.6</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1180</x>
+      <y>1590</y>
+      <w>540</w>
+      <h>340</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;324.2;90.7;297.8;163.1;250.3;195.9;64.3;530;15.6</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1180</x>
+      <y>1510</y>
+      <w>550</w>
+      <h>420</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;405.0;90.8;378.5;163.1;330.3;195.9;109.3;296.7;50.3;426.8;22.0;540;13.7</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>470</x>
+      <y>1930</y>
+      <w>420</w>
+      <h>300</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>240;14.6;56.0;70.3;15.2;123.3;34.6;195.8;203.4;286.9;410;269.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1180</x>
+      <y>1850</y>
+      <w>300</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;44.8;290;14.1</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1180</x>
+      <y>1920</y>
+      <w>520</w>
+      <h>390</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;11.3;163.1;80.3;195.9;172.3;347.2;301.7;504.0;380</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1180</x>
+      <y>1350</y>
+      <w>540</w>
+      <h>580</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;565.7;91.1;539.1;163.1;490.3;195.9;219.3;228.9;127.8;296.7;60.3;415.5;20.9;530;17.1</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1130</x>
+      <y>1430</y>
+      <w>610</w>
+      <h>360</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;344.9;115.9;315.5;213.1;255.3;245.9;101.3;346.7;55.3;488.5;28.5;600;19.5</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1130</x>
+      <y>1780</y>
+      <w>350</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;13.2;340;33.2</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1230</x>
+      <y>1900</y>
+      <w>300</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;129.8;113.1;99.3;282.6;10</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1230</x>
+      <y>1650</y>
+      <w>500</w>
+      <h>410</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;399.2;113.1;349.3;246.7;75.3;368.8;27.5;490;19.7</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1230</x>
+      <y>1420</y>
+      <w>510</w>
+      <h>650</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;636.8;113.1;579.3;144.1;505.1;145.9;416.3;246.7;65.3;379.8;17.8;500;21.6</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1230</x>
+      <y>2000</y>
+      <w>280</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+selects &gt;</panel_attributes>
+    <additional_attributes>10;41.0;270;12.8</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1230</x>
+      <y>2060</y>
+      <w>470</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+&lt;&lt;throws&gt;&gt;</panel_attributes>
+    <additional_attributes>10;19.7;460;31.2</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2040</x>
+      <y>2010</y>
+      <w>170</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10;13.0;160;32.2</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2040</x>
+      <y>1950</y>
+      <w>170</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10;21.7;160;16.1</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1990</x>
+      <y>1870</y>
+      <w>280</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>19.4;70;269.7;10</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1010</x>
+      <y>1900</y>
+      <w>490</w>
+      <h>300</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;283.0;154.0;275.2;333.1;243.3;433.8;192.3;466.7;24.3;479.8;10</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1340</x>
+      <y>1230</y>
+      <w>240</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;19.8;230;19.5</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1330</x>
+      <y>1310</y>
+      <w>390</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>13.4;10;380;55.9</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1050</x>
+      <y>600</y>
+      <w>540</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+current &gt;
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>10;10.3;530;10.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1830</x>
+      <y>700</y>
+      <w>530</w>
+      <h>460</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>14.7;10;158.1;210.4;371.7;389.3;520;441.5</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1870</x>
+      <y>700</y>
+      <w>490</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>11.6;10;152.8;144.6;331.7;258.3;480;306.9</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1960</x>
+      <y>700</y>
+      <w>330</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10;10;241.7;113.3;320;139.4</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1960</x>
+      <y>630</y>
+      <w>330</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10;19.5;320;75.7</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1960</x>
+      <y>600</y>
+      <w>420</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10;10.3;410;10.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1960</x>
+      <y>500</y>
+      <w>460</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10;79.5;450;16.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1960</x>
+      <y>410</y>
+      <w>460</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10;120.4;241.7;52.3;450;15.1</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1920</x>
+      <y>320</y>
+      <w>500</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>16.7;190;281.7;53.3;490;13.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1870</x>
+      <y>230</y>
+      <w>550</w>
+      <h>290</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>15.9;280;155.7;154.9;331.7;54.3;540;12.1</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1800</x>
+      <y>700</y>
+      <w>600</w>
+      <h>590</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+&lt;&lt;throws&gt;&gt;</panel_attributes>
+    <additional_attributes>14.3;10;155.0;266.2;401.7;520.3;495.4;560.2;590;576.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>480</x>
+      <y>1890</y>
+      <w>340</w>
+      <h>440</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>330;426.8;46.0;330.3;24.6;312.8;10.9;220.3;24.6;127.8;105.1;50.2;230;19.5</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1080</x>
+      <y>2330</y>
+      <w>520</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+consumes</panel_attributes>
+    <additional_attributes>10;12.3;510;12.3</additional_attributes>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>1600</x>
+      <y>280</y>
+      <w>350</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>Default implementation of every action throws
+InvalidTransitionError; each concrete state overrides
+only its legal transitions (see SM-1 state machine).
+bg=#FFF8DC</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1760</x>
+      <y>340</y>
+      <w>30</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=.</panel_attributes>
+    <additional_attributes>15.0;10.0;15.0;170.0</additional_attributes>
+  </element>
+</diagram>

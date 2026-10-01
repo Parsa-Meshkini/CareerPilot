@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>9710</w>
+      <h>3930</h>
+    </coordinates>
+    <panel_attributes>title=SD09 Process Application Emails, Auto-Update State and Notify (F14, F15 / UC13, UC14, UC15)
+obj=Scheduler~T ACTOR
+obj=Student~Student ACTOR
+obj=:TaskQueue~TQ
+obj=:BackgroundWorker~BW
+obj=:EmailSyncService~ESS
+obj=:EmailProviderRegistry~REG
+obj=:GmailAdapter~GA
+obj=:CredentialVault~CV
+obj=:EmailAccount~ACC
+obj=:EmailNormalizer~EN
+obj=:EmailEventDetector~ED
+obj=:HybridClassifier~HC
+obj=:RuleBasedClassifier~RBC
+obj=:LLMClassifier~LC
+obj=:LLMClient~LLM
+obj=:ApplicationMatcher~AM
+obj=:DetectedEmailEvent~DEV
+obj=:DomainEventBus~BUS
+obj=:ApplicationStatusUpdater~ASU
+obj=:InterviewScheduler~IS
+obj=:ApplicationService~AS
+obj=:NotificationService~NS
+obj=Gmail API\n&lt;&lt;external&gt;&gt;~GAPI
+obj=:EventReviewPage~ERP
+obj=:EmailAPI~EAPI
+obj=:ReminderService~RS
+obj=:ApplicationRepository~AR
+
+T-&gt;&gt;&gt;TQ : 1: enqueue("sync_email", {accountId})\n[every 15 min]
+TQ-&gt;&gt;&gt;BW : 2: runTask("sync_email",\nargs)
+BW-&gt;&gt;&gt;ESS : 3: syncAccount(accountId); on=ESS
+ESS-&gt;&gt;&gt;REG : 4: getAdapter("GMAIL"); on=REG
+REG.&gt;ESS : 5: GmailAdapter; off=REG
+ESS-&gt;&gt;&gt;GA : 6: fetchNewMessages(account, since); on=GA
+GA-&gt;&gt;&gt;CV : 7: decrypt(cipher); on=CV
+CV.&gt;GA : 8: refresh token; off=CV
+GA-&gt;&gt;&gt;GAPI : 9: messages.list(q = "newer_than:2d\n(interview OR application OR offer OR\nfrom:tracked domains)")
+combinedFragment=alt~f1 ESS GAPI; REG:[invalid_grant (revoked,\nor 7-day expiry while\napp is in Google\n"Testing" mode)]
+GAPI.&gt;GA : 10: 400 invalid_grant
+GA.&gt;ESS : 11: AuthExpiredError
+ESS-&gt;&gt;&gt;ACC : 12: needsReauth()
+ESS-&gt;&gt;&gt;NS : 13: notify(userId, "REAUTH", "Reconnect\nGmail", "/settings")
+..=f1; REG:[messages returned]
+GAPI.&gt;GA : 14: message ids + payloads
+GA.&gt;ESS : 15: List&lt;RawEmail&gt;; off=GA
+combinedFragment=loop~f2 ESS NS; REG:[for each RawEmail]
+ESS-&gt;&gt;&gt;EN : 16: normalize(raw, account); on=EN
+EN.&gt;ESS : 17: EmailMessage (body trimmed to 4 KB\nexcerpt); off=EN
+ESS-&gt;&gt;&gt;ESS + : 18:\nprocess\nEmail(email)
+tick=1
+ESS-&gt;&gt;&gt;ED : 19: detect(email); on=ED
+ED-&gt;&gt;&gt;HC : 20: classify(email); on=HC
+HC-&gt;&gt;&gt;RBC : 21: classify(email); on=RBC
+RBC.&gt;HC : 22: Classification(confidence); off=RBC
+combinedFragment=opt~f3 HC LLM; RBC:[rule confidence &lt; 0.85]
+HC-&gt;&gt;&gt;LC : 23: classify(email); on=LC
+LC-&gt;&gt;&gt;LLM : 24: generateStructured("email.classify",\nvars,\nclassificationSchema,\nuserId); on=LLM
+LLM.&gt;LC : 25: {eventType, confidence,\ndate, time, contact}; off=LLM
+LC.&gt;HC : 26: Classification; off=LC
+--=f3
+HC.&gt;ED : 27: Classification; off=HC
+ED.&gt;ESS : 28: DetectedEmailEvent; off=ED
+combinedFragment=alt~f4 ESS NS; REG:[eventType = NOT_RELEVANT]
+text=ESS:excerpt deleted\; only\nmessage id kept\n(prevents re-processing)
+..=f4; REG:[application-related]
+ESS-&gt;&gt;&gt;AM : 29: match(event, email); on=AM
+AM.&gt;ESS : 30: MatchCandidate(applicationId,\nconfidence); off=AM
+ESS-&gt;&gt;&gt;DEV : 31: requiresReview(0.85); on=DEV
+DEV.&gt;ESS : 32: bool; off=DEV
+combinedFragment=alt~f5 ESS NS; REG:[confident event AND\nconfident match]
+ESS-&gt;&gt;&gt;BUS : 33: publish(ApplicationEventDetected)
+BUS-&gt;&gt;&gt;ASU : 34: handle(event); on=ASU
+ASU-&gt;&gt;&gt;AS : 35: transition(userId, applicationId,\n"scheduleInterview", EMAIL_EVENT,\ndetectedEventId)
+text=AS:State pattern as in\nSD07\; reversible\nfrom the timeline\n(undoTransition)
+off=ASU
+BUS-&gt;&gt;&gt;IS : 36: handle(event); on=IS
+IS-&gt;&gt;&gt;AS : 37: addInterview(userId,\napplicationId, details)
+text=IS:also enqueues\ninterview-prep plan\n(SD11)
+off=IS
+BUS-&gt;&gt;&gt;NS : 38: handle(event)
+..=f5; REG:[low confidence or\nno/ambiguous match]
+text=DEV:reviewStatus =\nNEEDS_REVIEW\;\napplication state NOT\nchanged
+ESS-&gt;&gt;&gt;NS : 39: notify(userId, "REVIEW_EVENT",\n"Possible interview invite -\nconfirm?", "/review")
+--=f5
+--=f4
+--=f2
+ESS-&gt;&gt;&gt;ACC : 40: markSynced(at)
+--=f1
+off=ESS
+text=T:--- student resolves an\nuncertain event (UC14\nextends UC11) ---
+Student-&gt;&gt;&gt;ERP : 41: confirmEvent(eventId, applicationId)
+ERP-&gt;&gt;&gt;EAPI : 42: confirmEvent(req,\neventId); on=EAPI
+EAPI-&gt;&gt;&gt;ESS : 43: confirmEvent(userId, eventId,\napplicationId); on=ESS
+ESS-&gt;&gt;&gt;DEV : 44: confirm(applicationId)
+ESS-&gt;&gt;&gt;BUS : 45: publish(ApplicationEventDetected)
+text=BUS:same observers as above
+ESS.&gt;EAPI : 46: ok; off=ESS
+EAPI.&gt;ERP : 47: 200 OK; off=EAPI
+text=T:--- deadline reminders\n(UC15) ---
+T-&gt;&gt;&gt;TQ : 48: enqueue("scan_deadlines", {})  [daily\n08:00]
+TQ-&gt;&gt;&gt;BW : 49: runTask("scan_deadlines",\nargs)
+BW-&gt;&gt;&gt;RS : 50: scanDeadlines(now); on=RS
+RS-&gt;&gt;&gt;AR : 51: findOpenByUser(userId)
+combinedFragment=loop~f6 BUS RS; ASU:[each SAVED/PREPARED\napplication with\ndeadline within 3 days]
+RS-&gt;&gt;&gt;BUS : 52: publish(DeadlineApproachingEvent)
+BUS-&gt;&gt;&gt;NS : 53: handle(event)
+--=f6
+off=RS
+</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+</diagram>

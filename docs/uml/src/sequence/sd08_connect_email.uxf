@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>2260</w>
+      <h>1720</h>
+    </coordinates>
+    <panel_attributes>title=SD08 Connect Email Account with OAuth, or Upload .eml Files (F14 / UC12)
+obj=Student~Student ACTOR
+obj=:SettingsPage~SP
+obj=:EmailAPI~EAPI
+obj=:EmailSyncService~ESS
+obj=:EmailProviderRegistry~REG
+obj=:GmailAdapter~GA
+obj=:CredentialVault~CV
+obj=:EmailAccount~ACC CREATED_LATER
+obj=Google OAuth\n(consent + token endpoint)\n&lt;&lt;external&gt;&gt;~G
+
+Student-&gt;&gt;&gt;SP : 1: connectGmail()
+SP-&gt;&gt;&gt;EAPI : 2: startConnect(req); on=EAPI
+EAPI-&gt;&gt;&gt;ESS : 3: startConnect(userId); on=ESS
+ESS-&gt;&gt;&gt;REG : 4: getAdapter("GMAIL"); on=REG
+REG.&gt;ESS : 5: GmailAdapter; off=REG
+ESS-&gt;&gt;&gt;GA : 6: buildAuthUrl(userId, state); on=GA
+GA.&gt;ESS : 7: authUrl (scope gmail.readonly,\naccess_type=offline, PKCE); off=GA
+ESS.&gt;EAPI : 8: authUrl; off=ESS
+EAPI.&gt;SP : 9: 200 {authUrl}; off=EAPI
+SP-&gt;&gt;&gt;G : 10: browser redirect to consent screen
+Student-&gt;&gt;&gt;G : 11: reviews and grants read-only access
+G-&gt;&gt;&gt;EAPI : 12: oauthCallback(req)  [code, state]; on=EAPI
+combinedFragment=alt~f1 SP G; EAPI:[state mismatch or access denied]
+EAPI.&gt;SP : 13: 400 (nothing stored)
+..=f1; EAPI:[consent granted]
+EAPI-&gt;&gt;&gt;ESS : 14: completeConnect(userId, code); on=ESS
+ESS-&gt;&gt;&gt;GA : 15: exchangeAuthCode(code); on=GA
+GA-&gt;&gt;&gt;G : 16: POST token endpoint
+G.&gt;GA : 17: access + refresh token
+GA.&gt;ESS : 18: TokenSet; off=GA
+ESS-&gt;&gt;&gt;CV : 19: encrypt(plain); on=CV
+CV.&gt;ESS : 20: ciphertext; off=CV
+ESS-&gt;&gt;&gt;ACC : 21: &lt;&lt;create&gt;&gt; (status ACTIVE,\nencryptedRefreshToken)
+ESS.&gt;EAPI : 22: EmailAccount; off=ESS
+EAPI.&gt;SP : 23: redirect to Settings ("Gmail\nconnected"); off=EAPI
+--=f1
+text=Student:--- alternative without OAuth\n(course demo / privacy-preferring\nusers) ---
+Student-&gt;&gt;&gt;SP : 24: uploadEml(files)
+SP-&gt;&gt;&gt;EAPI : 25: uploadEml(req); on=EAPI
+EAPI-&gt;&gt;&gt;ESS : 26: importEmlFiles(userId, files); on=ESS
+text=ESS:EmlFileAdapter feeds the same\npipeline as SD09
+ESS.&gt;EAPI : 27: processed count; off=ESS
+EAPI.&gt;SP : 28: 200 OK; off=EAPI
+</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+</diagram>

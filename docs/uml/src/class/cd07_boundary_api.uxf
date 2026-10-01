@@ -1,0 +1,1080 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <help_text>fontsize=12
+</help_text>
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>20</x>
+      <y>10</y>
+      <w>800</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>*CD-7 Boundary Layer: React GUI pages, Browser Extension, CLI and REST API controllers*
+fontsize=16
+style=wordwrap</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>1060</x>
+      <y>360</y>
+      <w>490</w>
+      <h>1150</h>
+    </coordinates>
+    <panel_attributes>api (Django REST Framework controllers) &lt;&lt;control&gt;&gt;
+--
+layer=-20</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>520</x>
+      <y>110</y>
+      <w>390</w>
+      <h>1320</h>
+    </coordinates>
+    <panel_attributes>frontend (React GUI) &lt;&lt;boundary&gt;&gt;
+--
+layer=-19</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>120</x>
+      <y>1790</y>
+      <w>1820</w>
+      <h>270</h>
+    </coordinates>
+    <panel_attributes>extension (Chrome MV3) &lt;&lt;boundary&gt;&gt;
+--
+layer=-18</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>20</x>
+      <y>1440</y>
+      <w>910</w>
+      <h>340</h>
+    </coordinates>
+    <panel_attributes>cli (Python/Typer) &lt;&lt;boundary&gt;&gt;
+--
+layer=-17</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>640</x>
+      <y>140</y>
+      <w>150</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+*DashboardPage*
+--
+--
++loadDashboard()</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>590</x>
+      <y>770</y>
+      <w>250</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+*ProfilePage*
+--
+--
++uploadResume(file: File)
++verifyFacts(factIds: List&lt;UUID&gt;)
++saveGoal(form: Map)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>560</x>
+      <y>1160</y>
+      <w>310</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+*JobsPage*
+--
+--
++pasteJob(text: String, source: SourceType)
++showBatchProgress(batchId: UUID)
++filterJobs(filters: Map)
++compareJobs(jobIds: List&lt;UUID&gt;)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>600</x>
+      <y>1040</y>
+      <w>230</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+*JobDetailPage*
+--
+--
++requestAnalysis(jobId: UUID)
++createApplication(jobId: UUID)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>530</x>
+      <y>900</y>
+      <w>360</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+*ApplicationTrackerPage*
+--
+--
++changeStatus(applicationId: UUID, action: String)
++undoChange(changeId: UUID)
++generatePackage(applicationId: UUID)
++downloadPackage(applicationId: UUID)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>530</x>
+      <y>390</y>
+      <w>370</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+*EventReviewPage*
+--
+--
++confirmEvent(eventId: UUID, applicationId: UUID)
++dismissEvent(eventId: UUID)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>560</x>
+      <y>1310</y>
+      <w>310</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+*AgentWorkspacePage*
+--
+--
++submitGoal(text: String)
++approveStep(runId: UUID, approved: bool)
++undoAction(recordId: UUID)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>590</x>
+      <y>240</y>
+      <w>250</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+*InterviewPrepPage*
+--
+--
++preparePlan(applicationId: UUID)
++startMock(applicationId: UUID)
++sendAnswer(text: String)
++finishMock(sessionId: UUID)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>570</x>
+      <y>650</y>
+      <w>290</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+*InsightsPage*
+--
+--
++loadInsights()
++acceptAdjustment(adjustmentId: UUID)</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>610</x>
+      <y>510</y>
+      <w>210</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+*SettingsPage*
+--
+--
++connectGmail()
++uploadEml(files: List&lt;File&gt;)
++exportMyData()
++deleteMyData()</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1160</x>
+      <y>1920</y>
+      <w>290</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+/SiteExtractor/
+--
+--
++matches(url: String): bool
++extractList(doc: Document): List&lt;Map&gt;
++extractDetail(doc: Document): Map</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1630</x>
+      <y>1820</y>
+      <w>300</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>*YorkExtractor*
+--
+--
++matches(url: String): bool
++extractList(doc: Document): List&lt;Map&gt;
++extractDetail(doc: Document): Map</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1630</x>
+      <y>1940</y>
+      <w>300</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>*LinkedInExtractor*
+--
+-enabled: bool = false
+--
++matches(url: String): bool
++extractList(doc: Document): List&lt;Map&gt;
++extractDetail(doc: Document): Map</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>600</x>
+      <y>1940</y>
+      <w>230</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>*ContentScript*
+--
+--
++detectPostings(): List&lt;Map&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>130</x>
+      <y>1900</y>
+      <w>210</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+*ExtensionPopup*
+--
+--
++showDetected(count: int)
++onImportClicked()</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>540</x>
+      <y>1820</y>
+      <w>340</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>*ExtensionServiceWorker*
+--
+-apiToken: String
+--
++sendBatch(payload: ImportPayload): BatchRef
++pollStatus(batchId: UUID): Map</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>40</x>
+      <y>1470</y>
+      <w>390</w>
+      <h>290</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;boundary&gt;&gt;
+*CareerPilotCLI*
+--
+--
++login(apiUrl: String)
++profileShow()
++goalSet(type: String, term: String, roles: String)
++jobsImport(file: Path, source: String)
++jobsList(filters: String)
++jobsAnalyze(jobId: UUID)
++jobsTriage(batchId: UUID)
++applicationList(state: String)
++applicationUpdate(applicationId: UUID, action: String)
++packageGenerate(applicationId: UUID, out: Path)
++emailSync()
++emailImport(files: List&lt;Path&gt;)
++packageDownload(packageId: UUID, out: Path)
++interviewPrepare(applicationId: UUID)
++agentRun(goal: String)
++analyticsShow()</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>520</x>
+      <y>1470</y>
+      <w>390</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>*CliApiClient*
+--
+-baseUrl: String
+-token: String
+--
++request(method: String, path: String, body: Map): Map</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1150</x>
+      <y>770</y>
+      <w>310</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>*ProfileAPI*
+--
+--
++uploadResume(req: Request): Response
++verifyFacts(req: Request): Response
++updateGoal(req: Request): Response
++exportData(req: Request): Response
++deleteAccount(req: Request): Response</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1100</x>
+      <y>1400</y>
+      <w>410</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>*JobImportAPI*
+--
+--
++createBatch(req: Request): Response
++getBatchStatus(req: Request, batchId: UUID): Response
++importManual(req: Request): Response</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1130</x>
+      <y>1150</y>
+      <w>350</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>*JobAPI*
+--
+--
++listJobs(req: Request): Response
++getJob(req: Request, jobId: UUID): Response
++analyzeJob(req: Request, jobId: UUID): Response</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1100</x>
+      <y>1020</y>
+      <w>410</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>*ApplicationAPI*
+--
+--
++createApplication(req: Request): Response
++transition(req: Request, applicationId: UUID): Response
++undoTransition(req: Request, changeId: UUID): Response
++listApplications(req: Request): Response</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1080</x>
+      <y>920</y>
+      <w>450</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>*DocumentAPI*
+--
+--
++requestPackage(req: Request, applicationId: UUID): Response
++getDownloadUrl(req: Request, documentId: UUID): Response</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1110</x>
+      <y>530</y>
+      <w>390</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>*EmailAPI*
+--
+--
++startConnect(req: Request): Response
++oauthCallback(req: Request): Response
++uploadEml(req: Request): Response
++confirmEvent(req: Request, eventId: UUID): Response
++dismissEvent(req: Request, eventId: UUID): Response</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1110</x>
+      <y>1270</y>
+      <w>390</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>*AgentAPI*
+--
+--
++startRun(req: Request): Response
++approveStep(req: Request, runId: UUID): Response
++getRun(req: Request, runId: UUID): Response
++undoAction(req: Request, recordId: UUID): Response</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1100</x>
+      <y>400</y>
+      <w>410</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>*InterviewAPI*
+--
+--
++preparePlan(req: Request, applicationId: UUID): Response
++startMock(req: Request, applicationId: UUID): Response
++submitAnswer(req: Request, sessionId: UUID): Response
++finishMock(req: Request, sessionId: UUID): Response</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1070</x>
+      <y>670</y>
+      <w>470</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>*AnalyticsAPI*
+--
+--
++getInsights(req: Request): Response
++acceptAdjustment(req: Request, adjustmentId: UUID): Response</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1710</x>
+      <y>810</y>
+      <w>130</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*CandidateService*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1710</x>
+      <y>1440</y>
+      <w>130</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*JobImportService*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1710</x>
+      <y>1140</y>
+      <w>140</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*JobAnalysisService*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1710</x>
+      <y>1050</y>
+      <w>140</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*ApplicationService*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1710</x>
+      <y>930</y>
+      <w>140</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*DocumentService*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1710</x>
+      <y>560</y>
+      <w>140</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*EmailSyncService*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1720</x>
+      <y>1360</y>
+      <w>120</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*AgentController*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1700</x>
+      <y>460</y>
+      <w>160</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*InterviewPrepService*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1700</x>
+      <y>380</y>
+      <w>160</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*MockInterviewService*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1720</x>
+      <y>690</y>
+      <w>120</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*AnalyticsService*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1730</x>
+      <y>1210</y>
+      <w>100</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*TaskQueue*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1730</x>
+      <y>1290</y>
+      <w>100</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>*ToolManager*</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1440</x>
+      <y>1890</y>
+      <w>200</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10;46.8;190;10.6</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1440</x>
+      <y>1960</y>
+      <w>200</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.</panel_attributes>
+    <additional_attributes>10;19.6;190;26.9</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>820</x>
+      <y>1960</y>
+      <w>350</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-
+m2=1..*</panel_attributes>
+    <additional_attributes>10;12.3;340;12.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>330</x>
+      <y>1930</y>
+      <w>280</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+asks</panel_attributes>
+    <additional_attributes>10;18.3;270;35.2</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>330</x>
+      <y>1880</y>
+      <w>220</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;47.7;210;15.4</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>810</x>
+      <y>1480</y>
+      <w>470</w>
+      <h>350</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+HTTPS + token</panel_attributes>
+    <additional_attributes>15.1;340;124.2;292.3;314.9;145.2;451.5;10</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>420</x>
+      <y>1540</y>
+      <w>110</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;38.5;100;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>900</x>
+      <y>1480</y>
+      <w>270</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+HTTPS</panel_attributes>
+    <additional_attributes>10;40.8;144.5;30.3;252.4;10</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>840</x>
+      <y>1100</y>
+      <w>270</w>
+      <h>380</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+HTTPS</panel_attributes>
+    <additional_attributes>18.6;370;94.2;322.3;136.3;142.2;213.3;40.3;260;13.6</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>800</x>
+      <y>1360</y>
+      <w>320</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+HTTPS</panel_attributes>
+    <additional_attributes>12.7;110;310;10.5</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>830</x>
+      <y>810</y>
+      <w>330</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;13.1;320;20.7</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>860</x>
+      <y>1250</y>
+      <w>250</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;12.6;74.2;42.3;193.3;138.3;240;157.8</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>860</x>
+      <y>1190</y>
+      <w>280</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;24.9;270;15.7</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>820</x>
+      <y>1100</y>
+      <w>320</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;10.2;310;65.8</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>820</x>
+      <y>1070</y>
+      <w>290</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;16.6;280;10.2</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>880</x>
+      <y>980</y>
+      <w>230</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;13.0;220;54.1</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>880</x>
+      <y>940</y>
+      <w>210</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;18.3;200;18.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>860</x>
+      <y>470</y>
+      <w>260</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>14.7;10;250;65.6</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>860</x>
+      <y>1320</y>
+      <w>260</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;29.3;250;14.7</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>830</x>
+      <y>320</y>
+      <w>290</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;13.0;272.8;80</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>850</x>
+      <y>680</y>
+      <w>230</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;19.7;220;24.8</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>810</x>
+      <y>550</y>
+      <w>310</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;19.0;300;29.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1450</x>
+      <y>820</y>
+      <w>270</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;14.3;260;14.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1500</x>
+      <y>1440</y>
+      <w>220</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;13.6;210;20.2</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1470</x>
+      <y>1150</y>
+      <w>250</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;35.7;240;17.8</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1500</x>
+      <y>1060</y>
+      <w>220</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;15.3;210;15.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1520</x>
+      <y>940</y>
+      <w>200</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;18.3;190;18.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1490</x>
+      <y>570</y>
+      <w>230</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;16.3;220;16.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1490</x>
+      <y>1330</y>
+      <w>240</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;18.5;230;48.9</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1500</x>
+      <y>450</y>
+      <w>210</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;12.1;200;24.9</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1500</x>
+      <y>400</y>
+      <w>210</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;29.7;200;12.7</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1530</x>
+      <y>700</y>
+      <w>200</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;</panel_attributes>
+    <additional_attributes>10;10.3;190;10.3</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1470</x>
+      <y>1200</y>
+      <w>270</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;13.2;260;33.6</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1490</x>
+      <y>1230</y>
+      <w>250</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>10;59.4;240;15.6</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1490</x>
+      <y>1300</y>
+      <w>250</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;
+undo</panel_attributes>
+    <additional_attributes>10;19.0;240;13.5</additional_attributes>
+  </element>
+  <element>
+    <id>UMLNote</id>
+    <coordinates>
+      <x>1120</x>
+      <y>2070</y>
+      <w>370</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>Every controller authenticates the request and passes
+req.user.id as userId; every repository query is scoped
+by userId (tenant isolation).
+bg=#FFF8DC</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1290</x>
+      <y>880</y>
+      <w>30</w>
+      <h>1200</h>
+    </coordinates>
+    <panel_attributes>lt=.</panel_attributes>
+    <additional_attributes>15.0;1190.0;15.0;10.0</additional_attributes>
+  </element>
+</diagram>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>3800</w>
+      <h>1700</h>
+    </coordinates>
+    <panel_attributes>title=SD12 Outcome Analysis and Adaptive Strategy (F19 / UC19)
+obj=Student~Student ACTOR
+obj=:InsightsPage~IP
+obj=:AnalyticsAPI~ANAPI
+obj=:AnalyticsService~ANS
+obj=:OutcomeAnalyzer~OA
+obj=:CandidateRepository~CR
+obj=:StrategyAdvisor~SA
+obj=:LLMClient~LLM
+obj=:StrategyAdjustment~ADJ
+obj=:StrategyWeights~SW
+obj=:MemoryManager~MM
+
+Student-&gt;&gt;&gt;IP : 1: loadInsights()
+IP-&gt;&gt;&gt;ANAPI : 2: getInsights(req); on=ANAPI
+ANAPI-&gt;&gt;&gt;ANS : 3: getInsights(userId); on=ANS
+ANS-&gt;&gt;&gt;OA : 4: computeStats(userId); on=OA
+text=OA:Deterministic aggregates over the\nstudent's own\nApplications, StatusChanges and\nJobMatches:\nresponse / interview rate by role\ncategory, source,\nmatch-score band\; median days to\nresponse.
+OA.&gt;ANS : 5: OutcomeStats; off=OA
+combinedFragment=alt~f1 IP LLM; ANAPI:[stats.sufficientData == false (&lt;\n10 applications with an outcome)]
+ANS.&gt;ANAPI : 6: InsightReport(stats only, "need\nmore outcomes")
+ANAPI.&gt;IP : 7: 200 OK
+..=f1; ANAPI:[enough data]
+ANS-&gt;&gt;&gt;CR : 8: findProfileByUser(userId); on=CR
+CR.&gt;ANS : 9: profile (goal + StrategyWeights); off=CR
+ANS-&gt;&gt;&gt;SA : 10: proposeAdjustments(userId, stats, weights); on=SA
+SA-&gt;&gt;&gt;LLM : 11: generateStructured("strategy.propose",\nvars, adjustmentSchema, userId); on=LLM
+LLM.&gt;SA : 12: candidate adjustments + narrative; off=LLM
+text=SA:Guard rails: each weight change &lt;=\n0.10, min score within 40-85,\nevery proposal must cite a metric\nwith n &gt;= 5\; others discarded.
+SA.&gt;ANS : 13: List&lt;StrategyAdjustment&gt; (PROPOSED); off=SA
+ANS.&gt;ANAPI : 14: InsightReport; off=ANS
+ANAPI.&gt;IP : 15: 200 OK; off=ANAPI
+--=f1
+Student-&gt;&gt;&gt;IP : 16: acceptAdjustment(adjustmentId)
+IP-&gt;&gt;&gt;ANAPI : 17: acceptAdjustment(req,\nadjustmentId); on=ANAPI
+ANAPI-&gt;&gt;&gt;ANS : 18: acceptAdjustment(userId,\nadjustmentId); on=ANS
+ANS-&gt;&gt;&gt;ADJ : 19: accept()
+ANS-&gt;&gt;&gt;SW : 20: applyAdjustment(adj)
+ANS-&gt;&gt;&gt;CR : 21: saveProfile(profile)
+ANS-&gt;&gt;&gt;MM : 22: remember(userId, STRATEGY, rationale,\nadjustmentId)
+ANS.&gt;ANAPI : 23: StrategyAdjustment(ACCEPTED); off=ANS
+ANAPI.&gt;IP : 24: 200 OK; off=ANAPI
+text=SW:Adaptation loop: MatchingService\n(SD04) reads the updated weights,\nand the agent planner (SD05, SD10)\nrecalls STRATEGY memories,\nso future ranking and triage\nchange.
+</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+</diagram>

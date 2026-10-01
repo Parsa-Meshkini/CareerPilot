@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>5950</w>
+      <h>3410</h>
+    </coordinates>
+    <panel_attributes>title=SD02 Import Jobs through the Browser Extension (F04, F06 / UC04, UC06)
+obj=Student~Student ACTOR
+obj=Experience York\n(page already open)\n&lt;&lt;external&gt;&gt;~Portal
+obj=:ExtensionPopup~POP
+obj=:ContentScript~CSX
+obj=:YorkExtractor~YX
+obj=:ExtensionServiceWorker~ESW
+obj=:JobImportAPI~API
+obj=:JobImportService~JIS
+obj=:JobSourceRegistry~REG
+obj=:YorkBrowserImportAdapter~YA
+obj=:ImportBatch~IB CREATED_LATER
+obj=:TaskQueue~TQ
+obj=:BackgroundWorker~BW
+obj=:JobNormalizer~JN
+obj=:JobPosting~JP CREATED_LATER
+obj=:DuplicateDetector~DD
+obj=:JobRepository~JR
+obj=:DomainEventBus~BUS
+obj=:JobsPage~JPG
+
+Student-&gt;&gt;&gt;Portal : 1: log in and open postings\nlist (normal browsing)
+text=Student:student clicks the\nCareerPilot toolbar icon
+POP-&gt;&gt;&gt;CSX : 2: detectPostings(); on=CSX
+CSX-&gt;&gt;&gt;YX : 3: matches(url); on=YX
+YX.&gt;CSX : 4: true; off=YX
+combinedFragment=alt~f1 POP YX; CSX:[page not supported]
+CSX.&gt;POP : 5: [] (popup offers "paste\njob text" instead, UC05)
+..=f1; CSX:[supported page]
+CSX-&gt;&gt;&gt;YX : 6: extractList(doc); on=YX
+YX.&gt;CSX : 7: 47 records (title,\ncompany, deadline,\nexternalId, url); off=YX
+CSX.&gt;POP : 8: records; off=CSX
+POP-&gt;&gt;&gt;POP + : 9:\nshow\nDetected(47)
+tick=1
+--=f1
+Student-&gt;&gt;&gt;POP : 10: onImportClicked()
+POP-&gt;&gt;&gt;ESW : 11: sendBatch(payload); on=ESW
+ESW-&gt;&gt;&gt;API : 12: createBatch(req)  [HTTPS\nPOST\n/api/import-batches,\nbearer token]; on=API
+combinedFragment=alt~f2 POP TQ; CSX:[token missing / expired]
+API.&gt;ESW : 13: 401 Unauthorized
+ESW.&gt;POP : 14: ask student to sign in to CareerPilot
+..=f2; CSX:[authenticated]
+API-&gt;&gt;&gt;JIS : 15: createBatch(userId,\npayload); on=JIS
+JIS-&gt;&gt;&gt;REG : 16: getAdapter(YORK); on=REG
+REG.&gt;JIS : 17: YorkBrowserImportAdapter; off=REG
+JIS-&gt;&gt;&gt;YA : 18: parse(payload); on=YA
+YA.&gt;JIS : 19: List&lt;RawJobRecord&gt;; off=YA
+combinedFragment=loop~f3 JIS YA; REG:[each record]
+JIS-&gt;&gt;&gt;YA : 20: validate(record)
+--=f3
+JIS-&gt;&gt;&gt;IB : 21: &lt;&lt;create&gt;&gt; (status = RECEIVED,\ntotalCount = 47)
+JIS-&gt;&gt;&gt;TQ : 22: enqueue("process_import_batch",\n{batchId})
+JIS.&gt;API : 23: ImportBatch; off=JIS
+API.&gt;ESW : 24: 202 Accepted {batchId}; off=API
+ESW.&gt;POP : 25: BatchRef; off=ESW
+--=f2
+text=Student:--- asynchronous:\nbackground worker ---
+TQ-&gt;&gt;&gt;BW : 26: runTask("process_import_batch",\nargs)
+BW-&gt;&gt;&gt;JIS : 27: processBatch(batchId); on=JIS
+combinedFragment=loop~f4 JIS JR; REG:[for each RawJobRecord]
+JIS-&gt;&gt;&gt;JN : 28: normalize(raw, userId); on=JN
+JN-&gt;&gt;&gt;JP : 29: &lt;&lt;create&gt;&gt; (completeness\n= SUMMARY)
+JN-&gt;&gt;&gt;JP : 30: computeFingerprint()
+JN.&gt;JIS : 31: job; off=JN
+JIS-&gt;&gt;&gt;DD : 32: findDuplicate(job); on=DD
+DD-&gt;&gt;&gt;JR : 33: findByExternalId(userId,\nYORK, externalId)
+combinedFragment=opt~f5 DD JR; DD:[no exact match]
+DD-&gt;&gt;&gt;JR : 34: findByFingerprint(userId,\nfingerprint)
+--=f5
+DD.&gt;JIS : 35: existing or null; off=DD
+combinedFragment=alt~f6 JIS JR; REG:[duplicate found]
+JIS-&gt;&gt;&gt;JP : 36: mergeFrom(other)
+text=JIS:existing posting keeps\nits id\;\nnewer / fuller fields\nwin
+JIS-&gt;&gt;&gt;JR : 37: save(job)
+JIS-&gt;&gt;&gt;IB : 38: recordResult(DUPLICATE)
+..=f6; REG:[new posting]
+JIS-&gt;&gt;&gt;JR : 39: save(job)
+JIS-&gt;&gt;&gt;IB : 40: recordResult(IMPORTED)
+..=f6; REG:[normalization error\n(e.g. missing title)]
+JIS-&gt;&gt;&gt;IB : 41: recordResult(FAILED)
+--=f6
+--=f4
+JIS-&gt;&gt;&gt;IB : 42: complete()
+JIS-&gt;&gt;&gt;BUS : 43: publish(JobsImportedEvent)
+text=BUS:TriageTrigger reacts -&gt;\nSD05
+off=JIS
+text=Student:--- progress shown in\nGUI ---
+Student-&gt;&gt;&gt;JPG : 44: showBatchProgress(batchId)
+JPG-&gt;&gt;&gt;API : 45: getBatchStatus(req, batchId); on=API
+API-&gt;&gt;&gt;JIS : 46: getBatchStatus(userId,\nbatchId); on=JIS
+JIS-&gt;&gt;&gt;IB : 47: progress()
+JIS.&gt;API : 48: ImportBatch (imported\n44, duplicates 3); off=JIS
+API.&gt;JPG : 49: 200 OK; off=API
+</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+</diagram>

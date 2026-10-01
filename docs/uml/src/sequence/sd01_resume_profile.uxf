@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>4460</w>
+      <h>2240</h>
+    </coordinates>
+    <panel_attributes>title=SD01 Import Resume, Verify Extracted Facts and Configure Career Goal (F01, F02, F03 / UC01-UC03)
+obj=Student~Student ACTOR
+obj=:ProfilePage~PP
+obj=:ProfileAPI~PA
+obj=:CandidateService~CS
+obj=:StorageService~SS
+obj=:TaskQueue~TQ
+obj=:BackgroundWorker~BW
+obj=:ResumeParser~RP
+obj=:LLMClient~LLM
+obj=:CandidateRepository~CR
+obj=:ProfileFact~PF
+obj=:MatchingService~MS
+
+Student-&gt;&gt;&gt;PP : 1: uploadResume(file)
+PP-&gt;&gt;&gt;PA : 2: uploadResume(req); on=PA
+PA-&gt;&gt;&gt;CS : 3: importResume(userId, file); on=CS
+combinedFragment=alt~f1 PP TQ; PA:[file is not PDF/DOCX or &gt; 5 MB]
+CS.&gt;PA : 4: ValidationError
+PA.&gt;PP : 5: 400 Bad Request
+..=f1; PA:[valid file]
+CS-&gt;&gt;&gt;SS : 6: put(key, data)
+CS-&gt;&gt;&gt;TQ : 7: enqueue("parse_resume", {resumeId})
+CS.&gt;PA : 8: UploadedResume(parseStatus=PENDING); off=CS
+PA.&gt;PP : 9: 202 Accepted; off=PA
+--=f1
+text=Student:--- asynchronous: background\nworker ---
+TQ-&gt;&gt;&gt;BW : 10: runTask("parse_resume", args)
+BW-&gt;&gt;&gt;CS : 11: parseResume(resumeId); on=CS
+CS-&gt;&gt;&gt;RP : 12: extractText(data, mimeType); on=RP
+RP.&gt;CS : 13: text; off=RP
+combinedFragment=alt~f2 CS CR; SS:[no extractable text (scanned\nimage)]
+CS.&gt;BW : 14: parseStatus = FAILED (student asked to enter\nfacts manually)
+..=f2; SS:[text extracted]
+CS-&gt;&gt;&gt;RP : 15: extractFacts(text, userId); on=RP
+RP-&gt;&gt;&gt;LLM : 16: generateStructured("resume.extract_facts",\nvars, factSchema, userId); on=LLM
+LLM.&gt;RP : 17: JSON facts (education, experience,\nprojects, skills, certifications); off=LLM
+RP.&gt;CS : 18: List&lt;ProfileFact&gt; (verified = false, source =\nRESUME_EXTRACTION); off=RP
+CS-&gt;&gt;&gt;CR : 19: saveFacts(facts)
+CS.&gt;BW : 20: parseStatus = PARSED; off=CS
+--=f2
+text=Student:--- student review (human\nverification gate) ---
+Student-&gt;&gt;&gt;PP : 21: verifyFacts(factIds)
+PP-&gt;&gt;&gt;PA : 22: verifyFacts(req); on=PA
+PA-&gt;&gt;&gt;CS : 23: verifyFacts(userId, factIds,\nedits); on=CS
+CS-&gt;&gt;&gt;CR : 24: findFacts(userId, ids); on=CR
+CR.&gt;CS : 25: facts; off=CR
+combinedFragment=loop~f3 CS PF; SS:[for each accepted fact]
+CS-&gt;&gt;&gt;PF : 26: verify()
+--=f3
+CS-&gt;&gt;&gt;CR : 27: saveFacts(facts)
+CS.&gt;PA : 28: verifiedCount; off=CS
+PA.&gt;PP : 29: 200 OK; off=PA
+text=PF:Only verified facts are ever\npassed to\ndocument / interview generators\n(F10-F12, F17).
+text=Student:--- configure career goal ---
+Student-&gt;&gt;&gt;PP : 30: saveGoal(form)
+PP-&gt;&gt;&gt;PA : 31: updateGoal(req); on=PA
+PA-&gt;&gt;&gt;CS : 32: updateCareerGoal(userId, goal); on=CS
+CS-&gt;&gt;&gt;MS : 33: selectStrategy(goal); on=MS
+MS.&gt;CS : 34: MatchScoringStrategy (e.g.\nCoopInternshipStrategy); off=MS
+CS-&gt;&gt;&gt;CR : 35: saveProfile(profile)
+CS.&gt;PA : 36: CareerGoal; off=CS
+PA.&gt;PP : 37: 200 OK; off=PA
+</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+</diagram>

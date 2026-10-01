@@ -1,0 +1,39 @@
+# STAGE 2 DRAFT: service layout from report section 12.7 / DD-1.
+# The images referenced below are built in Stage 2; this file is not runnable in Stage 1.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: careerpilot
+      POSTGRES_USER: careerpilot
+      POSTGRES_PASSWORD: careerpilot   # development only
+    volumes: [pgdata:/var/lib/postgresql/data]
+  redis:
+    image: redis:7
+  minio:
+    image: minio/minio
+    command: server /data
+    env_file: .env
+    volumes: [miniodata:/data]
+  web:
+    build: ./backend
+    command: gunicorn careerpilot.wsgi:application -b 0.0.0.0:8000
+    env_file: .env
+    depends_on: [postgres, redis, minio]
+    ports: ["8000:8000"]
+  worker:
+    build: ./backend
+    command: celery -A careerpilot worker -Q import,ai,docs,email -l info
+    env_file: .env
+    depends_on: [postgres, redis]
+  beat:
+    build: ./backend
+    command: celery -A careerpilot beat -l info
+    env_file: .env
+    depends_on: [redis]
+  frontend:
+    build: ./frontend
+    ports: ["5173:5173"]
+volumes:
+  pgdata:
+  miniodata:

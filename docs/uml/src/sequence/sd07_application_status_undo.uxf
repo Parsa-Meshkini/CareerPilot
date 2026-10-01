@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>2970</w>
+      <h>2680</h>
+    </coordinates>
+    <panel_attributes>title=SD07 Update Application Status (State pattern) and Undo (F13 / UC11)
+obj=Student~Student ACTOR
+obj=:ApplicationTrackerPage~ATP
+obj=:ApplicationAPI~AAPI
+obj=:ApplicationService~AS
+obj=:ApplicationRepository~AR
+obj=:Application~APP
+obj=:ApplicationState~ST
+obj=:StatusChange~SC CREATED_LATER
+obj=:DomainEventBus~BUS
+obj=:MemoryRecorder~MR
+obj=:MemoryManager~MM
+obj=:NotificationService~NS
+
+Student-&gt;&gt;&gt;ATP : 1: changeStatus(applicationId,\n"submit")
+ATP-&gt;&gt;&gt;AAPI : 2: transition(req, applicationId); on=AAPI
+AAPI-&gt;&gt;&gt;AS : 3: transition(userId, applicationId,\n"submit", USER, null); on=AS
+AS-&gt;&gt;&gt;AR : 4: findById(applicationId, userId); on=AR
+AR.&gt;AS : 5: app (or NotFound -&gt; 404\; other\nusers' data is never visible); off=AR
+AS-&gt;&gt;&gt;APP : 6: submit(); on=APP
+APP-&gt;&gt;&gt;ST : 7: submit(app); on=ST
+combinedFragment=alt~f1 ATP NS; AAPI:[current state is SavedState or\nPreparedState]
+ST-&gt;&gt;&gt;APP : 8: setState(s)
+text=ST:s = new AppliedState()
+ST.&gt;APP : 9: ok; off=ST
+APP.&gt;AS : 10: ok; off=APP
+AS-&gt;&gt;&gt;AR : 11: save(app)
+AS-&gt;&gt;&gt;SC : 12: &lt;&lt;create&gt;&gt; (from PREPARED to APPLIED, source\nUSER)
+AS-&gt;&gt;&gt;AR : 13: saveChange(change)
+AS-&gt;&gt;&gt;BUS : 14: publish(ApplicationStatusChanged)
+BUS-&gt;&gt;&gt;MR : 15: handle(event)
+MR-&gt;&gt;&gt;MM : 16: remember(userId, EPISODIC,\n"applied: Backend Intern @ Acme\n(YORK, score 78)", applicationId)
+BUS-&gt;&gt;&gt;NS : 17: handle(event)
+AS.&gt;AAPI : 18: StatusChange; off=AS
+AAPI.&gt;ATP : 19: 200 OK (new state +\nallowedActions()); off=AAPI
+..=f1; AAPI:[any other state (e.g.\nRejectedState)]
+ST.&gt;APP : 20: InvalidTransitionError
+APP.&gt;AS : 21: InvalidTransitionError
+AS.&gt;AAPI : 22: InvalidTransitionError
+AAPI.&gt;ATP : 23: 409 Conflict +\napp.allowedActions()
+--=f1
+text=Student:--- undo the most recent change\n---
+Student-&gt;&gt;&gt;ATP : 24: undoChange(changeId)
+ATP-&gt;&gt;&gt;AAPI : 25: undoTransition(req, changeId); on=AAPI
+AAPI-&gt;&gt;&gt;AS : 26: undoTransition(userId, changeId); on=AS
+AS-&gt;&gt;&gt;AR : 27: findChange(changeId, userId); on=AR
+AR.&gt;AS : 28: change; off=AR
+combinedFragment=alt~f2 ATP BUS; AAPI:[change is not the latest for this\napplication]
+AS.&gt;AAPI : 29: 409 Conflict (undo newer changes\nfirst)
+..=f2; AAPI:[latest change]
+AS-&gt;&gt;&gt;SC : 30: revert()
+AS-&gt;&gt;&gt;APP : 31: setState(s)
+text=APP:s = state named change.fromState\;\nrestoration is audited, not a\nnormal transition
+AS-&gt;&gt;&gt;AR : 32: save(app)
+AS-&gt;&gt;&gt;AR : 33: saveChange(change)
+AS-&gt;&gt;&gt;BUS : 34: publish(ApplicationStatusChanged)
+AS.&gt;AAPI : 35: app; off=AS
+AAPI.&gt;ATP : 36: 200 OK; off=AAPI
+--=f2
+</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+</diagram>

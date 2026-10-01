@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>2890</w>
+      <h>2160</h>
+    </coordinates>
+    <panel_attributes>title=SD11 Interview Preparation and AI Mock Interview (F17, F18 / UC17, UC18)
+obj=Student~Student ACTOR
+obj=:InterviewPrepPage~IPP
+obj=:InterviewAPI~IAPI
+obj=:InterviewPrepService~IPS
+obj=:ContextBuilder~CB
+obj=:LLMClient~LLM
+obj=:FabricationGuard~FG
+obj=:MockInterviewService~MIS
+obj=:MockInterviewSession~SES CREATED_LATER
+obj=:MemoryManager~MM
+
+Student-&gt;&gt;&gt;IPP : 1: preparePlan(applicationId)
+IPP-&gt;&gt;&gt;IAPI : 2: preparePlan(req, applicationId); on=IAPI
+IAPI-&gt;&gt;&gt;IPS : 3: preparePlan(userId, applicationId); on=IPS
+IPS-&gt;&gt;&gt;CB : 4: buildCandidateContext(userId, job); on=CB
+CB.&gt;IPS : 5: ctx (verified facts + past\nmock-interview feedback); off=CB
+IPS-&gt;&gt;&gt;LLM : 6: generateStructured("interview.plan", vars,\nplanSchema, userId); on=LLM
+LLM.&gt;IPS : 7: questions (behavioural / technical / role), STAR\nstories citing fact ids, checklist; off=LLM
+IPS-&gt;&gt;&gt;FG : 8: check(content, facts); on=FG
+FG.&gt;IPS : 9: VerificationReport; off=FG
+combinedFragment=opt~f1 IPS CB; IPS:[STAR story cites unknown fact or\ninvents a metric]
+text=IPS:story removed\; plan suggests\n"add detail to experience X in\nyour profile"
+--=f1
+IPS.&gt;IAPI : 10: InterviewPrepPlan; off=IPS
+IAPI.&gt;IPP : 11: 201 Created; off=IAPI
+text=Student:--- mock interview ---
+Student-&gt;&gt;&gt;IPP : 12: startMock(applicationId)
+IPP-&gt;&gt;&gt;IAPI : 13: startMock(req, applicationId); on=IAPI
+IAPI-&gt;&gt;&gt;MIS : 14: startSession(userId, applicationId); on=MIS
+MIS-&gt;&gt;&gt;LLM : 15: generateText("mock.first_question", vars,\nuserId); on=LLM
+LLM.&gt;MIS : 16: first question; off=LLM
+MIS-&gt;&gt;&gt;SES : 17: &lt;&lt;create&gt;&gt;
+MIS.&gt;IAPI : 18: session + question; off=MIS
+IAPI.&gt;IPP : 19: 201 Created; off=IAPI
+combinedFragment=loop~f2 Student SES; IPP:[until session.isFinished() (max 6\nquestions)]
+Student-&gt;&gt;&gt;IPP : 20: sendAnswer(text)
+IPP-&gt;&gt;&gt;IAPI : 21: submitAnswer(req, sessionId); on=IAPI
+IAPI-&gt;&gt;&gt;MIS : 22: submitAnswer(userId, sessionId, answer); on=MIS
+MIS-&gt;&gt;&gt;LLM : 23: generateStructured("mock.evaluate_answer", vars,\nturnSchema, userId); on=LLM
+LLM.&gt;MIS : 24: {score 1-5 per rubric, feedback,\nfollowUpOrNextQuestion}; off=LLM
+MIS-&gt;&gt;&gt;SES : 25: addTurn(turn)
+MIS-&gt;&gt;&gt;SES : 26: isFinished(); on=SES
+SES.&gt;MIS : 27: bool; off=SES
+MIS.&gt;IAPI : 28: InterviewTurn; off=MIS
+IAPI.&gt;IPP : 29: 200 OK; off=IAPI
+--=f2
+Student-&gt;&gt;&gt;IPP : 30: finishMock(sessionId)
+IPP-&gt;&gt;&gt;IAPI : 31: finishMock(req, sessionId); on=IAPI
+IAPI-&gt;&gt;&gt;MIS : 32: finishSession(userId, sessionId); on=MIS
+MIS-&gt;&gt;&gt;LLM : 33: generateText("mock.summary", vars, userId); on=LLM
+LLM.&gt;MIS : 34: strengths, weaknesses, practice plan; off=LLM
+MIS-&gt;&gt;&gt;MM : 35: remember(userId, FEEDBACK, "weak: quantifying\nimpact in STAR answers", applicationId)
+MIS.&gt;IAPI : 36: MockInterviewSession; off=MIS
+IAPI.&gt;IPP : 37: 200 OK; off=IAPI
+</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+</diagram>

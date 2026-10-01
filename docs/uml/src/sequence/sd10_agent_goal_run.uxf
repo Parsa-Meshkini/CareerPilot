@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>6440</w>
+      <h>3690</h>
+    </coordinates>
+    <panel_attributes>title=SD10 Goal-Driven Agent Run with Planning, Human Approval, Replanning and Undo (F16 / UC16)
+obj=Student~Student ACTOR
+obj=:AgentWorkspacePage~AWP
+obj=:AgentAPI~AAPI
+obj=:TaskQueue~TQ
+obj=:BackgroundWorker~BW
+obj=:AgentController~AC
+obj=:MemoryManager~MM
+obj=:ContextBuilder~CB
+obj=:Planner~PL
+obj=:PlaybookLibrary~PB
+obj=:LLMClient~LLM
+obj=:Plan~P
+obj=:ToolManager~TM
+obj=:ApprovalPolicy~AP
+obj=:AgentRun~RUN
+obj=:AgentCommand~CMD
+obj=:Reasoner~RS
+
+Student-&gt;&gt;&gt;AWP : 1: submitGoal("Prepare my\napplication for the Acme\nbackend co-op")
+AWP-&gt;&gt;&gt;AAPI : 2: startRun(req); on=AAPI
+AAPI-&gt;&gt;&gt;TQ : 3: enqueue("agent_run",\n{userId, goal:\nPREPARE_APPLICATION})
+AAPI.&gt;AWP : 4: 202 {runId}; off=AAPI
+TQ-&gt;&gt;&gt;BW : 5: runTask("agent_run",\nargs)
+BW-&gt;&gt;&gt;AC : 6: runGoal(userId, goal); on=AC
+AC-&gt;&gt;&gt;MM : 7: recall(userId,\ngoal.description,\n[EPISODIC, PREFERENCE,\nFEEDBACK], 10); on=MM
+MM.&gt;AC : 8: relevant memories; off=MM
+AC-&gt;&gt;&gt;CB : 9: buildCandidateContext(userId, job); on=CB
+CB.&gt;AC : 10: ctx; off=CB
+AC-&gt;&gt;&gt;TM : 11: listTools(); on=TM
+TM.&gt;AC : 12: ToolSpecs; off=TM
+AC-&gt;&gt;&gt;PL : 13: createPlan(goal, ctx, tools); on=PL
+PL-&gt;&gt;&gt;LLM : 14: generateStructured("agent.plan", vars,\nplanSchema, userId); on=LLM
+LLM.&gt;PL : 15: steps; off=LLM
+PL-&gt;&gt;&gt;PL + : 16:\nvalidate\nPlan(plan,\ntools)
+tick=1
+combinedFragment=opt~f1 PL PB; PL:[invalid twice]
+PL-&gt;&gt;&gt;PB : 17: getPlaybook(PREPARE_APPLICATION); on=PB
+PB.&gt;PL : 18: fallback plan; off=PB
+--=f1
+PL.&gt;AC : 19: Plan: SearchJobs -&gt; RetrieveContext -&gt;\nAnalyzeJob -&gt; MatchJob -&gt;\nBuildPackage* -&gt;\nUpdateApplicationStatus*; off=PL
+text=P:* side-effecting steps\nrequire approval
+combinedFragment=loop~f2 Student RS; AWP:[while plan.hasNext() and\nrun.withinBudget() and\nstepCount &lt; 8]
+AC-&gt;&gt;&gt;P : 20: nextStep(); on=P
+P.&gt;AC : 21: step; off=P
+AC-&gt;&gt;&gt;TM : 22: createCommand(step, run); on=TM
+TM.&gt;AC : 23: cmd; off=TM
+AC-&gt;&gt;&gt;AP : 24: requiresApproval(cmd); on=AP
+AP.&gt;AC : 25: needsApproval; off=AP
+combinedFragment=opt~f3 Student RS; AWP:[needsApproval]
+AC-&gt;&gt;&gt;RUN : 26: awaitApproval(step)
+text=RUN:run persisted as\nAWAITING_APPROVAL\;\nworker is released
+AWP-&gt;&gt;&gt;AAPI : 27: getRun(req, runId); on=AAPI
+AAPI.&gt;AWP : 28: pending step +\ncmd.describe(); off=AAPI
+Student-&gt;&gt;&gt;AWP : 29: approveStep(runId, true)
+AWP-&gt;&gt;&gt;AAPI : 30: approveStep(req, runId); on=AAPI
+AAPI-&gt;&gt;&gt;AC : 31: resumeRun(runId, approved)
+AAPI.&gt;AWP : 32: 202; off=AAPI
+combinedFragment=alt~f4 AC RS; MM:[student rejects the step]
+AC-&gt;&gt;&gt;RS : 33: evaluate(run, step, obs)
+text=RS:rejection is an\nobservation\;\nReasoner returns REPLAN\nor FINISH
+--=f4
+--=f3
+AC-&gt;&gt;&gt;TM : 34: execute(cmd); on=TM
+TM-&gt;&gt;&gt;CMD : 35: execute(); on=CMD
+CMD.&gt;TM : 36: Observation; off=CMD
+TM.&gt;AC : 37: Observation (AgentActionRecord\npersisted); off=TM
+AC-&gt;&gt;&gt;RUN : 38: recordObservation(obs)
+AC-&gt;&gt;&gt;RS : 39: evaluate(run, step, obs); on=RS
+RS.&gt;AC : 40: Decision; off=RS
+combinedFragment=alt~f5 AC RUN; MM:[ASK_USER (e.g.\nSearchJobs found two\n"Acme" postings)]
+AC-&gt;&gt;&gt;RUN : 41: awaitApproval(step)
+text=RUN:GUI asks which posting\;\nanswer resumes run
+..=f5; MM:[REPLAN and replanCount &lt;\n2]
+AC-&gt;&gt;&gt;PL : 42: replan(run, obs); on=PL
+PL-&gt;&gt;&gt;P : 43: replaceRemaining(steps)
+PL.&gt;AC : 44: Plan; off=PL
+..=f5; MM:[ABORT (budget / repeated\ntool failure)]
+AC-&gt;&gt;&gt;RUN : 45: fail(reason)
+--=f5
+--=f2
+AC-&gt;&gt;&gt;AC + : 46:\nfinish(run)
+tick=1
+AC-&gt;&gt;&gt;MM : 47: remember(userId,\nEPISODIC, "prepared\npackage for Acme backend\nco-op", runId)
+AC-&gt;&gt;&gt;RUN : 48: complete(summary); off=AC
+text=Student:--- undo a reversible\nagent action ---
+Student-&gt;&gt;&gt;AWP : 49: undoAction(recordId)
+AWP-&gt;&gt;&gt;AAPI : 50: undoAction(req,\nrecordId); on=AAPI
+AAPI-&gt;&gt;&gt;TM : 51: undo(recordId); on=TM
+TM-&gt;&gt;&gt;CMD : 52: undo()
+text=CMD:UpdateApplicationStatusCommand.undo()\n-&gt;\nApplicationService.undoTransition()
+TM.&gt;AAPI : 53: ok; off=TM
+AAPI.&gt;AWP : 54: 200 OK; off=AAPI
+</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+</diagram>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.ActivityDiagramText</type>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>1200</w>
+      <h>1530</h>
+    </coordinates>
+    <panel_attributes>title:AD-1 Agent Control Loop (activity view of AgentController.runGoal)
+Start
+Receive AgentGoal
+Recall memories (MemoryManager.recall)\Build context (ContextBuilder)
+Planner.createPlan (LLM, tool catalog)
+If
+	[plan valid]
+
+	[plan invalid]
+	PlaybookLibrary.getPlaybook
+EndIf
+While[plan.hasNext() and withinBudget()\and steps &lt; 8]
+	[yes]
+	ToolManager.createCommand(step)
+	If
+		[approval required]
+		AgentRun.awaitApproval
+		Student approves / rejects
+
+		[no approval needed]
+	EndIf
+	ToolManager.execute(cmd): Observation\(AgentActionRecord written)
+	Reasoner.evaluate(): Decision
+	If
+		[CONTINUE]
+
+		[REPLAN]
+		Planner.replan (max 2)
+
+		[ASK_USER]
+		AgentRun.awaitApproval (question)
+
+		[ABORT]
+		AgentRun.fail
+		End
+
+		[FINISH]
+		leave loop-&gt;rem
+	EndIf
+[no]
+MemoryManager.remember (episodic summary)~rem
+AgentRun.complete
+End
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

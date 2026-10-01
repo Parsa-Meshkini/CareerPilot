@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>5990</w>
+      <h>3180</h>
+    </coordinates>
+    <panel_attributes>title=SD05 Agent Batch Triage and Prioritized Shortlist (F09 / UC08)
+obj=:DomainEventBus~BUS
+obj=:TriageTrigger~TT
+obj=:TaskQueue~TQ
+obj=:BackgroundWorker~BW
+obj=:AgentController~AC
+obj=:ContextBuilder~CB
+obj=:MemoryManager~MM
+obj=:ToolManager~TM
+obj=:Planner~PL
+obj=:PlaybookLibrary~PB
+obj=:LLMClient~LLM
+obj=:Plan~P
+obj=:ApprovalPolicy~AP
+obj=:AgentCommand~CMD
+obj=:MatchingService~MS
+obj=:AgentRun~RUN CREATED_LATER
+obj=:Reasoner~RS
+obj=:NotificationService~NS
+
+BUS-&gt;&gt;&gt;TT : 1: handle(event)\n[JobsImportedEvent]; on=TT
+TT-&gt;&gt;&gt;TQ : 2: enqueue("agent_run",\n{goal: TRIAGE_BATCH,\nbatchId}); off=TT
+TQ-&gt;&gt;&gt;BW : 3: runTask("agent_run",\nargs)
+BW-&gt;&gt;&gt;AC : 4: runGoal(userId, goal); on=AC
+AC-&gt;&gt;&gt;RUN : 5: &lt;&lt;create&gt;&gt; (status = PLANNING,\ntokenBudget = 40k)
+AC-&gt;&gt;&gt;CB : 6: buildCandidateContext(userId,\njob); on=CB
+text=CB:job = null -&gt;\nwhole-profile context
+CB.&gt;AC : 7: ctx; off=CB
+AC-&gt;&gt;&gt;MM : 8: recall(userId, "triage", [PREFERENCE,\nSTRATEGY], 10); on=MM
+MM.&gt;AC : 9: e.g. "prefers backend roles", "min\nscore 65 (accepted adjustment)"; off=MM
+AC-&gt;&gt;&gt;TM : 10: listTools(); on=TM
+TM.&gt;AC : 11: ToolSpecs; off=TM
+AC-&gt;&gt;&gt;PL : 12: createPlan(goal, ctx, tools); on=PL
+PL-&gt;&gt;&gt;LLM : 13: generateStructured("agent.plan", vars,\nplanSchema, userId); on=LLM
+LLM.&gt;PL : 14: candidate plan; off=LLM
+PL-&gt;&gt;&gt;PL + : 15:\nvalidate\nPlan(plan,\ntools)
+tick=1
+combinedFragment=alt~f1 PL PB; PL:[plan invalid (unknown\ntool, bad arguments, too\nmany steps)]
+PL-&gt;&gt;&gt;PB : 16: getPlaybook(TRIAGE_BATCH); on=PB
+PB.&gt;PL : 17: SearchJobs -&gt;\nMatchJob(quick, all) -&gt;\nAnalyzeJob(top-K) -&gt;\nMatchJob(deep, top-K) -&gt;\nRankJobs; off=PB
+--=f1
+PL.&gt;AC : 18: Plan; off=PL
+combinedFragment=loop~f2 AC RS; CB:[while plan.hasNext() and\nrun.withinBudget() and\nstepCount &lt; maxSteps]
+AC-&gt;&gt;&gt;P : 19: nextStep(); on=P
+P.&gt;AC : 20: step; off=P
+AC-&gt;&gt;&gt;AC + : 21:\nexecuteStep(\nrun,\nstep)
+tick=1
+AC-&gt;&gt;&gt;TM : 22: createCommand(step, run); on=TM
+TM.&gt;AC : 23: cmd (e.g. MatchJobCommand); off=TM
+AC-&gt;&gt;&gt;AP : 24: requiresApproval(cmd); on=AP
+AP.&gt;AC : 25: false (read-only / analysis tools); off=AP
+AC-&gt;&gt;&gt;TM : 26: execute(cmd); on=TM
+TM-&gt;&gt;&gt;CMD : 27: execute(); on=CMD
+CMD-&gt;&gt;&gt;MS : 28: matchJob(userId, jobId,\nfalse)
+text=CMD:receiver depends on the\nconcrete command:\nAnalyzeJob -&gt;\nJobAnalysisService.analyzeJob\nRankJobs -&gt;\nMatchingService.rankJobs
+CMD.&gt;TM : 29: Observation; off=CMD
+TM.&gt;AC : 30: Observation (AgentActionRecord\nwritten); off=TM
+AC-&gt;&gt;&gt;RUN : 31: recordObservation(obs)
+AC-&gt;&gt;&gt;RS : 32: evaluate(run, step, obs); on=RS
+RS.&gt;AC : 33: Decision; off=RS
+combinedFragment=alt~f3 AC RUN; CB:[Decision = REPLAN (e.g.\n30 of 47 postings are\nSUMMARY-only)]
+AC-&gt;&gt;&gt;PL : 34: replan(run, obs); on=PL
+PL-&gt;&gt;&gt;P : 35: replaceRemaining(steps)
+text=P:deep analysis restricted\nto FULL postings\;\nSUMMARY postings ranked\non quick score and\nflagged
+PL.&gt;AC : 36: Plan; off=PL
+..=f3; CB:[Decision = ABORT (budget\nexhausted)]
+AC-&gt;&gt;&gt;RUN : 37: fail("token budget exhausted\; partial\nshortlist saved")
+--=f3
+--=f2
+AC-&gt;&gt;&gt;AC + : 38:\nfinish(run)
+tick=1
+AC-&gt;&gt;&gt;MM : 39: remember(userId, EPISODIC, "triaged 47\njobs, 12 shortlisted", batchId)
+AC-&gt;&gt;&gt;RUN : 40: complete(summary)
+AC-&gt;&gt;&gt;NS : 41: notify(userId, "TRIAGE_DONE", "12 of\n47 jobs shortlisted", link); off=AC
+text=RS:Decision rule for deep\nanalysis: quick score &gt;=\ngoal.minMatchScore,\ntop-K by score (K =\nmin(10, remaining budget\n/ est. cost per job)),\ndeadline within 21 days\nboosts priority.
+</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+</diagram>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>5590</w>
+      <h>2970</h>
+    </coordinates>
+    <panel_attributes>title=SD04 Analyze Job and Match Candidate, incl. Skill Gap (F07, F08 / UC07)
+obj=Student~Student ACTOR
+obj=:JobDetailPage~JDP
+obj=:JobAPI~JAPI
+obj=:TaskQueue~TQ
+obj=:BackgroundWorker~BW
+obj=:JobAnalysisService~JAS
+obj=:JobRepository~JR
+obj=:LLMClient~LLM
+obj=:UsageTracker~UT
+obj=:PromptRegistry~PR
+obj=:LLMProvider~PROV
+obj=:ResponseValidator~RV
+obj=:MatchingService~MS
+obj=:ContextBuilder~CB
+obj=:MemoryManager~MM
+obj=:MatchScoringStrategy~STRAT
+obj=Gemini / OpenAI API\n&lt;&lt;external&gt;&gt;~EXT
+
+Student-&gt;&gt;&gt;JDP : 1: requestAnalysis(jobId)
+JDP-&gt;&gt;&gt;JAPI : 2: analyzeJob(req, jobId); on=JAPI
+JAPI-&gt;&gt;&gt;TQ : 3: enqueue("analyze_and_match",\n{userId, jobId})
+JAPI.&gt;JDP : 4: 202 Accepted; off=JAPI
+text=Student:--- asynchronous:\nbackground worker ---
+TQ-&gt;&gt;&gt;BW : 5: runTask("analyze_and_match",\nargs)
+BW-&gt;&gt;&gt;JAS : 6: analyzeJob(userId,\njobId); on=JAS
+JAS-&gt;&gt;&gt;JR : 7: findById(jobId, userId); on=JR
+JR.&gt;JAS : 8: job; off=JR
+combinedFragment=opt~f1 JAS JR; JAS:[job.completeness ==\nSUMMARY]
+text=JAS:analysis marked\n"partial"\; GUI asks the\nstudent\nto open the posting so\nthe extension can import\nfull details
+--=f1
+JAS-&gt;&gt;&gt;LLM : 9: generateStructured("job.analyze",\nvars, analysisSchema, userId); on=LLM
+LLM-&gt;&gt;&gt;UT : 10: checkBudget(userId)
+LLM-&gt;&gt;&gt;PR : 11: getTemplate("job.analyze")
+LLM-&gt;&gt;&gt;LLM + : 12:\ncallWith\nRetry(req)
+tick=1
+LLM-&gt;&gt;&gt;PROV : 13: complete(req); on=PROV
+PROV-&gt;&gt;&gt;EXT : 14: HTTPS request (vendor SDK)
+EXT.&gt;PROV : 15: completion
+PROV.&gt;LLM : 16: LLMResponse; off=PROV
+LLM-&gt;&gt;&gt;RV : 17: validate(raw, schema); on=RV
+RV.&gt;LLM : 18: Map (or SchemaError -&gt; retry, max 2); off=RV
+LLM-&gt;&gt;&gt;UT : 19: record(userId, resp)
+combinedFragment=alt~f2 JAS LLM; JR:[provider failed after\nretries]
+LLM.&gt;JAS : 20: LLMUnavailableError
+JAS-&gt;&gt;&gt;JAS + : 21:\nfallback\nKeyword\nAnalysis(\njob)
+tick=1
+..=f2; JR:[success]
+LLM.&gt;JAS : 22: requiredSkills, preferredSkills,\nresponsibilities, seniority, redFlags; off=LLM
+--=f2
+JAS-&gt;&gt;&gt;JR : 23: saveAnalysis(analysis)
+JAS.&gt;BW : 24: JobAnalysis; off=JAS
+BW-&gt;&gt;&gt;MS : 25: matchJob(userId, jobId, true); on=MS
+MS-&gt;&gt;&gt;CB : 26: buildCandidateContext(userId,\njob); on=CB
+CB-&gt;&gt;&gt;MM : 27: getPreferences(userId)
+CB.&gt;MS : 28: CandidateContext\n(verified facts ranked\nby relevance); off=CB
+combinedFragment=alt~f3 BW STRAT; JAS:[profile has no verified\nfacts]
+MS.&gt;BW : 29: ProfileIncompleteError (GUI: "verify\nyour profile first")
+..=f3; JAS:[else]
+MS-&gt;&gt;&gt;MS + : 30:\nselect\nStrategy(\ngoal)
+tick=1
+MS-&gt;&gt;&gt;STRAT : 31: score(ctx, job, analysis); on=STRAT
+STRAT.&gt;MS : 32: JobMatch(score, breakdown,\nmatchedSkills, missingSkills); off=STRAT
+MS-&gt;&gt;&gt;MS + : 33:\nexplain\nMatch(match,\nanalysis,\nctx)
+tick=1
+MS-&gt;&gt;&gt;LLM : 34: generateText("match.explain_gap",\nvars, userId); on=LLM
+LLM.&gt;MS : 35: explanation + learning suggestions per\nmissing skill; off=LLM
+MS-&gt;&gt;&gt;JR : 36: saveMatch(match)
+MS.&gt;BW : 37: JobMatch; off=MS
+--=f3
+text=JDP:page polls until\nanalysis and match exist
+JDP-&gt;&gt;&gt;JAPI : 38: getJob(req, jobId); on=JAPI
+JAPI.&gt;JDP : 39: JobPosting + JobAnalysis\n+ JobMatch; off=JAPI
+</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+</diagram>

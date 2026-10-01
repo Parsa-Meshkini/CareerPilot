@@ -1,0 +1,26 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  design-artifacts:
+    name: UML consistency check (Stage 1)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Check UML / traceability consistency
+        run: python tools/check_uml_consistency.py
+      - name: Check every UMLet diagram has an up-to-date render
+        run: |
+          for f in $(find docs/uml/src -name '*.uxf'); do
+            n=$(basename "$f" .uxf)
+            test -f "docs/uml/rendered/$n.png" && test -f "docs/uml/rendered/$n.svg" || { echo "missing render for $n"; exit 1; }
+          done
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+  # Stage 2 adds: backend tests (pytest, MockLLMProvider), frontend tests, extension tests, Docker build.

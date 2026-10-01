@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLSequenceAllInOne</id>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>5450</w>
+      <h>3700</h>
+    </coordinates>
+    <panel_attributes>title=SD06 Generate Tailored Resume, Cover Letter and Application Package (F10, F11, F12 / UC09, UC10)
+obj=Student~Student ACTOR
+obj=:ApplicationTrackerPage~ATP
+obj=:DocumentAPI~DAPI
+obj=:DocumentService~DS
+obj=:TaskQueue~TQ
+obj=:BackgroundWorker~BW
+obj=:PackageAssembler~PA
+obj=:ResumeGenerator~RG
+obj=:CoverLetterGenerator~CLG
+obj=:ContextBuilder~CB
+obj=:LLMClient~LLM
+obj=:FabricationGuard~FG
+obj=:DocumentRenderer~DR
+obj=:StorageService~SS
+obj=:DocumentRepository~DREPO
+obj=:ApplicationService~AS
+
+Student-&gt;&gt;&gt;ATP : 1: generatePackage(applicationId)
+ATP-&gt;&gt;&gt;DAPI : 2: requestPackage(req,\napplicationId); on=DAPI
+DAPI-&gt;&gt;&gt;DS : 3: requestPackage(userId,\napplicationId); on=DS
+DS-&gt;&gt;&gt;TQ : 4: enqueue("build_package",\n{userId, applicationId})
+DS.&gt;DAPI : 5: TaskHandle; off=DS
+DAPI.&gt;ATP : 6: 202 Accepted; off=DAPI
+text=Student:--- asynchronous:\nbackground worker ---
+TQ-&gt;&gt;&gt;BW : 7: runTask("build_package",\nargs)
+BW-&gt;&gt;&gt;PA : 8: buildPackage(userId,\napplicationId, false); on=PA
+PA-&gt;&gt;&gt;RG : 9: generate(userId,\napplicationId); on=RG
+combinedFragment=Template Method DocumentGenerator.generate()~f1 RG DREPO
+RG-&gt;&gt;&gt;CB : 10: buildCandidateContext(userId, job); on=CB
+CB.&gt;RG : 11: ctx (verified facts only); off=CB
+RG-&gt;&gt;&gt;RG + : 12:\nbuildPrompt\nVariables(\nctx,\njob,\nanalysis)
+tick=1
+RG-&gt;&gt;&gt;LLM : 13: generateStructured("resume.tailor",\nvars, resumeSchema, userId); on=LLM
+LLM.&gt;RG : 14: sections\; every bullet cites\nsourceFactIds; off=LLM
+RG-&gt;&gt;&gt;RG + : 15:\nverify(\ncontent,\nctx)
+tick=1
+RG-&gt;&gt;&gt;FG : 16: check(content, facts); on=FG
+FG.&gt;RG : 17: VerificationReport; off=FG
+combinedFragment=alt~f2 RG FG; CLG:[violations (unknown fact\nid, number/org/skill not\nin cited fact)]
+RG-&gt;&gt;&gt;LLM : 18: generateStructured("resume.tailor",\nvars + violations, resumeSchema,\nuserId); on=LLM
+LLM.&gt;RG : 19: revised content; off=LLM
+RG-&gt;&gt;&gt;FG : 20: check(content, facts); on=FG
+FG.&gt;RG : 21: VerificationReport; off=FG
+combinedFragment=opt~f3 RG CLG; RG:[still failing]
+text=RG:offending bullets\nremoved\;\nverificationStatus =\nNEEDS_REVIEW
+--=f3
+--=f2
+RG-&gt;&gt;&gt;RG + : 22:\nrender(\ncontent)
+tick=1
+RG-&gt;&gt;&gt;DR : 23: renderDocx(content, "resume_default")
+RG-&gt;&gt;&gt;DR : 24: renderPdf(content, "resume_default")
+RG-&gt;&gt;&gt;RG + : 25:\npersist(\nfiles,\napplication\nId)
+tick=1
+RG-&gt;&gt;&gt;SS : 26: put(key, data)
+RG-&gt;&gt;&gt;DREPO : 27: save(doc)
+--=f1
+RG.&gt;PA : 28: [Resume.pdf,\nResume.docx]; off=RG
+PA-&gt;&gt;&gt;CLG : 29: generate(userId, applicationId); on=CLG
+text=CLG:same template steps as\nabove\n(prompt\n"cover_letter.tailor",\n&lt;= 350 words)
+CLG.&gt;PA : 30: [Cover_Letter.pdf, Cover_Letter.docx]; off=CLG
+PA-&gt;&gt;&gt;PA + : 31:\nbuild\nChecklist(\napp,\njob)
+tick=1
+PA-&gt;&gt;&gt;PA + : 32:\nbuildInfo\nText(app,\njob)
+tick=1
+PA-&gt;&gt;&gt;PA + : 33:\nzip(files)
+tick=1
+PA-&gt;&gt;&gt;SS : 34: put(zipKey, bytes)
+PA-&gt;&gt;&gt;DREPO : 35: savePackage(pkg)
+combinedFragment=opt~f4 PA AS; RG:[application state is\nSAVED or PREPARED]
+PA-&gt;&gt;&gt;AS : 36: transition(userId, applicationId,\n"markPrepared", AGENT, null)
+--=f4
+PA.&gt;BW : 37: ApplicationPackage; off=PA
+text=Student:--- download (student\nsubmits the application\nthemselves) ---
+Student-&gt;&gt;&gt;ATP : 38: downloadPackage(applicationId)
+ATP-&gt;&gt;&gt;DAPI : 39: getDownloadUrl(req,\ndocumentId); on=DAPI
+DAPI-&gt;&gt;&gt;DS : 40: getDownloadUrl(userId,\ndocumentId); on=DS
+DS-&gt;&gt;&gt;SS : 41: getSignedUrl(key, 300); on=SS
+SS.&gt;DS : 42: signed URL (5 min); off=SS
+DS.&gt;DAPI : 43: url; off=DS
+DAPI.&gt;ATP : 44: 200 OK; off=DAPI
+text=Student:CareerPilot never\nsubmits applications.\nAfter submitting on the\nemployer site, the\nstudent marks the\napplication APPLIED\n(SD07).
+</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+</diagram>

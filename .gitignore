@@ -1,0 +1,48 @@
+# --- secrets: never commit ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+client_secret*.json
+token*.json
+secrets/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# --- Node / frontend / extension ---
+node_modules/
+frontend/dist/
+extension/dist/
+*.zip.tmp
+
+# --- Django / runtime data ---
+media/
+staticfiles/
+*.sqlite3
+celerybeat-schedule*
+dumps/
+
+# --- personal / sample user data (keep real resumes and emails out of git) ---
+data/private/
+*.eml
+!backend/tests/fixtures/emails/*.eml
+
+# --- tooling ---
+# UMLet is installed locally (https://www.umlet.com); only the .uxf diagrams are versioned
+Umlet/
+umlet.jar
+.DS_Store
+.idea/
+.vscode/
