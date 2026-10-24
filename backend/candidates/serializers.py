@@ -15,3 +15,9 @@ def goal_to_dict(goal):
             "preferred_locations": goal.preferred_locations, "work_term": goal.work_term,
             "work_model": goal.work_model, "min_match_score": goal.min_match_score,
             "strategy_key": goal.to_strategy_key(), "weights": goal.weights.to_dict()}
+
+
+def resume_to_dict(resume):
+    return {"id": str(resume.id), "original_name": resume.original_name, "parse_status": resume.parse_status,
+            "status_message": resume.status_message, "extracted_count": resume.extracted_count,
+            "created_at": resume.created_at}

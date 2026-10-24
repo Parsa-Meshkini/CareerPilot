@@ -2,7 +2,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from .serializers import fact_to_dict, goal_to_dict, profile_to_dict
+from .serializers import fact_to_dict, goal_to_dict, profile_to_dict, resume_to_dict
 from .services import CandidateService
 
 service = CandidateService()
@@ -58,3 +58,23 @@ def goal(request):
         g, changed = service.update_career_goal(request.user, request.data)
         return Response({**goal_to_dict(g), "strategy_changed": changed})
     return Response(goal_to_dict(service.get_career_goal(request.user)))
+
+
+@api_view(["POST"])
+def upload_resume(request):
+    upload = request.FILES.get("file")
+    if upload is None:
+        return Response({"error": "validation_failed", "message": "attach the resume as 'file'"}, status=400)
+    resume = service.import_resume(request.user, upload.name, upload.read())
+    return Response(resume_to_dict(resume), status=201)
+
+
+@api_view(["GET"])
+def resume_detail(request, resume_id):
+    return Response(resume_to_dict(service.get_resume(request.user, resume_id)))
+
+
+@api_view(["POST"])
+def resume_retry(request, resume_id):
+    resume = service.get_resume(request.user, resume_id)
+    return Response(resume_to_dict(service.parse_resume(resume.id)))

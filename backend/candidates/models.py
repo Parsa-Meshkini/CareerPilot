@@ -80,6 +80,27 @@ def _span(d):
     return f"{d.get('start_date') or '?'} to {d.get('end_date') or 'present'}"
 
 
+class UploadedResume(models.Model):
+    PENDING, PARSED, FAILED, FAILED_RETRYABLE = "PENDING", "PARSED", "FAILED", "FAILED_RETRYABLE"
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="resumes")
+    storage_key = models.CharField(max_length=300)
+    original_name = models.CharField(max_length=200)
+    mime_type = models.CharField(max_length=100)
+    parse_status = models.CharField(max_length=20, default=PENDING)
+    status_message = models.CharField(max_length=300, blank=True)
+    extracted_count = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def mark_parsed(self, count):
+        self.parse_status, self.extracted_count, self.status_message = self.PARSED, count, ""
+
+    def mark_failed(self, message, retryable=False):
+        self.parse_status = self.FAILED_RETRYABLE if retryable else self.FAILED
+        self.status_message = message[:300]
+
+
 @dataclass
 class StrategyWeights:
     """Factor weights inside a MatchScoringStrategy; tuned by F19 within bounds."""

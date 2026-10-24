@@ -2,7 +2,7 @@ import re
 
 from careerpilot.errors import ValidationFailed
 
-from .models import DEFAULT_WEIGHTS, CareerGoal, ProfileFact
+from .models import DEFAULT_WEIGHTS, CareerGoal, ProfileFact, UploadedResume
 from .repository import CandidateRepository
 
 # required fields first, then optional ones; list fields are noted separately
@@ -110,6 +110,58 @@ class CandidateService:
         if self.repo.find_goal(user) is None:
             hints.append("Set a career goal so jobs can be scored")
         return hints
+
+    # ---- F02 resume import ----
+    def import_resume(self, user, filename, data):
+        from careerpilot.storage import storage
+        from careerpilot.tasks import task_queue
+
+        from .resume_parser import MAX_BYTES, SUPPORTED
+
+        ext = "." + filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+        if ext not in SUPPORTED:
+            raise ValidationFailed("only PDF, DOCX or TXT resumes are supported", fields={"file": "type"})
+        if len(data) > MAX_BYTES:
+            raise ValidationFailed("resume must be 5 MB or smaller", fields={"file": "size"})
+        key = storage.put(storage.new_key(user, "resumes", filename), data)
+        resume = UploadedResume.objects.create(user=user, storage_key=key, original_name=filename[:200],
+                                               mime_type=SUPPORTED[ext])
+        task_queue.enqueue("candidates.parse_resume", {"resume_id": resume.id})
+        resume.refresh_from_db()
+        return resume
+
+    def parse_resume(self, resume_id, parser=None):
+        from agent.llm.types import LLMError, LLMProviderError
+        from careerpilot.storage import storage
+
+        from .resume_parser import NoTextError, ResumeParser
+
+        resume = UploadedResume.objects.get(pk=resume_id)
+        parser = parser or ResumeParser()
+        try:
+            text = parser.extract_text(storage.get(resume.storage_key), resume.mime_type)
+            facts = parser.extract_facts(resume.user, text)
+        except NoTextError as exc:
+            resume.mark_failed(str(exc))
+        except LLMProviderError as exc:
+            resume.mark_failed(f"AI service unavailable, retry later ({exc})", retryable=exc.retryable)
+        except LLMError as exc:
+            resume.mark_failed(f"AI extraction failed: {exc}", retryable=True)
+        except Exception as exc:  # corrupt files etc.
+            resume.mark_failed(f"could not read file: {exc}")
+        else:
+            self.repo.save_facts(facts)
+            resume.mark_parsed(len(facts))
+        resume.save()
+        return resume
+
+    def get_resume(self, user, resume_id):
+        from careerpilot.errors import NotFoundError
+
+        resume = UploadedResume.objects.filter(user=user, pk=resume_id).first()
+        if resume is None:
+            raise NotFoundError("resume not found")
+        return resume
 
     # ---- F03 career goal & strategy ----
     def get_career_goal(self, user):
