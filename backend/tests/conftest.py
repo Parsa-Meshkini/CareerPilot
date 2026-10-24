@@ -17,3 +17,6 @@ def api(user):
     client = APIClient()
     client.force_authenticate(user=user)
     return client
+
+
+from tests.llm_helpers import mock_llm  # noqa: E402,F401
