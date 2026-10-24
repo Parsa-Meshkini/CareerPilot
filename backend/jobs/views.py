@@ -6,10 +6,13 @@ from rest_framework.response import Response
 
 from careerpilot.errors import ValidationFailed
 
+from .analysis_service import JobAnalysisService
 from .import_service import JobImportService
+from .matching import MatchingService
+from .models import JobAnalysis, JobMatch
 from .normalizer import parse_deadline
 from .repository import JobRepository
-from .serializers import batch_to_dict, job_to_dict
+from .serializers import analysis_to_dict, batch_to_dict, job_to_dict, match_to_dict
 
 imports = JobImportService()
 jobs = JobRepository()
@@ -64,7 +67,12 @@ def list_jobs(request):
     qs = jobs.list_jobs(request.user, q=p.get("q"), deadline_before=parse_deadline(p.get("deadline_before", "")),
                         shortlisted=(p["shortlisted"] == "true") if "shortlisted" in p else None,
                         include_dismissed=p.get("include_dismissed") == "true")
-    return Response([job_to_dict(j, include_description=False) for j in qs])
+    rows = [job_to_dict(j, include_description=False) for j in qs.select_related("match")]
+    if p.get("min_score"):
+        rows = [r for r in rows if r["score"] is not None and r["score"] >= int(p["min_score"])]
+    if p.get("sort") == "score":
+        rows.sort(key=lambda r: -1 if r["score"] is None else r["score"], reverse=True)
+    return Response(rows)
 
 
 EDITABLE = ("title", "company", "location", "job_type", "salary_text", "deadline_text", "work_term", "description",
@@ -84,4 +92,40 @@ def job_detail(request, job_id):
         if "deadline_text" in request.data:
             job.deadline = parse_deadline(job.deadline_text)
         job.save()
-    return Response(job_to_dict(job))
+    return Response({**job_to_dict(job), "analysis": analysis_to_dict(JobAnalysis.objects.filter(job=job).first()),
+                     "match": match_to_dict(JobMatch.objects.filter(job=job).first())})
+
+
+@api_view(["POST"])
+def analyze_job(request, job_id):
+    """F07 + F08: deep analysis, then a deep match with explanation."""
+    analysis = JobAnalysisService().analyze_job(request.user, job_id)
+    match = MatchingService().match_job(request.user, job_id, deep=True)
+    return Response({"analysis": analysis_to_dict(analysis), "match": match_to_dict(match)})
+
+
+@api_view(["POST"])
+def match_job(request, job_id):
+    deep = bool(request.data.get("deep", False))
+    return Response(match_to_dict(MatchingService().match_job(request.user, job_id, deep=deep)))
+
+
+@api_view(["POST"])
+def score_all(request):
+    """Quick-scores every job without spending LLM tokens."""
+    ids = list(jobs.list_jobs(request.user).values_list("id", flat=True))
+    ranked = MatchingService().rank_jobs(request.user, ids)
+    return Response([{"job_id": str(m.job_id), "score": m.score} for m in ranked])
+
+
+@api_view(["POST"])
+def compare_jobs(request):
+    ids = request.data.get("job_ids") or []
+    if not 2 <= len(ids) <= 4:
+        raise ValidationFailed("compare between 2 and 4 jobs")
+    out = []
+    for jid in ids:
+        job = jobs.find_by_id(request.user, jid)
+        match = JobMatch.objects.filter(job=job).first() or MatchingService().match_job(request.user, jid)
+        out.append({"job": job_to_dict(job, include_description=False), "match": match_to_dict(match)})
+    return Response(out)

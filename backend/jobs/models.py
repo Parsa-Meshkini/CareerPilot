@@ -128,3 +128,48 @@ def _norm(text):
     text = re.sub(r"[^a-z0-9 ]", " ", (text or "").lower())
     text = re.sub(r"\b(inc|ltd|llc|corp|corporation|co|the)\b", " ", text)
     return " ".join(text.split())
+
+
+class JobAnalysis(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    job = models.OneToOneField(JobPosting, on_delete=models.CASCADE, related_name="analysis")
+    required_skills = models.JSONField(default=list)
+    preferred_skills = models.JSONField(default=list)
+    responsibilities = models.JSONField(default=list)
+    seniority = models.CharField(max_length=30, blank=True)
+    years_required = models.IntegerField(null=True, blank=True)
+    keywords = models.JSONField(default=list)
+    red_flags = models.JSONField(default=list)
+    summary = models.TextField(blank=True)
+    model_used = models.CharField(max_length=80, blank=True)
+    is_fallback = models.BooleanField(default=False)
+    partial = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now=True)
+
+
+class JobMatch(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    job = models.OneToOneField(JobPosting, on_delete=models.CASCADE, related_name="match")
+    score = models.IntegerField()
+    strategy_key = models.CharField(max_length=30)
+    breakdown = models.JSONField(default=dict)
+    matched_skills = models.JSONField(default=list)
+    missing_skills = models.JSONField(default=list)
+    transferable = models.JSONField(default=list, blank=True)
+    constraint_notes = models.JSONField(default=list, blank=True)
+    explanation = models.TextField(blank=True)
+    suggestions = models.JSONField(default=list, blank=True)
+    is_deep_analysis = models.BooleanField(default=False)
+    outdated = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now=True)
+
+    def score_band(self):
+        if self.score >= 80:
+            return "80-100"
+        if self.score >= 60:
+            return "60-79"
+        if self.score >= 40:
+            return "40-59"
+        return "0-39"

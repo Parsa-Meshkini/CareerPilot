@@ -9,5 +9,9 @@ urlpatterns = [
     path("batches/<uuid:batch_id>/", views.batch_detail),
     path("import/manual/", views.import_manual),
     path("import/file/", views.import_file),
+    path("score/", views.score_all),
+    path("compare/", views.compare_jobs),
     path("<uuid:job_id>/", views.job_detail),
+    path("<uuid:job_id>/analyze/", views.analyze_job),
+    path("<uuid:job_id>/match/", views.match_job),
 ]
