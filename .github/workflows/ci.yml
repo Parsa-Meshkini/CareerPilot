@@ -1,8 +1,20 @@
 name: CI
 on: [push, pull_request]
 jobs:
+  backend-tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run: { working-directory: backend }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r requirements.txt
+      - name: Run backend tests (offline, MockLLMProvider)
+        env: { LLM_PROVIDER: mock }
+        run: python -m pytest
   design-artifacts:
-    name: UML consistency check (Stage 1)
+    name: UML consistency check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,4 +35,3 @@ jobs:
         with: { fetch-depth: 0 }
       - uses: gitleaks/gitleaks-action@v2
         env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
-  # Stage 2 adds: backend tests (pytest, MockLLMProvider), frontend tests, extension tests, Docker build.

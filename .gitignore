@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+config.local.json
 *.pem
 *.key
 credentials*.json
@@ -29,6 +30,7 @@ extension/dist/
 
 # --- Django / runtime data ---
 media/
+backend/media/
 staticfiles/
 *.sqlite3
 celerybeat-schedule*
