@@ -1,0 +1,14 @@
+{
+  "extractor_version": "york-list-1",
+  "records": [
+    {"url": "https://experience.yorku.ca/myAccount/co-op/postings.htm?id=1101",
+     "fields": {"Job ID": "1101", "Job Title": "Backend Developer Co-op", "Organization": "Acme Corp",
+                "Job Location": "Toronto, ON (Hybrid)", "Application Deadline": "November 15, 2026 11:59 PM",
+                "Work Term": "Summer 2027"}},
+    {"url": "https://experience.yorku.ca/myAccount/co-op/postings.htm?id=1102",
+     "fields": {"Job ID": "1102", "Job Title": "Data Analyst Intern", "Organization": "Northwind Inc.",
+                "Job Location": "Remote", "Application Deadline": "2026-11-30", "Work Term": "Summer 2027"}},
+    {"url": "https://experience.yorku.ca/myAccount/co-op/postings.htm?id=1103",
+     "fields": {"Job ID": "1103", "Organization": "Broken Posting Ltd"}}
+  ]
+}

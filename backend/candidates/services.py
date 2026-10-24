@@ -200,8 +200,11 @@ class CandidateService:
     def _mark_matches_outdated(self, user):
         from django.apps import apps
 
-        if apps.is_installed("jobs"):
-            apps.get_model("jobs", "JobMatch").objects.filter(user=user).update(outdated=True)
+        try:
+            match_model = apps.get_model("jobs", "JobMatch")
+        except LookupError:
+            return
+        match_model.objects.filter(user=user).update(outdated=True)
 
 
 def _as_list(value):

@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     "users",
     "agent",
     "candidates",
+    "notifications",
+    "jobs",
 ]
 
 MIDDLEWARE = [
