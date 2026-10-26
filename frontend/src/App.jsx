@@ -4,8 +4,9 @@ import JobDetail from "./pages/JobDetail";
 import Jobs from "./pages/Jobs";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
+import Tracker from "./pages/Tracker";
 
-const NAV = [["/jobs", "Jobs"], ["/profile", "Profile"]];
+const NAV = [["/jobs", "Jobs"], ["/applications", "Applications"], ["/profile", "Profile"]];
 
 function Layout({ children }) {
   const { user, signOut } = useAuth();
@@ -34,6 +35,7 @@ export default function App() {
       <Routes>
         <Route path="/jobs" element={<Jobs />} />
         <Route path="/jobs/:id" element={<JobDetail />} />
+        <Route path="/applications" element={<Tracker />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="*" element={<Navigate to="/profile" replace />} />
       </Routes>
