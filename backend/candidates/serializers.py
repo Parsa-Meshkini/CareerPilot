@@ -5,7 +5,7 @@ def fact_to_dict(fact):
 
 
 def profile_to_dict(profile):
-    return {k: getattr(profile, k) for k in ("full_name", "headline", "summary", "location", "email", "phone", "links")}
+    return {k: getattr(profile, k) for k in ("full_name", "headline", "summary", "location", "email", "phone", "links", "auto_triage")}
 
 
 def goal_to_dict(goal):

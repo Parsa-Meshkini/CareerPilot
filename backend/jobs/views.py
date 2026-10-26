@@ -129,3 +129,16 @@ def compare_jobs(request):
         match = JobMatch.objects.filter(job=job).first() or MatchingService().match_job(request.user, jid)
         out.append({"job": job_to_dict(job, include_description=False), "match": match_to_dict(match)})
     return Response(out)
+
+
+@api_view(["POST"])
+def triage_batch(request, batch_id):
+    """Manual trigger for F09 (also used when auto-triage is off)."""
+    from agent.serializers import run_to_dict
+    from agent.triage import start_triage
+
+    batch = imports.get_batch_status(request.user, batch_id)
+    ids = batch.job_ids()
+    if len(ids) < 1:
+        raise ValidationFailed("this batch has no imported postings")
+    return Response(run_to_dict(start_triage(request.user, ids, str(batch.id))), status=201)

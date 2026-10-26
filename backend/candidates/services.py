@@ -45,7 +45,7 @@ def validate_fact(fact_type, data):
 
 
 class CandidateService:
-    PROFILE_FIELDS = ("full_name", "headline", "summary", "location", "email", "phone", "links")
+    PROFILE_FIELDS = ("full_name", "headline", "summary", "location", "email", "phone", "links", "auto_triage")
 
     def __init__(self, repository=None):
         self.repo = repository or CandidateRepository()

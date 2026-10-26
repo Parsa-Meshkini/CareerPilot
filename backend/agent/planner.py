@@ -6,7 +6,7 @@ import jsonschema
 from agent.llm.client import get_llm_client
 from agent.llm.types import LLMBudgetExceeded, LLMError
 
-from .commands import FOCUS_APP, FOCUS_JOB
+from .commands import BATCH_JOBS, DEEP_SELECTION, FOCUS_APP, FOCUS_JOB
 
 MAX_STEPS = 8
 
@@ -37,7 +37,12 @@ class PlaybookLibrary:
         return [step("retrieve_context", "load verified profile and preferences", topic=run.goal_text)] + find
 
     def triage_playbook(self, run):
-        return []  # filled in by the triage feature (F09)
+        return [
+            step("quick_score_jobs", "score every imported posting cheaply", job_ids=BATCH_JOBS),
+            step("select_for_deep_analysis", "decide where the LLM budget is worth spending", job_ids=BATCH_JOBS),
+            step("deep_match_jobs", "analyze and explain the most promising postings", job_ids=DEEP_SELECTION),
+            step("rank_jobs", "rank the batch and mark the shortlist", job_ids=BATCH_JOBS),
+        ]
 
 
 class Planner:
@@ -75,6 +80,11 @@ class Planner:
 
     def replan(self, run, observation, completed):
         """Replacement for the remaining steps, or None when no valid replan is possible."""
+        if run.goal_type == "TRIAGE_BATCH":
+            # nothing deserves deep analysis: rank on quick scores instead (no LLM needed)
+            return [step("rank_jobs", "rank on quick scores only", job_ids=BATCH_JOBS)], (
+                "No full-detail posting qualified for deep analysis; ranking on quick scores. "
+                "Open the top postings and import them again for full detail.")
         try:
             data = self.llm.generate_structured(run.user, "agent.replan", {
                 "goal": run.goal_text, "completed": completed, "observation": observation,
@@ -105,7 +115,7 @@ class Planner:
                 value = args.get(key)
                 if value and value not in (FOCUS_JOB, FOCUS_APP) and not self._owned(run.user, key, value):
                     raise PlanInvalid(f"step {i + 1} references a {key} the student does not own")
-            for value in args.get("job_ids", []):
+            for value in args.get("job_ids", []) if isinstance(args.get("job_ids"), list) else []:
                 if not self._owned(run.user, "job_id", value):
                     raise PlanInvalid(f"step {i + 1} references a job the student does not own")
             clean.append({"tool": tool, "args": args, "intent": str(s.get("intent", ""))[:200]})

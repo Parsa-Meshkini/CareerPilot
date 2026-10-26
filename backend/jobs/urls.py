@@ -7,6 +7,7 @@ urlpatterns = [
     path("batches/", views.create_batch),
     path("batches/list/", views.list_batches),
     path("batches/<uuid:batch_id>/", views.batch_detail),
+    path("batches/<uuid:batch_id>/triage/", views.triage_batch),
     path("import/manual/", views.import_manual),
     path("import/file/", views.import_file),
     path("score/", views.score_all),

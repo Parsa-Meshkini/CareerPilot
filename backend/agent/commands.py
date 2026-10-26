@@ -15,6 +15,7 @@ import jsonschema
 from careerpilot.errors import DomainError, ValidationFailed
 
 FOCUS_JOB, FOCUS_APP = "@focus_job", "@focus_application"
+BATCH_JOBS, DEEP_SELECTION = "@batch_jobs", "@deep_selection"
 
 
 @dataclass
@@ -245,11 +246,95 @@ class UpdateApplicationStatusCommand(AgentCommand):
         ApplicationService().undo_transition(self.user, undo_data["change_id"])
 
 
+class QuickScoreJobsCommand(AgentCommand):
+    name = "quick_score_jobs"
+    description = "Score many postings cheaply with the goal's strategy (keyword analysis, no LLM tokens)."
+    args_schema = {"type": "object", "required": ["job_ids"],
+                   "properties": {"job_ids": {"type": "array", "items": {"type": "string"}}}}
+
+    def execute(self):
+        from jobs.matching import MatchingService
+
+        matches = MatchingService().rank_jobs(self.user, self.args["job_ids"])
+        scores = {str(m.job_id): m.score for m in matches}
+        if self.run is not None:
+            self.run.context["quick_scores"] = scores
+        top = ", ".join(str(m.score) for m in matches[:5])
+        return Observation(True, f"quick-scored {len(matches)} postings (top: {top or '-'})", {"scores": scores})
+
+
+class SelectForDeepAnalysisCommand(AgentCommand):
+    """Decision step: which postings deserve expensive deep analysis within the remaining budget."""
+
+    name = "select_for_deep_analysis"
+    description = "Pick the postings worth a deep AI analysis: quick score >= goal minimum, full detail, " \
+                  "deadline-boosted, capped by the remaining token budget."
+    args_schema = {"type": "object", "required": ["job_ids"],
+                   "properties": {"job_ids": {"type": "array", "items": {"type": "string"}},
+                                  "max_jobs": {"type": "integer", "minimum": 0, "maximum": 20}}}
+    COST_PER_JOB = AnalyzeJobCommand.estimated_tokens + MatchJobCommand.estimated_tokens
+    DEADLINE_BOOST, BOOST_DAYS = 10, 21
+
+    def execute(self):
+        from jobs.models import JobPosting
+        from jobs.normalizer import days_until
+
+        scores = (self.run.context.get("quick_scores") if self.run else None) or {}
+        minimum = self.user.career_goal.min_match_score
+        budget_left = (self.run.token_budget - self.run.tokens_used) if self.run else 10 ** 6
+        k = min(self.args.get("max_jobs", 10), budget_left // self.COST_PER_JOB)
+        jobs = JobPosting.objects.filter(user=self.user, pk__in=self.args["job_ids"])
+        eligible, summary_only = [], 0
+        for j in jobs:
+            score = scores.get(str(j.id))
+            if score is None or score < minimum:
+                continue
+            if j.completeness != JobPosting.FULL:
+                summary_only += 1
+                continue
+            days = days_until(j.deadline)
+            boost = self.DEADLINE_BOOST if days is not None and 0 <= days <= self.BOOST_DAYS else 0
+            eligible.append((score + boost, j))
+        eligible.sort(key=lambda x: x[0], reverse=True)
+        chosen = [str(j.id) for _, j in eligible[:k]]
+        if self.run is not None:
+            self.run.context["deep_ids"] = chosen
+            self.run.context["summary_only_candidates"] = summary_only
+        reason = (f"{len(chosen)} selected for deep analysis (k={k} from budget {budget_left} tokens, "
+                  f"{len(eligible)} eligible, {summary_only} promising but summary-only)")
+        return Observation(True, reason, {"selected": chosen, "k": k, "summary_only": summary_only})
+
+
+class DeepMatchJobsCommand(AgentCommand):
+    name = "deep_match_jobs"
+    description = "Deep AI analysis + explained match for each selected posting."
+    args_schema = {"type": "object", "required": ["job_ids"],
+                   "properties": {"job_ids": {"type": "array", "items": {"type": "string"}}}}
+    estimated_tokens = 4000
+
+    def execute(self):
+        from agent.llm.types import LLMBudgetExceeded
+        from jobs.matching import MatchingService
+
+        svc, done, stopped = MatchingService(), [], False
+        for jid in self.args["job_ids"]:
+            try:
+                m = svc.match_job(self.user, jid, deep=True, run=self.run)
+            except LLMBudgetExceeded:
+                stopped = True
+                break
+            done.append({"job_id": jid, "score": m.score})
+        note = " (stopped early: budget reached)" if stopped else ""
+        return Observation(True, f"deep-analyzed {len(done)} of {len(self.args['job_ids'])}{note}",
+                           {"results": done, "stopped_for_budget": stopped})
+
+
 class ToolManager:
     """Invoker: catalog, argument validation, execution with logging, undo."""
 
     def __init__(self, commands=None):
         classes = commands or [SearchJobsCommand, RetrieveContextCommand, AnalyzeJobCommand, MatchJobCommand,
+                               QuickScoreJobsCommand, SelectForDeepAnalysisCommand, DeepMatchJobsCommand,
                                RankJobsCommand, BuildPackageCommand, UpdateApplicationStatusCommand]
         self.catalog = {c.name: c for c in classes}
 
@@ -267,6 +352,10 @@ class ToolManager:
                 v = ctx.get("focus_job_id")
             elif v == FOCUS_APP:
                 v = ctx.get("focus_application_id")
+            elif v == BATCH_JOBS:
+                v = ctx.get("batch_job_ids", [])
+            elif v == DEEP_SELECTION:
+                v = ctx.get("deep_ids", [])
             if v is not None:
                 out[k] = v
         return out

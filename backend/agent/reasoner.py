@@ -41,6 +41,9 @@ class Reasoner:
             if run.replan_count < MAX_REPLANS:
                 return Decision(REPLAN, "no matching posting; replanning (the posting may need to be imported first)")
             return Decision(FINISH, "no matching posting; import it first, then run the goal again")
+        if step["tool"] == "select_for_deep_analysis" and not obs.data.get("selected"):
+            if run.replan_count < MAX_REPLANS:
+                return Decision(REPLAN, "no posting qualifies for deep analysis; replanning to rank on quick scores")
         if obs.needs_judgement:
             return self.reflect(run, step, obs, last)
         return Decision(FINISH if last else CONTINUE, "plan complete" if last else "step succeeded")

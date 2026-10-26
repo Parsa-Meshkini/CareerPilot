@@ -177,6 +177,16 @@ class AgentController:
 
     def _summary(self, run):
         done = [a for a in run.actions.all() if a.status == AgentActionRecord.EXECUTED]
+        if run.goal_type == "TRIAGE_BATCH":
+            rank = next((a for a in reversed(done) if a.command_name == "rank_jobs"), None)
+            if rank is not None:
+                shortlist = rank.observation.get("data", {}).get("shortlist", [])
+                top = "; ".join(f"{s['label']} ({s['score']})" for s in shortlist[:5])
+                text = f"{rank.observation_summary}." + (f" Top: {top}." if top else "")
+                if run.context.get("summary_only_candidates"):
+                    text += (f" {run.context['summary_only_candidates']} promising postings are summary-only; "
+                             "open them and import again for full detail.")
+                return text
         if not done:
             return "No actions were taken."
         return "Done: " + "; ".join(f"{a.command_name}: {a.observation_summary}" for a in done) + "."

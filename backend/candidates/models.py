@@ -15,6 +15,7 @@ class CandidateProfile(models.Model):
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=40, blank=True)
     links = models.JSONField(default=list, blank=True)
+    auto_triage = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def get_verified_facts(self):
