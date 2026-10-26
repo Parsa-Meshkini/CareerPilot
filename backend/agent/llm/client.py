@@ -7,6 +7,7 @@ budget check, provider call through the LLMProvider adapter, JSON-schema
 validation with retries, and usage accounting.
 """
 import logging
+import time
 
 from .factory import LLMProviderFactory
 from .prompts import PromptRegistry
@@ -19,8 +20,10 @@ log = logging.getLogger(__name__)
 
 class LLMClient:
     MAX_RETRIES = 2
+    BACKOFF_SECONDS = (1.5, 4.0)   # waits before retrying a rate-limited / overloaded provider
 
-    def __init__(self, provider=None, registry=None, tracker=None, validator=None):
+    def __init__(self, provider=None, registry=None, tracker=None, validator=None, sleep=time.sleep):
+        self.sleep = sleep
         self._provider = provider
         self.registry = registry or PromptRegistry()
         self.tracker = tracker or UsageTracker()
@@ -57,6 +60,8 @@ class LLMClient:
                 last_error = exc
                 if not exc.retryable:
                     break
+                if attempt <= self.MAX_RETRIES:
+                    self.sleep(self.BACKOFF_SECONDS[min(attempt, len(self.BACKOFF_SECONDS)) - 1])
                 continue
             tokens += response.total_tokens
             if run is not None:

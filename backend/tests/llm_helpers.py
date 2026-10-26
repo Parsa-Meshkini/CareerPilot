@@ -8,6 +8,6 @@ from agent.llm.providers import MockLLMProvider
 def mock_llm():
     """Every test runs against MockLLMProvider, so the suite never calls a real LLM or needs a key."""
     provider = MockLLMProvider()
-    set_llm_client(LLMClient(provider=provider))
+    set_llm_client(LLMClient(provider=provider, sleep=lambda seconds: None))
     yield provider
     set_llm_client(None)

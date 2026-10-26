@@ -90,3 +90,12 @@ def test_openai_compatible_adapter_and_error_mapping():
 def test_missing_key_is_a_clear_error():
     with pytest.raises(LLMProviderError, match="LLM_API_KEY"):
         GeminiProvider("", "gemini-2.5-flash")
+
+
+def test_overloaded_provider_backs_off_between_retries(user):
+    provider = MockLLMProvider()
+    provider.scripts["system.ping"] = [LLMProviderError("503 high demand"), LLMProviderError("503 again"),
+                                       {"ok": True, "echo": "x"}]
+    waits = []
+    result = LLMClient(provider=provider, sleep=waits.append).generate_structured(user, "system.ping", {"word": "x"})
+    assert result.data["ok"] is True and waits == [1.5, 4.0]
