@@ -8,14 +8,6 @@ from agent.llm.types import LLMProviderError
 from candidates.models import ProfileFact, UploadedResume
 
 
-@pytest.fixture(autouse=True)
-def tmp_storage(settings, tmp_path):
-    settings.STORAGE_ROOT = tmp_path
-    from careerpilot import storage as st
-
-    st.storage.root = tmp_path
-
-
 def make_docx():
     d = docx.Document()
     for line in ["Ana Lee", "York University - BSc Computer Science, 2023-09 to 2027-04",

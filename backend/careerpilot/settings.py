@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "notifications",
     "jobs",
     "applications",
+    "documents",
 ]
 
 MIDDLEWARE = [

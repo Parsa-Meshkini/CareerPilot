@@ -77,6 +77,9 @@ class CandidateService:
 
     def delete_fact(self, user, fact_id):
         self.repo.delete(user, fact_id)
+        from documents.service import mark_documents_citing_stale
+
+        mark_documents_citing_stale(user, fact_id)
 
     def list_facts(self, user, verified=None):
         qs = self.repo.list_by_user(user)
