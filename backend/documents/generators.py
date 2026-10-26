@@ -73,7 +73,9 @@ class DocumentGenerator(ABC):
 
     # ---------------- concrete steps ----------------
     def verify(self, guard, content):
-        return guard.check(self.claims(content))
+        report = guard.check(self.claims(content))
+        self.extra_checks(content, report)
+        return report
 
     def persist(self, user, application, ctx, content, status, report, model, prompt_version):
         previous = GeneratedDocument.objects.filter(application=application, doc_type=self.doc_type).first()
@@ -99,6 +101,8 @@ class DocumentGenerator(ABC):
         return self.doc_type.title().replace("_", "")
 
     # ---------------- hooks ----------------
+    def extra_checks(self, content, report):
+        """Optional hook for document-specific rules; it can only add violations."""
     @abstractmethod
     def prompt_key(self): ...
 
@@ -196,4 +200,71 @@ def _dates(d):
     return f"{start} - {end or 'Present'}"
 
 
-GENERATORS = {"resume": ResumeGenerator}
+class CoverLetterGenerator(DocumentGenerator):
+    doc_type = GeneratedDocument.COVER_LETTER
+    MAX_WORDS = 350
+    TONES = ("formal", "warm")
+
+    def prompt_key(self):
+        return "cover_letter.tailor"
+
+    def build_prompt_variables(self, ctx, application, analysis, options):
+        tone = options.get("tone", "formal")
+        if tone not in self.TONES:
+            from careerpilot.errors import ValidationFailed
+
+            raise ValidationFailed("tone must be formal or warm", fields={"tone": "formal|warm"})
+        job = application.job
+        return {"job_title": job.title, "company": job.company, "posting": job.description[:6000] or "(summary only)",
+                "required": analysis.required_skills, "facts": ctx.facts_for_prompt(),
+                "name": ctx.profile.full_name or ctx.user.email, "tone": tone,
+                "max_words": self.MAX_WORDS, "feedback": options.get("feedback", "")}
+
+    def claims(self, content):
+        from .guard import Claim
+
+        return [Claim(f"paragraphs.{i}", p.get("text", ""), [str(x) for x in p.get("source_fact_ids") or []],
+                      kind="paragraph") for i, p in enumerate(content.get("paragraphs", []))]
+
+    def extra_checks(self, content, report):
+        from .guard import Violation
+
+        words = sum(len(p.get("text", "").split()) for p in content.get("paragraphs", []))
+        if words > self.MAX_WORDS:
+            report.violations.append(Violation("length", "", "too_long", f"{words} words; the limit is {self.MAX_WORDS}"))
+
+    def remove_claims(self, content, locations):
+        paragraphs = [p for i, p in enumerate(content.get("paragraphs", [])) if f"paragraphs.{i}" not in locations]
+        if "length" in locations:
+            kept, total = [], 0
+            for p in paragraphs:
+                n = len(p.get("text", "").split())
+                if total + n > self.MAX_WORDS:
+                    break
+                kept.append(p)
+                total += n
+            paragraphs = kept
+        return {**content, "paragraphs": paragraphs}
+
+    def render(self, ctx, application, content):
+        from django.utils import timezone
+
+        p, job = ctx.profile, application.job
+        blocks = [{"kind": "text", "text": p.full_name or ctx.user.email}]
+        contact = " | ".join(x for x in (p.email, p.phone, p.location) if x)
+        if contact:
+            blocks.append({"kind": "text", "text": contact})
+        blocks += [{"kind": "text", "text": timezone.localdate().strftime("%B %d, %Y")},
+                   {"kind": "text", "text": f"{job.company}"},
+                   {"kind": "paragraph", "text": f"Re: {job.title}"},
+                   {"kind": "paragraph", "text": content.get("greeting") or "Dear Hiring Manager,"}]
+        blocks += [{"kind": "paragraph", "text": para["text"]} for para in content.get("paragraphs", [])]
+        blocks += [{"kind": "paragraph", "text": content.get("closing") or "Sincerely,"},
+                   {"kind": "text", "text": p.full_name or ctx.user.email}]
+        return blocks
+
+    def file_stem(self, application):
+        return "Cover_Letter"
+
+
+GENERATORS = {"resume": ResumeGenerator, "cover_letter": CoverLetterGenerator}
