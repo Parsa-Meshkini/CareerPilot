@@ -11,6 +11,7 @@ This repository hosts the course project for EECS 3311 Software Design (Fall 202
 ## Contents
 
 - [Key capabilities](#key-capabilities)
+- [Running locally](#running-locally)
 - [Project status](#project-status)
 - [Stage 1 deliverables](#stage-1-deliverables)
 - [Features](#features)
@@ -31,12 +32,68 @@ This repository hosts the course project for EECS 3311 Software Design (Fall 202
 - **Detect:** recognize interview invitations, rejections and offers in email.
 - **Adapt:** learn from the user's own outcomes to adjust future strategy.
 
+## Running locally
+
+### Prerequisites
+
+- Python 3.11 or newer
+- Node.js 18 or newer (for the GUI)
+- An LLM API key. A free Google Gemini key from Google AI Studio works. Any OpenAI-compatible endpoint (OpenAI, Groq, OpenRouter) works too.
+
+### 1. Configure your key (local only, never committed)
+
+```bash
+cp .env.example .env
+# edit .env and set LLM_API_KEY=<your key>   (LLM_PROVIDER=gemini, LLM_MODEL=gemini-2.5-flash by default)
+```
+
+`.env` is listed in `.gitignore`. Only `.env.example`, which holds placeholders, is in the repository.
+
+### 2. Backend (Django REST API)
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -r backend/requirements.txt
+cd backend
+../.venv/bin/python manage.py migrate
+../.venv/bin/python manage.py llm_check     # optional: confirms the key and model respond
+../.venv/bin/python manage.py runserver     # http://127.0.0.1:8000
+```
+
+The default database is SQLite (`backend/db.sqlite3`). Set `DATABASE_URL` in `.env` to use PostgreSQL.
+
+### 3. GUI (React + Vite)
+
+In a second terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev                                  # http://localhost:5173
+```
+
+Open http://localhost:5173 and create an account. The dev server forwards `/api` to the backend on port 8000.
+
+### 4. Try it
+
+1. **Profile:** set a career goal, then add facts or import a resume and verify the extracted facts.
+2. **Jobs:** paste a posting or import a JSON/CSV file. Open a job and click **Analyze with AI**.
+3. **Applications:** track the job, generate the resume and cover letter, and download the package ZIP.
+4. **Agent:** enter a goal such as "Prepare my application for the Acme backend co-op", then approve or reject each step.
+
+### Tests
+
+```bash
+cd backend && ../.venv/bin/python -m pytest     # offline: uses MockLLMProvider, no key needed
+cd frontend && npm test
+```
+
 ## Project status
 
 | Stage | Scope | Status |
 |---|---|---|
 | **Stage 1** | Design: features, UML, patterns, traceability | Complete |
-| Stage 2 | Core implementation (Tier 1, then Tier 2 features) | Planned (report §15) |
+| Stage 2 | Implementation: backend, GUI, CLI, agent | In progress |
 | Stage 3 | Testing, deployment, demonstration | Planned (report §16) |
 
 ## Stage 1 deliverables
