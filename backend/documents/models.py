@@ -25,3 +25,18 @@ class GeneratedDocument(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class ApplicationPackage(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    application = models.ForeignKey("applications.Application", on_delete=models.CASCADE, related_name="packages")
+    folder_name = models.CharField(max_length=200)
+    storage_key = models.CharField(max_length=300)
+    manifest = models.JSONField(default=list)
+    needs_review = models.BooleanField(default=False)
+    document_ids = models.JSONField(default=list)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
