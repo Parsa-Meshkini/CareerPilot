@@ -6,6 +6,7 @@ reversible) can undo itself. ToolManager is the invoker: it validates, runs
 and logs every command as an AgentActionRecord. There is deliberately no
 command that submits an application, sends email or logs into a portal.
 """
+import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
@@ -81,23 +82,29 @@ class SearchJobsCommand(AgentCommand):
     args_schema = {"type": "object", "required": ["query"],
                    "properties": {"query": {"type": "string", "minLength": 1}}}
 
+    STOP = {"the", "a", "an", "my", "for", "to", "of", "at", "in", "and", "job", "jobs", "posting", "application",
+            "prepare", "apply", "help", "me", "get", "ready", "please", "role", "position"}
+
     def execute(self):
         from django.db.models import Q
 
         from jobs.repository import JobRepository
 
-        qs = JobRepository().list_jobs(self.user)
-        for word in self.args["query"].split():
-            if len(word) > 1:
-                qs = qs.filter(Q(title__icontains=word) | Q(company__icontains=word) | Q(location__icontains=word))
-        jobs = list(qs[:10])
+        words = [w for w in re.findall(r"[a-z0-9+#.-]+", self.args["query"].lower()) if w not in self.STOP and len(w) > 1]
+        base = JobRepository().list_jobs(self.user)
+        hits = {}
+        for word in words:  # rank postings by how many query words they match
+            for job in base.filter(Q(title__icontains=word) | Q(company__icontains=word) | Q(location__icontains=word)):
+                hits.setdefault(job.id, [job, 0])[1] += 1
+        best = max((n for _, n in hits.values()), default=0)
+        jobs = [j for j, n in hits.values() if n == best][:10]
         found = [{"id": str(j.id), "label": f"{j.title} @ {j.company}"} for j in jobs]
         if len(jobs) == 1:
             self.set_focus(job_id=jobs[0].id)
             return Observation(True, f"1 posting found ({found[0]['label']})", {"jobs": found})
         if not jobs:
             return Observation(True, f"no saved postings match '{self.args['query']}'", {"jobs": []})
-        return Observation(True, f"{len(jobs)} postings match", {"jobs": found}, candidates=found)
+        return Observation(True, f"{len(jobs)} postings match equally well", {"jobs": found}, candidates=found)
 
 
 class RetrieveContextCommand(AgentCommand):
