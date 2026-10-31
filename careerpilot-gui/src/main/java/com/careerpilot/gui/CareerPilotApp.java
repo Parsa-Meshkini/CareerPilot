@@ -31,12 +31,17 @@ public class CareerPilotApp extends Application {
     void showLogin() {
         app.signOut();
         setScene(new LoginView(app, this::showMain));
-        stage.setWidth(460);
-        stage.setHeight(520);
+        stage.setWidth(880);
+        stage.setHeight(580);
+        stage.setMinWidth(760);
+        stage.setMinHeight(520);
+        stage.centerOnScreen();
     }
 
     void showMain() {
         setScene(new MainView(app, this::showLogin));
+        stage.setMinWidth(900);
+        stage.setMinHeight(620);
         stage.setWidth(1180);
         stage.setHeight(760);
         stage.centerOnScreen();

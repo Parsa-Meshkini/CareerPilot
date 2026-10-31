@@ -19,6 +19,15 @@ final class Icons {
             Map.entry("Settings", "M4 6h10v2H4zm12-1h4v4h-4zM4 11h4v2H4zm6-1h10v4H10zM4 16h10v2H4zm12-1h4v4h-4z"),
             Map.entry("Moon", "M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"),
             Map.entry("Sun", "M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM11 1h2v3h-2zm0 19h2v3h-2zM1 11h3v2H1zm19 0h3v2h-3zM4.2 5.6l1.4-1.4 2.1 2.1-1.4 1.4zm12.1 12.1 1.4-1.4 2.1 2.1-1.4 1.4zM5.6 19.8l-1.4-1.4 2.1-2.1 1.4 1.4zM17.7 7.7l-1.4-1.4 2.1-2.1 1.4 1.4z"),
+            Map.entry("Mark", "M12 2 20.5 21 12 16.6 3.5 21z"),
+            Map.entry("Search", "M10.5 3a7.5 7.5 0 0 1 5.9 12.1l4.3 4.3-1.4 1.4-4.3-4.3A7.5 7.5 0 1 1 10.5 3zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11z"),
+            Map.entry("Sidebar", "M3 4h18a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm1 2v12h4V6zm6 0v12h10V6z"),
+            Map.entry("Chevron", "M9 5l7 7-7 7-1.4-1.4L13.2 12 7.6 6.4z"),
+            Map.entry("Check", "M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"),
+            Map.entry("Alert", "M12 2 1 21h22zM11 10h2v5h-2zm0 6h2v2h-2z"),
+            Map.entry("Info", "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1 5h2v2h-2zm0 4h2v6h-2z"),
+            Map.entry("Close", "M6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12 19 6.4 17.6 5 12 10.6z"),
+            Map.entry("Shield", "M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5z"),
             Map.entry("Link", "M10 6H6a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-2h-2v2a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h4zm4-2v2h2.6l-6.3 6.3 1.4 1.4L18 7.4V10h2V4z"));
 
     private Icons() {}
@@ -34,11 +43,17 @@ final class Icons {
     }
 
     /** Wraps the icon in a fixed 18x18 box so scaling does not disturb layout. */
-    static javafx.scene.layout.StackPane box(String name) {
-        javafx.scene.layout.StackPane s = new javafx.scene.layout.StackPane(of(name));
-        s.setMinSize(18, 18);
-        s.setPrefSize(18, 18);
-        s.setMaxSize(18, 18);
+    static javafx.scene.layout.StackPane box(String name) { return box(name, 18); }
+
+    /** Same, at another size (the 24-unit path is scaled to fit). */
+    static javafx.scene.layout.StackPane box(String name, double size) {
+        SVGPath p = of(name);
+        p.setScaleX(size / 24);
+        p.setScaleY(size / 24);
+        javafx.scene.layout.StackPane s = new javafx.scene.layout.StackPane(p);
+        s.setMinSize(size, size);
+        s.setPrefSize(size, size);
+        s.setMaxSize(size, size);
         return s;
     }
 }

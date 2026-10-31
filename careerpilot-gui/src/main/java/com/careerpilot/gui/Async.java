@@ -25,7 +25,9 @@ final class Async {
         Task<T> task = new Task<>() {
             @Override protected T call() { return work.get(); }
         };
-        if (busy != null) {
+        if (busy instanceof View v) {
+            v.loadingProperty().set(true);  // the page stays visible; the top bar shows progress
+        } else if (busy != null) {
             busy.setDisable(true);
             busy.setCursor(Cursor.WAIT);
         }
@@ -47,26 +49,21 @@ final class Async {
     }
 
     private static void release(Node busy) {
-        if (busy != null) {
+        if (busy instanceof View v) {
+            v.loadingProperty().set(false);
+        } else if (busy != null) {
             busy.setDisable(false);
             busy.setCursor(Cursor.DEFAULT);
         }
     }
 
     static void showError(Throwable t) {
-        Platform.runLater(() -> {
-            StringBuilder msg = new StringBuilder(t.getMessage() == null ? t.toString() : t.getMessage());
-            if (t instanceof DomainException d && d.details().get("fields") instanceof Map<?, ?> fields)
-                fields.forEach((k, v) -> msg.append("\n  ").append(k).append(": ").append(v));
-            if (t instanceof DomainException d && d.details().get("allowed_actions") != null)
-                msg.append("\nAllowed now: ").append(d.details().get("allowed_actions"));
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("CareerPilot");
-            alert.setHeaderText(null);
-            alert.getDialogPane().setContent(new Label(msg.toString()));
-            alert.getButtonTypes().setAll(ButtonType.OK);
-            alert.showAndWait();
-        });
+        StringBuilder msg = new StringBuilder(t.getMessage() == null ? t.toString() : t.getMessage());
+        if (t instanceof DomainException d && d.details().get("fields") instanceof Map<?, ?> fields)
+            fields.forEach((k, v) -> msg.append("\n").append(k).append(": ").append(v));
+        if (t instanceof DomainException d && d.details().get("allowed_actions") != null)
+            msg.append("\nAllowed now: ").append(d.details().get("allowed_actions"));
+        Toast.error(msg.toString());  // stays until dismissed: feedback in place, not a modal alert
     }
 
     static void info(String message) {
@@ -75,6 +72,7 @@ final class Async {
             return;
         }
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Ui.style(alert);
         alert.setTitle("CareerPilot");
         alert.setHeaderText(null);
         alert.getDialogPane().setContent(new Label(message));

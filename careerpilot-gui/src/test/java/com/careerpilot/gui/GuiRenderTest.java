@@ -96,6 +96,18 @@ class GuiRenderTest {
         for (boolean dark : new boolean[]{false, true}) {
             runFx(() -> Theme.setMode(dark ? Theme.Mode.DARK : Theme.Mode.LIGHT, false));
             String suffix = dark ? "-dark" : "";
+            runFx(() -> {
+                LoginView login = new LoginView(app, () -> { });
+                Scene ls = new Scene(login, 880, 580);
+                ls.getStylesheets().addAll(Theme.stylesheets());
+                Theme.attach(login);
+                WritableImage img = login.snapshot(null, null);
+                try {
+                    javax.imageio.ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", out.resolve("login" + suffix + ".png").toFile());
+                } catch (java.io.IOException e) {
+                    throw new IllegalStateException(e);
+                }
+            });
             for (String page : List.of("Dashboard", "Profile", "Jobs", "Tracker", "Interview", "Agent", "Email", "Insights", "Settings")) {
                 runFx(() -> main.get().open(page));
                 Thread.sleep(900);  // background loads finish

@@ -175,5 +175,12 @@ final class Ui {
         return fc.showSaveDialog(owner);
     }
 
+    /** Loads the app's stylesheets and theme class into a dialog so it matches the main window. */
+    static void style(javafx.scene.control.Dialog<?> dialog) {
+        javafx.scene.control.DialogPane pane = dialog.getDialogPane();
+        pane.getStylesheets().addAll(Theme.stylesheets());
+        Theme.attach(pane);
+    }
+
     static String id8(Object id) { return id == null ? "" : id.toString().substring(0, 8); }
 }
