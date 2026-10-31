@@ -137,6 +137,8 @@ public final class JobCommands {
             JobMatch m = CliRuntime.bean(MatchingService.class).getMatch(j);
             Out.line("%s at %s", j.getTitle(), j.getCompany());
             Out.line("Location: %s (%s)   Term: %s   Deadline: %s", j.getLocation(), j.getWorkModel(), j.getWorkTerm(), j.getDeadline());
+            if (!j.getSourceUrl().isEmpty()) Out.line("Posting link: %s", j.getSourceUrl());
+            if (!j.getApplicationUrl().isEmpty()) Out.line("Apply at:      %s", j.getApplicationUrl());
             Out.line("Sources: %s   Detail: %s", j.getMergedSources().isEmpty() ? j.getSourceType() : j.getMergedSources(), j.getCompleteness());
             if (a != null) {
                 Out.line("Requires: %s", String.join(", ", a.getRequiredSkills()));

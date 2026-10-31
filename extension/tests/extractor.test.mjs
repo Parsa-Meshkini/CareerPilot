@@ -47,3 +47,10 @@ test("extractAll picks the first strategy that works and a plain page works as a
   assert.equal(plain.records[0].fields.Organization, "Umbrella");
   assert.equal(extractAll({ tables: [], pairs: [], h1: "About us", description: "nothing" }).method, "none");
 });
+
+test("every extracted posting keeps a link back to its page", () => {
+  const detail = extractAll({ tables: [], jsonld: [{ "@type": "JobPosting", title: "DevOps", hiringOrganization: { name: "Globex" } }], url: "https://globex.example/jobs/7" });
+  assert.equal(detail.records[0].url, "https://globex.example/jobs/7");
+  const row = extractAll({ tables: [{ headers: ["Job Title", "Organization"], rows: [{ cells: ["A", "B"], url: "https://x/p/1" }, { cells: ["C", "D"] }] }], url: "https://x/list" });
+  assert.deepEqual(row.records.map((r) => r.url), ["https://x/p/1", "https://x/list"]);
+});

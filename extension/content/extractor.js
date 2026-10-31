@@ -101,7 +101,11 @@ export function extractAll(page) {
   ];
   for (const [name, run] of strategies) {
     const records = run().filter((r) => clean(r.fields["Job Title"] || r.fields["Title"] || r.fields["Position Title"] || r.fields["Job title"]) || Object.keys(r.fields).length > 1);
-    if (records.length) return { method: name, records };
+    if (records.length) {
+      // every posting keeps a link back to where it came from, so the student can reopen it from CareerPilot
+      records.forEach((r) => { if (!r.url) r.url = page.url || ""; });
+      return { method: name, records };
+    }
   }
   return { method: "none", records: [] };
 }
