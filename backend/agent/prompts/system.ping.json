@@ -1,7 +1,0 @@
-{
-  "key": "system.ping",
-  "version": 1,
-  "system": "You are a health check. Follow the instructions exactly.",
-  "template": "Reply with a JSON object whose field \"ok\" is true and whose field \"echo\" repeats this word: $word",
-  "schema": {"type": "object", "required": ["ok", "echo"], "properties": {"ok": {"type": "boolean"}, "echo": {"type": "string"}}}
-}

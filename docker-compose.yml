@@ -1,5 +1,5 @@
-# STAGE 2 DRAFT: service layout from report section 12.7 / DD-1.
-# The images referenced below are built in Stage 2; this file is not runnable in Stage 1.
+# STAGE 1 DRAFT (historical): service layout from report section 12.7 / DD-1, written for the original
+# Django + Celery plan. The Stage 2 implementation is Java (see README); it is not used by the Stage 2 build.
 services:
   postgres:
     image: postgres:16
