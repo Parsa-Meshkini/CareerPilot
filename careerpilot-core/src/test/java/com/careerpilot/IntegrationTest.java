@@ -7,6 +7,7 @@ import com.careerpilot.users.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
@@ -19,9 +20,11 @@ import java.util.UUID;
         "careerpilot.storage-root=target/test-storage"
 })
 @Transactional
+@Import(TestData.class)
 public abstract class IntegrationTest {
     @Autowired protected LlmClient llm;
     @Autowired protected AuthService auth;
+    @Autowired protected TestData data;
     protected MockLlmProvider mock;
     protected User user;
 
