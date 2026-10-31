@@ -7,10 +7,6 @@ spring:
     import: optional:file:.env[.properties],optional:file:../.env[.properties]
   main:
     banner-mode: off
-  datasource:
-    url: ${DATABASE_URL:jdbc:h2:file:${user.home}/.careerpilot/careerpilot;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE}
-    username: ${DATABASE_USER:sa}
-    password: ${DATABASE_PASSWORD:}
   jpa:
     hibernate:
       ddl-auto: update
