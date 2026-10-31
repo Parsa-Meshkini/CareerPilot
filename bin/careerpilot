@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# Command-line interface. Build once with: mvn -q package -DskipTests
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+JAR="$ROOT/careerpilot-cli/target/careerpilot-cli-2.0.0.jar"
+[ -f "$JAR" ] || { echo "CLI not built yet. Run: mvn -q package -DskipTests" >&2; exit 1; }
+cd "$ROOT" && exec java -jar "$JAR" "$@"

@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# REST server for the Chrome extension on http://127.0.0.1:8000 . Build once with: mvn -q package -DskipTests
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+JAR="$ROOT/careerpilot-server/target/careerpilot-server-2.0.0.jar"
+[ -f "$JAR" ] || { echo "Server not built yet. Run: mvn -q package -DskipTests" >&2; exit 1; }
+cd "$ROOT" && exec java -jar "$JAR" "$@"
