@@ -1,0 +1,164 @@
+/* CareerPilot design tokens. Loaded after the AtlantaFX Primer theme, before components.css.
+
+   Layer 1  primitives  (-cp-ink-*, -cp-signal-*, status ramps)   raw values, no meaning
+   Layer 2  semantic    (-cp-bg-*, -cp-fg-*, -cp-accent-*, -cp-border-*, -cp-success/warning/danger-*)
+                         defined for light on .root and overridden for dark on .root.cp-dark
+   Layer 3  AtlantaFX   the semantic tokens mapped onto Primer's -color-* names so built-in controls follow
+   Component tokens live at the top of components.css.
+
+   Theme.java adds the style class cp-dark to every scene root while the dark appearance is active.
+   (JavaFX has no :dark pseudo-class, so do not use one.) Hex values appear in this file only.
+   Contrast of every text/background pair is documented in docs/gui-redesign/DIRECTION.md. */
+
+.root {
+    /* ---------- layer 1: primitives ---------- */
+    /* ink: neutrals tinted toward deep blue */
+    -cp-ink-0:   #FFFFFF;
+    -cp-ink-25:  #F7F8FA;
+    -cp-ink-50:  #F0F2F6;
+    -cp-ink-75:  #EEF0F5;
+    -cp-ink-100: #E6E9F1;
+    -cp-ink-200: #DADFE8;
+    -cp-ink-300: #B9C1D0;
+    -cp-ink-400: #7C869B;
+    -cp-ink-500: #5A657B;
+    -cp-ink-600: #454F63;
+    -cp-ink-700: #2B3345;
+    -cp-ink-900: #121827;
+    /* night ink */
+    -cp-night-950: #0A0E17;
+    -cp-night-900: #0D111C;
+    -cp-night-850: #101522;
+    -cp-night-800: #151B2B;
+    -cp-night-700: #1D2539;
+    -cp-night-600: #252E46;
+    -cp-night-500: #38435F;
+    -cp-night-400: #5E6C8F;
+    -cp-night-300: #8D99B0;
+    -cp-night-200: #B3BCCF;
+    -cp-night-100: #E9EDF6;
+    /* signal: the one accent */
+    -cp-signal-50:  #E8ECFF;
+    -cp-signal-300: #9AA9FF;
+    -cp-signal-500: #4A5FE6;
+    -cp-signal-600: #3A4FD8;
+    -cp-signal-700: #3043C4;
+    -cp-signal-900: #1F2B5C;
+    -cp-signal-950: #1B2557;
+    /* status ramps */
+    -cp-green-50:  #E2F4E9;  -cp-green-300: #62D393;  -cp-green-400: #4CC58A;  -cp-green-600: #1F8A55;  -cp-green-700: #17653F;  -cp-green-950: #10291C;
+    -cp-amber-50:  #FFF1CF;  -cp-amber-300: #F4BB50;  -cp-amber-400: #E6A93C;  -cp-amber-600: #B7791F;  -cp-amber-700: #855400;  -cp-amber-950: #33270C;
+    -cp-red-50:    #FDE7E9;  -cp-red-300:   #FF8F99;  -cp-red-400:   #F0707D;  -cp-red-600:   #C23B4B;  -cp-red-700:   #B0202F;  -cp-red-950:   #3A141A;
+    -cp-black: #000000;
+    -cp-white: #FFFFFF;
+
+    /* ---------- layer 2: semantic, light appearance ("Paper") ---------- */
+    -cp-bg-canvas:   -cp-ink-25;
+    -cp-bg-surface:  -cp-ink-0;
+    -cp-bg-sidebar:  -cp-ink-75;
+    -cp-bg-sunken:   -cp-ink-50;
+    -cp-bg-hover:    -cp-ink-100;
+    -cp-bg-selected: -cp-signal-50;
+    -cp-bg-scrim:    rgba(18, 24, 39, 0.38);
+
+    -cp-fg-primary:   -cp-ink-900;
+    -cp-fg-secondary: -cp-ink-600;
+    -cp-fg-tertiary:  -cp-ink-500;
+    -cp-fg-on-accent: -cp-white;
+
+    -cp-accent:         -cp-signal-600;
+    -cp-accent-hover:   -cp-signal-700;
+    -cp-accent-fg:      -cp-signal-700;
+    -cp-accent-subtle:  -cp-signal-50;
+    -cp-accent-muted:   rgba(58, 79, 216, 0.30);
+    -cp-focus-ring:     -cp-signal-600;
+
+    -cp-border:         -cp-ink-200;
+    -cp-border-strong:  -cp-ink-300;
+    -cp-border-control: -cp-ink-400;
+
+    -cp-success-fg: -cp-green-700;  -cp-success-bg: -cp-green-50;  -cp-success-solid: -cp-green-600;
+    -cp-warning-fg: -cp-amber-700;  -cp-warning-bg: -cp-amber-50;  -cp-warning-solid: -cp-amber-600;
+    -cp-danger-fg:  -cp-red-700;    -cp-danger-bg:  -cp-red-50;    -cp-danger-solid:  -cp-red-600;
+
+    /* brand panel (sign-in): same deep ultramarine in both appearances; 11.5:1, 7.1:1 and 6.1:1 for the three text roles */
+    -cp-bg-brand:         -cp-signal-900;
+    -cp-fg-on-brand:      -cp-night-100;
+    -cp-fg-on-brand-soft: -cp-night-200;
+    -cp-accent-on-brand:  -cp-signal-300;
+
+    -cp-shadow-1: rgba(18, 24, 39, 0.07);
+    -cp-shadow-2: rgba(18, 24, 39, 0.16);
+
+    /* ---------- layer 3: map onto AtlantaFX Primer so built-in controls follow ---------- */
+    -color-base-0: -cp-ink-25;   -color-base-1: -cp-ink-75;   -color-base-2: -cp-ink-200;  -color-base-3: -cp-ink-300;
+    -color-base-4: -cp-ink-400;  -color-base-5: #6A7489;      -color-base-6: -cp-ink-500;  -color-base-7: -cp-ink-600;
+    -color-base-8: -cp-ink-700;  -color-base-9: -cp-ink-900;
+    -color-accent-0: #E8ECFF;  -color-accent-1: #D5DCFF;  -color-accent-2: #BAC5FF;  -color-accent-3: #9AA9FF;  -color-accent-4: #6F82F5;
+    -color-accent-5: #4A5FE6;  -color-accent-6: #3A4FD8;  -color-accent-7: #3043C4;  -color-accent-8: #26349A;  -color-accent-9: #1B2557;
+
+    -color-fg-default:  -cp-fg-primary;
+    -color-fg-muted:    -cp-fg-secondary;
+    -color-fg-subtle:   -cp-fg-tertiary;
+    -color-fg-emphasis: -cp-fg-on-accent;
+    -color-bg-default:  -cp-bg-surface;
+    -color-bg-overlay:  -cp-bg-surface;
+    -color-bg-subtle:   -cp-bg-sunken;
+    -color-bg-inset:    -cp-bg-sunken;
+    -color-border-default: -cp-border;
+    -color-border-muted:   -cp-border;
+    -color-border-subtle:  -cp-border;
+    -color-shadow-default: -cp-shadow-2;
+    -color-neutral-emphasis-plus: -cp-fg-secondary;
+    -color-neutral-emphasis: -cp-fg-tertiary;
+    -color-neutral-muted:    -cp-bg-hover;
+    -color-neutral-subtle:   -cp-bg-sunken;
+    -color-accent-fg:       -cp-accent-fg;
+    -color-accent-emphasis: -cp-accent;
+    -color-accent-muted:    -cp-accent-muted;
+    -color-accent-subtle:   -cp-accent-subtle;
+    -color-success-fg: -cp-success-fg;  -color-success-emphasis: -cp-success-solid;  -color-success-subtle: -cp-success-bg;  -color-success-muted: -cp-success-bg;
+    -color-warning-fg: -cp-warning-fg;  -color-warning-emphasis: -cp-warning-solid;  -color-warning-subtle: -cp-warning-bg;  -color-warning-muted: -cp-warning-bg;
+    -color-danger-fg:  -cp-danger-fg;   -color-danger-emphasis:  -cp-danger-solid;   -color-danger-subtle:  -cp-danger-bg;   -color-danger-muted:  -cp-danger-bg;
+
+    -fx-font-family: "SF Pro Text", "Segoe UI", "System";
+    -fx-font-size: 13px;
+}
+
+/* ---------- semantic, dark appearance ("Night ink") ---------- */
+.root.cp-dark {
+    -cp-bg-canvas:   -cp-night-900;
+    -cp-bg-surface:  -cp-night-800;
+    -cp-bg-sidebar:  -cp-night-850;
+    -cp-bg-sunken:   -cp-night-950;
+    -cp-bg-hover:    -cp-night-700;
+    -cp-bg-selected: -cp-signal-900;
+    -cp-bg-scrim:    rgba(0, 0, 0, 0.55);
+
+    -cp-fg-primary:   -cp-night-100;
+    -cp-fg-secondary: -cp-night-200;
+    -cp-fg-tertiary:  -cp-night-300;
+    -cp-fg-on-accent: -cp-white;
+
+    -cp-accent:         -cp-signal-500;
+    -cp-accent-hover:   #3E52D8;
+    -cp-accent-fg:      -cp-signal-300;
+    -cp-accent-subtle:  -cp-signal-950;
+    -cp-accent-muted:   rgba(154, 169, 255, 0.35);
+    -cp-focus-ring:     -cp-signal-300;
+
+    -cp-border:         -cp-night-600;
+    -cp-border-strong:  -cp-night-500;
+    -cp-border-control: -cp-night-400;
+
+    -cp-success-fg: -cp-green-300;  -cp-success-bg: -cp-green-950;  -cp-success-solid: -cp-green-400;
+    -cp-warning-fg: -cp-amber-300;  -cp-warning-bg: -cp-amber-950;  -cp-warning-solid: -cp-amber-400;
+    -cp-danger-fg:  -cp-red-300;    -cp-danger-bg:  -cp-red-950;    -cp-danger-solid:  -cp-red-400;
+
+    -cp-shadow-1: rgba(0, 0, 0, 0.35);
+    -cp-shadow-2: rgba(0, 0, 0, 0.55);
+
+    -color-base-0: -cp-night-100;  -color-base-1: -cp-night-200;  -color-base-2: #A0ABC1;  -color-base-3: -cp-night-300;
+    -color-base-4: #6F7C98;        -color-base-5: #4A5775;        -color-base-6: -cp-night-600;  -color-base-7: -cp-night-700;
+    -color-base-8: -cp-night-800;  -color-base-9: -cp-night-900;
+}

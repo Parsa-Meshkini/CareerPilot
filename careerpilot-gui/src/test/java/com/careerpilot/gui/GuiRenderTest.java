@@ -85,15 +85,16 @@ class GuiRenderTest {
 
         AtomicReference<MainView> main = new AtomicReference<>();
         runFx(() -> {
-            Theme.apply();
+            Theme.setMode(Theme.Mode.LIGHT, false);
             MainView view = new MainView(app, () -> { });
             Scene scene = new Scene(view, 1180, 760);
-            scene.getStylesheets().add(getClass().getResource("/gui/styles.css").toExternalForm());
+            scene.getStylesheets().addAll(Theme.stylesheets());
+            Theme.attach(view);
             new javafx.stage.Stage().setScene(scene);
             main.set(view);
         });
         for (boolean dark : new boolean[]{false, true}) {
-            runFx(() -> javafx.application.Application.setUserAgentStylesheet((dark ? new atlantafx.base.theme.PrimerDark() : new atlantafx.base.theme.PrimerLight()).getUserAgentStylesheet()));
+            runFx(() -> Theme.setMode(dark ? Theme.Mode.DARK : Theme.Mode.LIGHT, false));
             String suffix = dark ? "-dark" : "";
             for (String page : List.of("Dashboard", "Profile", "Jobs", "Tracker", "Interview", "Agent", "Email", "Insights", "Settings")) {
                 runFx(() -> main.get().open(page));

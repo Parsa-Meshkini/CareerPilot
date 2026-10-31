@@ -44,8 +44,10 @@ public class CareerPilotApp extends Application {
 
     private void setScene(javafx.scene.Parent root) {
         Scene scene = new Scene(root);
-        scene.getStylesheets().add(getClass().getResource("/gui/styles.css").toExternalForm());
+        scene.getStylesheets().addAll(Theme.stylesheets());
+        Theme.attach(root);
         stage.setScene(scene);
+        stage.focusedProperty().addListener((o, was, now) -> { if (now) Theme.refreshSystem(); });
     }
 
     @Override
