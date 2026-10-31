@@ -36,9 +36,9 @@ This repository hosts the course project for EECS 3311 Software Design (Fall 202
 
 ### Prerequisites
 
-- Python 3.11 or newer
-- Node.js 18 or newer (for the GUI)
+- JDK 17 or newer and Maven 3.9 or newer (`brew install openjdk@17 maven` on macOS)
 - An LLM API key. A free Google Gemini key from Google AI Studio works. Any OpenAI-compatible endpoint (OpenAI, Groq, OpenRouter) works too.
+- Node.js 18 or newer, only to run the Chrome extension's unit tests
 
 ### 1. Configure your key (local only, never committed)
 
@@ -48,52 +48,73 @@ cp .env.example .env
 ```
 
 `.env` is listed in `.gitignore`. Only `.env.example`, which holds placeholders, is in the repository.
+Data (an H2 database and generated documents) lives in `~/.careerpilot`, shared by the GUI, CLI and server.
 
-### 2. Backend (Django REST API)
-
-```bash
-python3 -m venv .venv
-.venv/bin/pip install -r backend/requirements.txt
-cd backend
-../.venv/bin/python manage.py migrate
-../.venv/bin/python manage.py llm_check     # optional: confirms the key and model respond
-../.venv/bin/python manage.py runserver     # http://127.0.0.1:8000
-```
-
-The default database is SQLite (`backend/db.sqlite3`). Set `DATABASE_URL` in `.env` to use PostgreSQL.
-
-### 3. GUI (React + Vite)
-
-In a second terminal:
+### 2. Build
 
 ```bash
-cd frontend
-npm install
-npm run dev                                  # http://localhost:5173
+mvn -q install -DskipTests        # builds core, server, CLI and GUI
 ```
 
-Open http://localhost:5173 and create an account. The dev server forwards `/api` to the backend on port 8000.
+### 3. GUI (JavaFX desktop app)
 
-### 4. Try it
+```bash
+bin/careerpilot-gui               # or: mvn -q -pl careerpilot-gui javafx:run
+```
 
-1. **Profile:** set a career goal, then add facts or import a resume and verify the extracted facts.
-2. **Jobs:** paste a posting or import a JSON/CSV file. Open a job and click **Analyze with AI**.
-3. **Applications:** track the job, generate the resume and cover letter, and download the package ZIP.
-4. **Agent:** enter a goal such as "Prepare my application for the Acme backend co-op", then approve or reject each step.
+Create an account on the sign-in screen, then work through Profile, Jobs, Tracker, Agent and Email.
+
+### 4. CLI
+
+```bash
+bin/careerpilot --help
+bin/careerpilot register --email me@my.yorku.ca --name "Me"          # prompts for a password
+bin/careerpilot profile goal-set --type COOP --term "Summer 2027" --roles backend
+bin/careerpilot profile fact-add SKILL name=python
+bin/careerpilot profile resume ~/Documents/resume.pdf                # AI extracts facts to review
+bin/careerpilot jobs import-file jobs.csv                            # the agent triages the batch
+bin/careerpilot jobs list
+bin/careerpilot agent run "Prepare my application for the Acme backend co-op"
+bin/careerpilot agent approve <run id>                               # you approve each side-effecting step
+bin/careerpilot docs package <application id> --out acme.zip
+bin/careerpilot email sync-mock && bin/careerpilot email events
+bin/careerpilot llm-check                                            # confirms the key and model respond
+```
+
+Ids are printed as 8 characters; type those. Add `--json` for machine-readable output.
+
+### 5. Chrome extension (F04)
+
+```bash
+bin/careerpilot-server            # REST API on http://127.0.0.1:8000
+```
+
+In Chrome open `chrome://extensions`, enable developer mode, choose **Load unpacked** and select the `extension/` folder.
+Sign in from the popup (the same account as the GUI), open a posting list, and click **Import**. Nothing is read until you click.
+
+### 6. Try it (about two minutes)
+
+1. **Profile:** set a career goal, add a few facts or import a resume and verify the extracted facts.
+2. **Jobs:** import `jobs.csv` or paste a posting, then select a job and click **Analyze with AI**.
+3. **Agent:** enter "Prepare my application for the Acme backend co-op", then approve or reject each step.
+4. **Tracker:** generate the resume and cover letter, build the package ZIP, and move the application through its states (with undo).
+5. **Email:** sync the demo inbox or upload `.eml` files, then confirm or dismiss the detected events.
 
 ### Tests
 
 ```bash
-cd backend && ../.venv/bin/python -m pytest     # offline: uses MockLLMProvider, no key needed
-cd frontend && npm test
+mvn -q verify                                      # offline: mock LLM and in-memory database, no key needed
+node --test extension/tests/extractor.test.mjs     # extension unit tests
 ```
+
+The GUI render test writes a screenshot of every page to `careerpilot-gui/target/screenshots` and is skipped on machines without a display.
 
 ## Project status
 
 | Stage | Scope | Status |
 |---|---|---|
 | **Stage 1** | Design: features, UML, patterns, traceability | Complete |
-| Stage 2 | Implementation: backend, GUI, CLI, agent | In progress |
+| Stage 2 | Implementation in Java: core services, JavaFX GUI, CLI, agent, REST server and extension | In progress (F01-F14, F16 working; F15, F17-F19 planned) |
 | Stage 3 | Testing, deployment, demonstration | Planned (report §16) |
 
 ## Stage 1 deliverables
@@ -139,28 +160,31 @@ The system defines 19 features across three tiers.
 
 ## Architecture
 
-CareerPilot is planned as a modular monolith.
+CareerPilot is a modular monolith in Java (Stage 2). One shared core is used by every front end.
 
 | Layer | Technology |
 |---|---|
-| Clients | React + Vite SPA, Chrome MV3 extension, Python CLI |
-| API | Django + Django REST Framework |
-| Application | Application services, agent and integrations |
-| Data | PostgreSQL, S3-compatible object storage |
-| Asynchronous work | Celery + Redis |
-| LLM | Provider-neutral `LLMClient` (Gemini primary, OpenAI alternative, Mock for tests) |
-| Delivery | Docker Compose deployment, GitHub Actions CI |
+| Clients | JavaFX desktop GUI, picocli command line, Chrome MV3 extension |
+| API | Spring Boot REST server (extension and external clients) |
+| Application | Spring services in `careerpilot-core`: candidates, jobs, applications, documents, agent, integrations |
+| Data | Spring Data JPA on H2 (any JDBC database through `DATABASE_URL`), local object storage |
+| Background work | In-process task queue |
+| LLM | Provider-neutral `LlmClient` facade (Gemini primary, OpenAI-compatible alternative, Mock for tests) |
+| Delivery | Maven multi-module build, GitHub Actions CI |
 
 ## Repository layout
 
 ```
-backend/       Django apps (Stage 2); placeholders only in Stage 1
-frontend/      React + Vite SPA (Stage 2)
-extension/     Chrome MV3 extension (manifest scaffold only in Stage 1)
-cli/           careerpilot CLI (Stage 2)
-docs/          Stage 1 report, UML, requirements, decisions, architecture
-deployment/    Production configuration (Stage 3)
-tools/         UML consistency checker, UML render script, report builder
+pom.xml                  Maven parent (Spring Boot 3, Java 17)
+careerpilot-core/        domain, services, LLM subsystem, agent, integrations (+ the automated test suite)
+careerpilot-server/      REST API for the Chrome extension
+careerpilot-cli/         picocli command-line interface
+careerpilot-gui/         JavaFX desktop application
+extension/               Chrome MV3 extension (JavaScript, as required by the browser)
+bin/                     careerpilot, careerpilot-gui and careerpilot-server launchers
+docs/                    Stage 1 report, UML, requirements, decisions, architecture
+deployment/              Production configuration (Stage 3)
+tools/                   UML consistency checker, UML render script, report builder
 ```
 
 ## Working with the design artefacts
