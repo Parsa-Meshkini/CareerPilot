@@ -92,22 +92,27 @@ class GuiRenderTest {
             new javafx.stage.Stage().setScene(scene);
             main.set(view);
         });
-        for (String page : List.of("Dashboard", "Profile", "Jobs", "Tracker", "Interview", "Agent", "Email", "Insights", "Settings")) {
-            runFx(() -> main.get().open(page));
-            Thread.sleep(900);  // background loads finish
-            if (page.equals("Jobs") || page.equals("Tracker")) {
-                runFx(() -> main.get().page(page).selectFirstRow());
-                Thread.sleep(900);
-            }
-            runFx(() -> {
-                WritableImage img = main.get().snapshot(null, null);
-                try {
-                    javax.imageio.ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", out.resolve(page.toLowerCase() + ".png").toFile());
-                } catch (java.io.IOException e) {
-                    throw new IllegalStateException(e);
+        for (boolean dark : new boolean[]{false, true}) {
+            runFx(() -> javafx.application.Application.setUserAgentStylesheet((dark ? new atlantafx.base.theme.PrimerDark() : new atlantafx.base.theme.PrimerLight()).getUserAgentStylesheet()));
+            String suffix = dark ? "-dark" : "";
+            for (String page : List.of("Dashboard", "Profile", "Jobs", "Tracker", "Interview", "Agent", "Email", "Insights", "Settings")) {
+                runFx(() -> main.get().open(page));
+                Thread.sleep(900);  // background loads finish
+                if (page.equals("Jobs") || page.equals("Tracker")) {
+                    runFx(() -> main.get().page(page).selectFirstRow());
+                    Thread.sleep(900);
                 }
-            });
-            assertTrue(Files.size(out.resolve(page.toLowerCase() + ".png")) > 5_000, page + " rendered");
+                String file = page.toLowerCase() + suffix + ".png";
+                runFx(() -> {
+                    WritableImage img = main.get().snapshot(null, null);
+                    try {
+                        javax.imageio.ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", out.resolve(file).toFile());
+                    } catch (java.io.IOException e) {
+                        throw new IllegalStateException(e);
+                    }
+                });
+                assertTrue(Files.size(out.resolve(file)) > 5_000, page + suffix + " rendered");
+            }
         }
         ctx.close();
     }
