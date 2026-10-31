@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CareerPilot Importer</title>
+  <style>
+    body { font: 13px system-ui, sans-serif; width: 300px; margin: 12px; }
+    h1 { font-size: 15px; margin: 0 0 8px; }
+    label { display: block; margin: 6px 0 2px; }
+    input { width: 100%; box-sizing: border-box; padding: 5px; }
+    button { margin-top: 10px; padding: 6px 10px; }
+    #status { margin-top: 10px; min-height: 2em; }
+    .error { color: #b00020; }
+  </style>
+</head>
+<body>
+  <h1>CareerPilot Importer</h1>
+  <section id="signin">
+    <label>Server <input id="server" value="http://127.0.0.1:8000"></label>
+    <label>Email <input id="email" type="email"></label>
+    <label>Password <input id="password" type="password"></label>
+    <button id="login">Sign in</button>
+  </section>
+  <section id="import" hidden>
+    <p>Open a posting list or a single posting, then click Import. Nothing is read until you click.</p>
+    <button id="run">Import postings on this page</button>
+    <button id="logout">Sign out</button>
+  </section>
+  <div id="status" role="status"></div>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
