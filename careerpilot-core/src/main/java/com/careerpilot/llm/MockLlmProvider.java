@@ -31,6 +31,12 @@ public class MockLlmProvider implements LlmProvider {
         return this;
     }
 
+    /** Replaces anything already queued for the prompt key. */
+    public MockLlmProvider replace(String promptKey, Object... responses) {
+        scripts.remove(promptKey);
+        return script(promptKey, responses);
+    }
+
     @Override
     public synchronized LlmResponse complete(LlmRequest request) {
         calls.add(request);
