@@ -1,0 +1,17 @@
+.root { -fx-font-family: "System"; -fx-font-size: 13px; -fx-base: #f5f6f8; -fx-accent: #2f6fed; }
+.page { -fx-background-color: #ffffff; }
+.title { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1c2433; }
+.heading { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1c2433; }
+.muted { -fx-text-fill: #667085; }
+.error-text { -fx-text-fill: #b42318; }
+.sidebar { -fx-background-color: #1c2433; }
+.sidebar .nav-button { -fx-background-color: transparent; -fx-text-fill: #cbd2e0; -fx-alignment: CENTER_LEFT; -fx-padding: 9 14; -fx-background-radius: 6; -fx-cursor: hand; }
+.sidebar .nav-button:hover { -fx-background-color: #2a3550; }
+.sidebar .nav-button.active { -fx-background-color: #2f6fed; -fx-text-fill: white; }
+.sidebar .brand { -fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold; }
+.sidebar .who { -fx-text-fill: #9aa5bd; -fx-font-size: 11px; }
+.button.primary { -fx-background-color: #2f6fed; -fx-text-fill: white; -fx-font-weight: bold; }
+.card { -fx-background-color: #f7f8fa; -fx-border-color: #e4e7ec; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 12; }
+.stat-number { -fx-font-size: 26px; -fx-font-weight: bold; -fx-text-fill: #1c2433; }
+.banner { -fx-background-color: #fff7e6; -fx-border-color: #f5c26b; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 10; }
+.table-view { -fx-background-color: white; }
