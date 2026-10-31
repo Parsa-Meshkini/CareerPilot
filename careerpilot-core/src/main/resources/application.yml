@@ -1,0 +1,37 @@
+# Defaults for every CareerPilot front end. Values come from .env / the environment (see .env.example).
+spring:
+  config:
+    import: optional:file:.env[.properties],optional:file:../.env[.properties]
+  main:
+    banner-mode: off
+    web-application-type: none
+  datasource:
+    url: ${DATABASE_URL:jdbc:h2:file:./data/careerpilot;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${DATABASE_USER:sa}
+    password: ${DATABASE_PASSWORD:}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate.jdbc.time_zone: UTC
+logging:
+  level:
+    root: WARN
+    com.careerpilot: INFO
+    org.hibernate.orm.deprecation: ERROR
+
+careerpilot:
+  storage-root: ${STORAGE_ROOT:data/storage}
+  llm:
+    provider: ${LLM_PROVIDER:gemini}
+    api-key: ${LLM_API_KEY:}
+    model: ${LLM_MODEL:}
+    base-url: ${LLM_BASE_URL:}
+    user-daily-token-budget: ${LLM_USER_DAILY_TOKEN_BUDGET:200000}
+    run-token-budget: ${LLM_RUN_TOKEN_BUDGET:40000}
+    timeout-seconds: ${LLM_TIMEOUT_SECONDS:60}
+  email:
+    auto-apply-threshold: ${EMAIL_AUTO_APPLY_THRESHOLD:0.85}
+  features:
+    auto-triage: ${FEATURE_AUTO_TRIAGE:true}

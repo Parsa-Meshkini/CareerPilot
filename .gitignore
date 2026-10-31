@@ -48,3 +48,14 @@ umlet.jar
 .DS_Store
 .idea/
 .vscode/
+
+# --- Java / Maven ---
+target/
+*.class
+*.log
+hs_err_pid*
+
+# --- local runtime data (H2 database files, stored documents) ---
+data/
+*.mv.db
+*.trace.db
