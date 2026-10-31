@@ -1,5 +1,5 @@
 import { login, postBatch, describeBatch } from "../api/client.js";
-import { buildPayload, recordFromDetail, recordsFromTables } from "../content/extractor.js";
+import { buildPayload, extractAll } from "../content/extractor.js";
 
 const $ = (id) => document.getElementById(id);
 const say = (msg, error = false) => { $("status").textContent = msg; $("status").className = error ? "error" : ""; };
@@ -31,14 +31,14 @@ $("run").addEventListener("click", async () => {
     const { server, token } = await state();
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     const [{ result }] = await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ["content/page_reader.js"] });
-    let records = recordsFromTables(result.tables);
+    const { method, records } = extractAll(result);
     if (!records.length) {
       const single = recordFromDetail(result.pairs, result.url, result.description);
       records = single ? [single] : [];
     }
-    if (!records.length) { say("No postings were recognised on this page.", true); return; }
-    say(`Importing ${records.length} posting(s)...`);
-    say(describeBatch(await postBatch(server, token, buildPayload(records))));
+    if (!records.length) { say("No postings were recognised on this page. Try a page with a table, a list of job cards or a single posting.", true); return; }
+    say(`Read ${records.length} posting(s) from the ${method}. Importing...`);
+    say(`Read from the ${method}: ` + describeBatch(await postBatch(server, token, buildPayload(records))));
   } catch (e) { say(e.message, true); }
 });
 
