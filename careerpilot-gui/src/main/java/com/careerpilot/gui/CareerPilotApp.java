@@ -13,9 +13,16 @@ public class CareerPilotApp extends Application {
     @Override
     public void init() { app = AppContext.start(); }
 
+    static CareerPilotApp instance;
+
+    java.util.function.Consumer<String> opener() { return url -> getHostServices().showDocument(url); }
+
     @Override
     public void start(Stage primary) {
         this.stage = primary;
+        instance = this;
+        Theme.apply();
+        app.setLinkOpener(opener());
         stage.setTitle("CareerPilot");
         showLogin();
         stage.show();

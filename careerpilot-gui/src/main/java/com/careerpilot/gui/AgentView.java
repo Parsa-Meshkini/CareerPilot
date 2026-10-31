@@ -22,7 +22,7 @@ import java.util.Map;
 /** F16 goal-driven agent workspace: goal, plan, reasoning, approvals, questions, undo, and what the agent remembers. */
 final class AgentView extends View {
     private final TextField goal = new TextField();
-    private final TableView<AgentRun> runs = Ui.table(Ui.col("Status", 160, AgentRun::getStatus), Ui.col("Goal", 300, AgentRun::getGoalText));
+    private final TableView<AgentRun> runs = Ui.table(Ui.chipCol("Status", 170, AgentRun::getStatus), Ui.col("Goal", 300, AgentRun::getGoalText));
     private final Label heading = Ui.heading("Select or start a run");
     private final TableView<Map<String, Object>> plan = Ui.table(Ui.col("#", 30, m -> String.valueOf(m.getOrDefault("n", ""))), Ui.col("Tool", 160, m -> String.valueOf(m.get("tool"))),
             Ui.col("Status", 80, m -> String.valueOf(m.getOrDefault("status", ""))), Ui.col("Result", 360, m -> String.valueOf(m.getOrDefault("observation", m.get("intent")))));

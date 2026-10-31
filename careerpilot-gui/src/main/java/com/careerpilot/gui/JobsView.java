@@ -37,12 +37,13 @@ final class JobsView extends View {
     private final Consumer<String> navigate;
     private final TextField search = new TextField();
     private final TableView<Row> table = Ui.table(
-            Ui.col("Score", 60, r -> r.match() == null ? "-" : r.match().getScore() + (r.match().isOutdated() ? "*" : "")),
-            Ui.col("", 28, r -> r.job().isShortlisted() ? "★" : ""),
-            Ui.col("Title", 250, r -> r.job().getTitle()), Ui.col("Company", 150, r -> r.job().getCompany()),
-            Ui.col("Deadline", 90, r -> r.job().getDeadline() == null ? "" : r.job().getDeadline().toString()),
-            Ui.col("Detail", 70, r -> r.job().getCompleteness().name().toLowerCase()));
-    private final TextArea detail = Ui.readOnlyText();
+            Ui.col("Score", 64, r -> r.match() == null ? "-" : r.match().getScore() + (r.match().isOutdated() ? "*" : "")),
+            Ui.chipCol("Pick", 100, r -> r.job().isShortlisted() ? "SHORTLISTED" : ""),
+            Ui.col("Title", 220, r -> r.job().getTitle()), Ui.col("Company", 130, r -> r.job().getCompany()),
+            Ui.col("Deadline", 96, r -> r.job().getDeadline() == null ? "" : r.job().getDeadline().toString()),
+            Ui.chipCol("Detail", 90, r -> r.job().getCompleteness().name()));
+    private final VBox detail = new VBox(10);
+    private final javafx.scene.control.ScrollPane detailScroll = new javafx.scene.control.ScrollPane(detail);
     private final Label status = Ui.muted("");
 
     JobsView(AppContext app, Consumer<String> navigate) {
@@ -51,9 +52,13 @@ final class JobsView extends View {
         search.setPromptText("Search title, company, location");
         search.textProperty().addListener((o, a, b) -> refresh());
         table.getSelectionModel().selectedItemProperty().addListener((o, a, row) -> showDetail(row));
-        SplitPane split = new SplitPane(table, new VBox(8, detail, Ui.row(Ui.primary("Analyze with AI", this::analyze), Ui.button("Track application", this::track),
+        detail.setPadding(new javafx.geometry.Insets(4, 8, 4, 8));
+        detailScroll.setFitToWidth(true);
+        VBox.setVgrow(detailScroll, Priority.ALWAYS);
+        showDetail(null);
+        SplitPane split = new SplitPane(table, new VBox(8, detailScroll, Ui.row(Ui.primary("Analyze with AI", this::analyze), Ui.button("Track application", this::track),
                 Ui.button("Dismiss", this::dismiss))));
-        split.setDividerPositions(0.55);
+        split.setDividerPositions(0.6);
         VBox.setVgrow(split, Priority.ALWAYS);
         getChildren().addAll(Ui.title("Jobs"),
                 Ui.row(search, Ui.button("Import CSV/JSON", this::importFile), Ui.button("Paste a posting", this::paste), Ui.button("Score all", this::scoreAll)),
@@ -65,6 +70,8 @@ final class JobsView extends View {
     private static final class HBoxGrow {
         static void grow(javafx.scene.Node n) { javafx.scene.layout.HBox.setHgrow(n, Priority.ALWAYS); }
     }
+
+    @Override void selectFirstRow() { table.getSelectionModel().selectFirst(); }
 
     @Override String name() { return "Jobs"; }
 
@@ -86,37 +93,85 @@ final class JobsView extends View {
     }
 
     private void showDetail(Row row) {
+        detail.getChildren().clear();
         if (row == null) {
-            detail.clear();
+            Label hint = new Label("Select a posting to see its analysis, skill gaps and link.");
+            hint.getStyleClass().add("empty-state");
+            hint.setWrapText(true);
+            detail.getChildren().add(hint);
             return;
         }
         JobPosting j = row.job();
-        StringBuilder sb = new StringBuilder();
-        sb.append(j.getTitle()).append(" at ").append(j.getCompany()).append('\n')
-                .append(j.getLocation()).append(" (").append(j.getWorkModel()).append(")   Term: ").append(j.getWorkTerm())
-                .append("   Deadline: ").append(j.getDeadline() == null ? "-" : j.getDeadline()).append('\n')
-                .append("Sources: ").append(j.getMergedSources().isEmpty() ? j.getSourceType() : j.getMergedSources())
-                .append("   Detail: ").append(j.getCompleteness()).append("\n\n");
-        JobAnalysis a = app.bean(JobAnalysisService.class).getAnalysis(j);
-        if (a != null) {
-            sb.append("Requires: ").append(String.join(", ", a.getRequiredSkills())).append('\n')
-                    .append("Nice to have: ").append(String.join(", ", a.getPreferredSkills())).append('\n');
-            if (!a.getRedFlags().isEmpty()) sb.append("Red flags: ").append(String.join("; ", a.getRedFlags())).append('\n');
-            sb.append("Analysed by ").append(a.getModelUsed()).append(a.isPartial() ? " (summary only: import the full posting for a better result)" : "").append("\n\n");
-        }
         JobMatch m = row.match();
+        JobAnalysis a = app.bean(JobAnalysisService.class).getAnalysis(j);
+
+        Label title = new Label(j.getTitle());
+        title.getStyleClass().add("detail-title");
+        title.setWrapText(true);
+        Label meta = new Label(j.getCompany() + (j.getLocation().isEmpty() ? "" : "  -  " + j.getLocation()) + "  -  " + j.getWorkModel().toLowerCase());
+        meta.getStyleClass().add("detail-meta");
+        meta.setWrapText(true);
+        javafx.scene.layout.HBox head = new javafx.scene.layout.HBox(12, new VBox(2, title, meta));
+        HBoxGrow.grow(head.getChildren().get(0));
         if (m != null) {
-            sb.append("Match ").append(m.getScore()).append("/100 (").append(m.getStrategyKey()).append(")\n")
-                    .append("  matched: ").append(String.join(", ", m.getMatchedSkills())).append('\n')
-                    .append("  missing: ").append(String.join(", ", m.getMissingSkills())).append('\n');
-            m.getConstraintNotes().forEach(n -> sb.append("  note: ").append(n).append('\n'));
-            m.getTransferable().forEach(t -> sb.append("  transferable ").append(t.get("skill")).append(": ").append(t.get("reason")).append('\n'));
-            if (!m.getExplanation().isEmpty()) sb.append('\n').append(m.getExplanation()).append('\n');
-            m.getSuggestions().forEach(s -> sb.append("  learn ").append(s.get("skill")).append(": ").append(s.get("suggestion")).append('\n'));
-            sb.append('\n');
+            Label score = new Label(String.valueOf(m.getScore()));
+            score.getStyleClass().addAll("score-badge", "chip-" + (m.getScore() >= 70 ? "success" : m.getScore() >= 45 ? "warning" : "danger"));
+            head.getChildren().add(score);
         }
-        sb.append(j.getDescription());
-        detail.setText(sb.toString());
+        detail.getChildren().add(head);
+
+        javafx.scene.layout.FlowPane facts = new javafx.scene.layout.FlowPane(6, 6);
+        if (j.getDeadline() != null) facts.getChildren().add(Ui.chip("deadline " + j.getDeadline(), "warning"));
+        if (!j.getWorkTerm().isEmpty()) facts.getChildren().add(Ui.chip(j.getWorkTerm(), "neutral"));
+        facts.getChildren().add(Ui.chip(j.getCompleteness() == JobPosting.Completeness.FULL ? "full description" : "summary only", j.getCompleteness() == JobPosting.Completeness.FULL ? "success" : "warning"));
+        facts.getChildren().add(Ui.chip((j.getMergedSources().isEmpty() ? j.getSourceType().name() : String.join(" + ", j.getMergedSources())).toLowerCase(), "neutral"));
+        if (m != null && m.isOutdated()) facts.getChildren().add(Ui.chip("score outdated: goal changed", "danger"));
+        detail.getChildren().add(facts);
+
+        if (!j.getSourceUrl().isEmpty()) detail.getChildren().add(linkButton("Open the original posting", j.getSourceUrl()));
+        if (!j.getApplicationUrl().isEmpty() && !j.getApplicationUrl().equals(j.getSourceUrl())) detail.getChildren().add(linkButton("Open the application page", j.getApplicationUrl()));
+
+        if (m != null) {
+            javafx.scene.layout.FlowPane have = new javafx.scene.layout.FlowPane(6, 6);
+            m.getMatchedSkills().forEach(s -> have.getChildren().add(Ui.chip(s, "success")));
+            javafx.scene.layout.FlowPane gaps = new javafx.scene.layout.FlowPane(6, 6);
+            m.getMissingSkills().forEach(s -> gaps.getChildren().add(Ui.chip(s, "warning")));
+            VBox fit = Ui.card("Fit  (" + m.getStrategyKey().replace('_', ' ') + ")");
+            fit.getChildren().add(Ui.muted("You have"));
+            fit.getChildren().add(have.getChildren().isEmpty() ? Ui.muted("none of the detected skills yet") : have);
+            fit.getChildren().add(Ui.muted("Gaps to close"));
+            fit.getChildren().add(gaps.getChildren().isEmpty() ? Ui.muted("no gaps found") : gaps);
+            m.getConstraintNotes().forEach(n -> fit.getChildren().add(Ui.chip(n, "danger")));
+            m.getTransferable().forEach(t -> fit.getChildren().add(Ui.muted("Transferable: " + t.get("skill") + " - " + t.get("reason"))));
+            if (!m.getExplanation().isEmpty()) {
+                Label ex = new Label(m.getExplanation());
+                ex.setWrapText(true);
+                fit.getChildren().add(ex);
+            }
+            m.getSuggestions().forEach(sg -> fit.getChildren().add(Ui.muted("To learn " + sg.get("skill") + ": " + sg.get("suggestion"))));
+            detail.getChildren().add(fit);
+        } else {
+            detail.getChildren().add(Ui.muted("Not scored yet. Use Score all, or Analyze with AI for a full explanation."));
+        }
+        if (a != null) {
+            VBox ai = Ui.card("What the posting asks for");
+            ai.getChildren().add(Ui.muted("Required: " + String.join(", ", a.getRequiredSkills())));
+            if (!a.getPreferredSkills().isEmpty()) ai.getChildren().add(Ui.muted("Nice to have: " + String.join(", ", a.getPreferredSkills())));
+            a.getRedFlags().forEach(f -> ai.getChildren().add(Ui.chip(f, "danger")));
+            ai.getChildren().add(Ui.muted("Analysed by " + a.getModelUsed() + (a.isPartial() ? " (summary only: import the full posting for a better result)" : "")));
+            detail.getChildren().add(ai);
+        }
+        Label desc = new Label(j.getDescription().isEmpty() ? "(no description)" : j.getDescription());
+        desc.setWrapText(true);
+        detail.getChildren().addAll(Ui.heading("Description"), desc);
+    }
+
+    private javafx.scene.control.Button linkButton(String text, String url) {
+        javafx.scene.control.Button b = new javafx.scene.control.Button(text + "  " + (url.length() > 46 ? url.substring(0, 46) + "..." : url), Icons.box("Link"));
+        b.getStyleClass().add("link-button");
+        b.setOnAction(e -> app.openLink(url));
+        b.setMaxWidth(Double.MAX_VALUE);
+        return b;
     }
 
     private Row selected() { return table.getSelectionModel().getSelectedItem(); }

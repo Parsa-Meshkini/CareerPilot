@@ -10,6 +10,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public final class AppContext {
     private final ConfigurableApplicationContext context;
     private User user;
+    private java.util.function.Consumer<String> linkOpener = url -> { };
 
     public AppContext(ConfigurableApplicationContext context) { this.context = context; }
 
@@ -21,6 +22,10 @@ public final class AppContext {
     public <T> T bean(Class<T> type) { return context.getBean(type); }
 
     public User user() { return user; }
+
+    public void setLinkOpener(java.util.function.Consumer<String> opener) { this.linkOpener = opener; }
+
+    public void openLink(String url) { linkOpener.accept(url); }
 
     public void signIn(User user) { this.user = user; }
 

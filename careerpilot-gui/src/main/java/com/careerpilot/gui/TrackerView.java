@@ -23,7 +23,7 @@ import java.util.Map;
 
 /** F13 lifecycle tracking with undo; F10-F12 documents and the application package for the selected application. */
 final class TrackerView extends View {
-    private final TableView<Application> table = Ui.table(Ui.col("State", 100, Application::getStateName), Ui.col("Title", 240, a -> a.getJob().getTitle()),
+    private final TableView<Application> table = Ui.table(Ui.chipCol("State", 120, Application::getStateName), Ui.col("Title", 240, a -> a.getJob().getTitle()),
             Ui.col("Company", 150, a -> a.getJob().getCompany()), Ui.col("Deadline", 90, a -> a.getJob().getDeadline() == null ? "" : a.getJob().getDeadline().toString()));
     private final Label heading = Ui.heading("Select an application");
     private final FlowPane actions = new FlowPane(8, 8);
@@ -47,6 +47,8 @@ final class TrackerView extends View {
         VBox.setVgrow(split, Priority.ALWAYS);
         getChildren().addAll(Ui.title("Tracker"), Ui.muted("CareerPilot never submits an application. You submit on the employer's site, then mark it submitted here."), split);
     }
+
+    @Override void selectFirstRow() { table.getSelectionModel().selectFirst(); }
 
     @Override String name() { return "Tracker"; }
 

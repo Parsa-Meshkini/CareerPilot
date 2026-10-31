@@ -43,6 +43,60 @@ final class Ui {
         return l;
     }
 
+    /** Page title with a one-line explanation underneath. */
+    static VBox pageHeader(String title, String subtitle) {
+        Label t = title(title);
+        Label sub = muted(subtitle);
+        VBox box = new VBox(2, t, sub);
+        box.getStyleClass().add("page-header");
+        return box;
+    }
+
+    /** Small rounded status label. kind: success, warning, danger, info or neutral. */
+    static Label chip(String text, String kind) {
+        Label l = new Label(text);
+        l.getStyleClass().addAll("chip", "chip-" + kind);
+        l.setMinWidth(Region.USE_PREF_SIZE);
+        return l;
+    }
+
+    static String stateKind(String state) {
+        return switch (state) {
+            case "OFFER", "ACCEPTED", "PUBLISHED", "CONFIRMED", "COMPLETED", "PASSED", "verified", "FULL", "SHORTLISTED" -> "success";
+            case "INTERVIEW", "RUNNING", "APPLIED", "PREPARED" -> "info";
+            case "AWAITING_APPROVAL", "AWAITING_INPUT", "NEEDS_REVIEW", "NEEDS_REVIEW ", "to review", "needs a fix", "PAUSED", "SUMMARY" -> "warning";
+            case "REJECTED", "DECLINED", "FAILED", "ABORTED", "WITHDRAWN" -> "danger";
+            default -> "neutral";
+        };
+    }
+
+    /** A table column that shows its value as a coloured chip. */
+    static <T> TableColumn<T, String> chipCol(String title, double width, Function<T, String> value) {
+        TableColumn<T, String> c = col(title, width, value);
+        c.setCellFactory(column -> new javafx.scene.control.TableCell<>() {
+            @Override protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || item.isBlank()) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    setText(null);
+                    setGraphic(chip(item.replace('_', ' ').toLowerCase(), stateKind(item)));
+                }
+            }
+        });
+        return c;
+    }
+
+    /** A bordered card with an optional heading. */
+    static VBox card(String heading, Node... content) {
+        VBox box = new VBox(8);
+        box.getStyleClass().add("card");
+        if (heading != null) box.getChildren().add(heading(heading));
+        box.getChildren().addAll(content);
+        return box;
+    }
+
     static Label muted(String text) {
         Label l = new Label(text);
         l.getStyleClass().add("muted");

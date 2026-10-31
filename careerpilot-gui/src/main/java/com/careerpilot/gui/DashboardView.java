@@ -10,6 +10,9 @@ import com.careerpilot.integrations.EmailSyncService;
 import com.careerpilot.jobs.JobImportService;
 import com.careerpilot.jobs.JobPosting;
 import com.careerpilot.jobs.MatchingService;
+import com.careerpilot.notifications.Notification;
+import com.careerpilot.notifications.NotificationService;
+import com.careerpilot.notifications.ReminderService;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
@@ -35,7 +38,7 @@ final class DashboardView extends View {
         super(app);
         this.navigate = navigate;
         shortlist.setPrefHeight(220);
-        getChildren().addAll(Ui.title("Dashboard"), stats, Ui.heading("Needs your attention"), attention, Ui.heading("Shortlist chosen by the agent"), shortlist);
+        getChildren().addAll(Ui.title("Dashboard"), stats, Ui.row(Ui.heading("Needs your attention"), Ui.spacer(), Ui.button("Mark notifications read", this::markRead)), attention, Ui.heading("Shortlist chosen by the agent"), shortlist);
     }
 
     @Override String name() { return "Dashboard"; }
@@ -45,8 +48,8 @@ final class DashboardView extends View {
         n.getStyleClass().add("stat-number");
         Label c = Ui.muted(caption);
         VBox box = new VBox(2, n, c);
-        box.getStyleClass().add("card");
-        box.setPrefWidth(170);
+        box.getStyleClass().add("stat-card");
+        box.setPrefWidth(176);
         stats.getChildren().add(box);
         return n;
     }
@@ -60,8 +63,10 @@ final class DashboardView extends View {
             List<DetectedEmailEvent> review = app.bean(EmailSyncService.class).listEvents(user, DetectedEmailEvent.NEEDS_REVIEW);
             List<AgentRun> runs = app.bean(AgentController.class).listRuns(user);
             List<String> hints = app.bean(CandidateService.class).completenessHints(user);
+            app.bean(ReminderService.class).checkDeadlines(user, 7);
+            List<Notification> feed = app.bean(NotificationService.class).list(user);
             long outdated = jobs.stream().map(j -> app.bean(MatchingService.class).getMatch(j)).filter(m -> m != null && m.isOutdated()).count();
-            return new Object[]{jobs, apps, review, runs, hints, outdated};
+            return new Object[]{jobs, apps, review, runs, hints, outdated, feed};
         }, data -> {
             @SuppressWarnings("unchecked") List<JobPosting> jobs = (List<JobPosting>) data[0];
             @SuppressWarnings("unchecked") List<Application> apps = (List<Application>) data[1];
@@ -69,6 +74,7 @@ final class DashboardView extends View {
             @SuppressWarnings("unchecked") List<AgentRun> runs = (List<AgentRun>) data[3];
             @SuppressWarnings("unchecked") List<String> hints = (List<String>) data[4];
             long outdated = (Long) data[5];
+            @SuppressWarnings("unchecked") List<Notification> feed = (List<Notification>) data[6];
             stats.getChildren().clear();
             stat(String.valueOf(jobs.size()), "saved postings");
             stat(String.valueOf(jobs.stream().filter(JobPosting::isShortlisted).count()), "shortlisted");
@@ -85,9 +91,14 @@ final class DashboardView extends View {
             jobs.stream().filter(j -> j.getDeadline() != null && !j.getDeadline().isBefore(today) && ChronoUnit.DAYS.between(today, j.getDeadline()) <= 7)
                     .forEach(j -> banner("Deadline in " + ChronoUnit.DAYS.between(today, j.getDeadline()) + " day(s): " + j.getTitle() + " at " + j.getCompany(), "Jobs"));
             hints.forEach(h -> banner(h, "Profile"));
+            feed.stream().filter(n -> !n.isRead()).limit(5).forEach(n -> banner(n.getMessage(), n.getKind() == Notification.Kind.INTERVIEW || n.getKind() == Notification.Kind.PREP_READY ? "Interview" : "Tracker"));
             if (attention.getChildren().isEmpty()) attention.getChildren().add(Ui.muted("Nothing needs your attention."));
             Ui.fill(shortlist, jobs.stream().filter(JobPosting::isShortlisted).toList());
         });
+    }
+
+    private void markRead() {
+        Async.run(this, () -> app.bean(NotificationService.class).markAllRead(app.user()), this::refresh);
     }
 
     private void banner(String text, String page) {

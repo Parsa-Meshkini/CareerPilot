@@ -70,6 +70,10 @@ final class Async {
     }
 
     static void info(String message) {
+        if (message.length() < 240) {
+            Toast.show(message);
+            return;
+        }
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("CareerPilot");
         alert.setHeaderText(null);

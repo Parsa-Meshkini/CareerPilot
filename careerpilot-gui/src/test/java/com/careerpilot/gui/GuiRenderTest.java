@@ -85,17 +85,21 @@ class GuiRenderTest {
 
         AtomicReference<MainView> main = new AtomicReference<>();
         runFx(() -> {
+            Theme.apply();
             MainView view = new MainView(app, () -> { });
             Scene scene = new Scene(view, 1180, 760);
             scene.getStylesheets().add(getClass().getResource("/gui/styles.css").toExternalForm());
             new javafx.stage.Stage().setScene(scene);
             main.set(view);
         });
-        for (String page : List.of("Dashboard", "Profile", "Jobs", "Tracker", "Agent", "Email", "Settings")) {
+        for (String page : List.of("Dashboard", "Profile", "Jobs", "Tracker", "Interview", "Agent", "Email", "Insights", "Settings")) {
             runFx(() -> main.get().open(page));
             Thread.sleep(900);  // background loads finish
+            if (page.equals("Jobs") || page.equals("Tracker")) {
+                runFx(() -> main.get().page(page).selectFirstRow());
+                Thread.sleep(900);
+            }
             runFx(() -> {
-                if (page.equals("Jobs")) selectFirst(main.get());
                 WritableImage img = main.get().snapshot(null, null);
                 try {
                     javax.imageio.ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", out.resolve(page.toLowerCase() + ".png").toFile());
@@ -106,11 +110,6 @@ class GuiRenderTest {
             assertTrue(Files.size(out.resolve(page.toLowerCase() + ".png")) > 5_000, page + " rendered");
         }
         ctx.close();
-    }
-
-    private static void selectFirst(MainView main) {
-        javafx.scene.Node center = main.getCenter();
-        center.lookupAll(".table-view").stream().findFirst().ifPresent(t -> ((javafx.scene.control.TableView<?>) t).getSelectionModel().selectFirst());
     }
 
     private static void runFx(Runnable r) throws Exception {

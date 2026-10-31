@@ -25,7 +25,7 @@ import java.util.Map;
 
 /** F14: detect interview, rejection and offer emails from .eml files or the demo inbox, then confirm or dismiss. */
 final class EmailView extends View {
-    private final TableView<DetectedEmailEvent> table = Ui.table(Ui.col("Status", 130, DetectedEmailEvent::getReviewStatus), Ui.col("Type", 170, DetectedEmailEvent::getEventType),
+    private final TableView<DetectedEmailEvent> table = Ui.table(Ui.chipCol("Status", 130, DetectedEmailEvent::getReviewStatus), Ui.col("Type", 170, DetectedEmailEvent::getEventType),
             Ui.col("Conf.", 50, e -> String.format("%.2f", e.getConfidence())), Ui.col("By", 70, DetectedEmailEvent::getClassifier),
             Ui.col("Subject", 260, e -> e.getEmail().getSubject()),
             Ui.col("Application", 200, e -> e.getApplication() == null ? "(no match)" : e.getApplication().getJob().getTitle() + " at " + e.getApplication().getJob().getCompany()));

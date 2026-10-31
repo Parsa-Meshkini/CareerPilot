@@ -42,3 +42,6 @@ umlet.jar
 .DS_Store
 .idea/
 .vscode/
+
+# --- build / test logs ---
+logs/

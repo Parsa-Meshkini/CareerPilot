@@ -7,6 +7,7 @@
   <name>CareerPilot JavaFX GUI</name>
   <dependencies>
     <dependency><groupId>com.careerpilot</groupId><artifactId>careerpilot-core</artifactId></dependency>
+    <dependency><groupId>io.github.mkpaz</groupId><artifactId>atlantafx-base</artifactId><version>2.0.1</version></dependency>
     <dependency><groupId>org.openjfx</groupId><artifactId>javafx-controls</artifactId><version>${javafx.version}</version></dependency>
     <dependency><groupId>org.openjfx</groupId><artifactId>javafx-swing</artifactId><version>${javafx.version}</version><scope>test</scope></dependency>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-test</artifactId><scope>test</scope></dependency>

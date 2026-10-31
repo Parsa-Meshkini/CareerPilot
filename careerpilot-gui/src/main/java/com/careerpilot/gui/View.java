@@ -17,4 +17,7 @@ abstract class View extends VBox {
     abstract String name();
 
     abstract void refresh();
+
+    /** Selects the first row of the page's main list (used by the screenshot test and keyboard shortcuts). */
+    void selectFirstRow() { }
 }

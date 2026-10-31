@@ -42,7 +42,7 @@ final class ProfileView extends View {
     private final Label hints = Ui.muted(""), strategy = Ui.muted("");
     private final CheckBox pendingOnly = new CheckBox("Only facts waiting for review");
     private final TableView<ProfileFact> facts = Ui.table(Ui.col("Type", 100, f -> f.getFactType().name()),
-            Ui.col("State", 130, f -> f.isVerified() ? "verified" : (f.isNeedsReview() ? "needs a fix" : "to review")),
+            Ui.chipCol("State", 130, f -> f.isVerified() ? "verified" : (f.isNeedsReview() ? "needs a fix" : "to review")),
             Ui.col("Fact", 420, ProfileFact::toContextText), Ui.col("Note", 160, ProfileFact::getReviewNote));
 
     ProfileView(AppContext app) {
