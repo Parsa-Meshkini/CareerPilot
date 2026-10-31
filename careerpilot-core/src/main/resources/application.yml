@@ -5,7 +5,7 @@ spring:
   main:
     banner-mode: off
   datasource:
-    url: ${DATABASE_URL:jdbc:h2:file:./data/careerpilot;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE}
+    url: ${DATABASE_URL:jdbc:h2:file:${user.home}/.careerpilot/careerpilot;AUTO_SERVER=TRUE;DB_CLOSE_ON_EXIT=FALSE}
     username: ${DATABASE_USER:sa}
     password: ${DATABASE_PASSWORD:}
   jpa:
@@ -21,7 +21,7 @@ logging:
     org.hibernate.orm.deprecation: ERROR
 
 careerpilot:
-  storage-root: ${STORAGE_ROOT:data/storage}
+  storage-root: ${STORAGE_ROOT:${user.home}/.careerpilot/storage}
   llm:
     provider: ${LLM_PROVIDER:gemini}
     api-key: ${LLM_API_KEY:}

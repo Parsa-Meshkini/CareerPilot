@@ -7,7 +7,7 @@ import java.nio.file.Path;
 /** Typed view of application.yml; every value can be overridden from .env or the environment. */
 @ConfigurationProperties(prefix = "careerpilot")
 public class AppProperties {
-    private Path storageRoot = Path.of("data", "storage");
+    private Path storageRoot = Path.of(System.getProperty("user.home"), ".careerpilot", "storage");
     private final Llm llm = new Llm();
     private final Email email = new Email();
     private final Features features = new Features();

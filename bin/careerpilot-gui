@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+# JavaFX desktop app. Needs the modules installed once: mvn -q install -DskipTests
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT" && exec mvn -q -pl careerpilot-gui javafx:run
