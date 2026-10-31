@@ -71,13 +71,13 @@ bin/careerpilot --help
 bin/careerpilot register --email me@my.yorku.ca --name "Me"          # prompts for a password
 bin/careerpilot profile goal-set --type COOP --term "Summer 2027" --roles backend
 bin/careerpilot profile fact-add SKILL name=python
-bin/careerpilot profile resume ~/Documents/resume.pdf                # AI extracts facts to review
-bin/careerpilot jobs import-file jobs.csv                            # the agent triages the batch
+bin/careerpilot profile resume samples/resume.txt                    # AI extracts facts to review
+bin/careerpilot jobs import-file samples/jobs.csv                    # the agent triages the batch
 bin/careerpilot jobs list
 bin/careerpilot agent run "Prepare my application for the Acme backend co-op"
 bin/careerpilot agent approve <run id>                               # you approve each side-effecting step
 bin/careerpilot docs package <application id> --out acme.zip
-bin/careerpilot email sync-mock && bin/careerpilot email events
+bin/careerpilot email upload samples/emails/*.eml && bin/careerpilot email events
 bin/careerpilot llm-check                                            # confirms the key and model respond
 ```
 
@@ -95,10 +95,10 @@ Sign in from the popup (the same account as the GUI), open a posting list, and c
 ### 6. Try it (about two minutes)
 
 1. **Profile:** set a career goal, add a few facts or import a resume and verify the extracted facts.
-2. **Jobs:** import `jobs.csv` or paste a posting, then select a job and click **Analyze with AI**.
+2. **Jobs:** import `samples/jobs.csv` or paste a posting, then select a job and click **Analyze with AI**.
 3. **Agent:** enter "Prepare my application for the Acme backend co-op", then approve or reject each step.
 4. **Tracker:** generate the resume and cover letter, build the package ZIP, and move the application through its states (with undo).
-5. **Email:** sync the demo inbox or upload `.eml` files, then confirm or dismiss the detected events.
+5. **Email:** sync the demo inbox or upload `samples/emails/*.eml`, then confirm or dismiss the detected events.
 
 ### Tests
 
@@ -180,6 +180,7 @@ careerpilot-core/        domain, services, LLM subsystem, agent, integrations (+
 careerpilot-server/      REST API for the Chrome extension
 careerpilot-cli/         picocli command-line interface
 careerpilot-gui/         JavaFX desktop application
+samples/                 safe sample data: jobs, resume, emails, extension payload
 extension/               Chrome MV3 extension (JavaScript, as required by the browser)
 bin/                     careerpilot, careerpilot-gui and careerpilot-server launchers
 docs/                    Stage 1 report, UML, requirements, decisions, architecture

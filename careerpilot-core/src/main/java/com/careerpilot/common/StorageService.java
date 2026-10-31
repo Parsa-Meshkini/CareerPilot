@@ -18,7 +18,11 @@ public class StorageService {
     private final Path root;
 
     public StorageService(AppProperties props) {
-        this.root = props.getStorageRoot().toAbsolutePath().normalize();
+        Path configured = props.getStorageRoot();
+        // a blank STORAGE_ROOT= line in .env must not point the store at the working directory
+        if (configured == null || configured.toString().isBlank())
+            configured = Path.of(System.getProperty("user.home"), ".careerpilot", "storage");
+        this.root = configured.toAbsolutePath().normalize();
     }
 
     private Path resolve(String key) {

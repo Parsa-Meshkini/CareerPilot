@@ -1,0 +1,6 @@
+title,company,location,deadline,work_term,job_type,description
+Backend Developer Co-op,Acme Corp,"Toronto, ON (Hybrid)",2026-11-20,Summer 2027,Co-op,"We are hiring a Backend Developer Co-op for Summer 2027. You will build REST APIs with Python and Django, write SQL against PostgreSQL, containerize services with Docker and deploy to AWS. We value testing, code review and clear communication. Required: Python, Django, SQL, Git. Nice to have: Docker, AWS, Kubernetes. You will join a team of six engineers and ship to production in your first month."
+Data Analyst Intern,Northwind Inc.,Remote,2026-12-01,Summer 2027,Internship,"Northwind is looking for a Data Analyst Intern for Summer 2027. You will clean data with Python and pandas, build dashboards in Tableau and write SQL reports for the product team. Required: SQL, Excel, Python. Nice to have: Tableau, statistics. This is a fully remote role."
+Senior Platform Engineer,Globex,"Ottawa, ON",2026-11-30,,Full-time,"Senior Platform Engineer with 8+ years of experience in Kubernetes, Terraform and AWS. You will own our deployment platform and mentor a team of engineers."
+Retail Sales Associate,Shoe Barn,"Toronto, ON",,Fall 2027,Part-time,Sell shoes and help customers in store.
+,Missing Title Ltd,Toronto,,,,This row has no title so the import reports it as skipped.

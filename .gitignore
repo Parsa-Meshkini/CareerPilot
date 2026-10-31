@@ -33,7 +33,7 @@ node_modules/
 # --- personal / sample user data (keep real resumes and emails out of git) ---
 data/private/
 *.eml
-!careerpilot-core/src/test/resources/emails/*.eml
+!samples/emails/*.eml
 
 # --- tooling ---
 # UMLet is installed locally (https://www.umlet.com); only the .uxf diagrams are versioned

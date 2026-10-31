@@ -1,0 +1,21 @@
+Jane Student
+jane.student@my.yorku.ca | Toronto, ON | github.com/janestudent
+
+EDUCATION
+York University, BSc Computer Science, September 2023 to April 2027. GPA 3.8.
+
+EXPERIENCE
+Software Developer Intern, Acme Corp, May 2025 to August 2025
+- Built a REST API with Python and Django used by the internal tools team
+- Wrote SQL queries and PostgreSQL migrations for the reporting service
+- Containerized the service with Docker
+
+PROJECTS
+Course Planner, Fall 2024
+- Web app that plans a degree path. Built with Java, Spring Boot and SQL.
+
+SKILLS
+Python, Django, Java, Spring Boot, SQL, PostgreSQL, Docker, Git
+
+CERTIFICATIONS
+AWS Cloud Practitioner, Amazon Web Services, 2025
