@@ -167,6 +167,13 @@ final class Ui {
         return b;
     }
 
+    /** Small grey section label used above groups of content. */
+    static Label section(String text) {
+        Label l = new Label(text);
+        l.getStyleClass().add("section-label");
+        return l;
+    }
+
     private static void h_ellipsis(Label l) { l.setTextOverrun(javafx.scene.control.OverrunStyle.ELLIPSIS); }
 
     static Region skeleton(double width, double height) {
@@ -234,7 +241,7 @@ final class Ui {
     static <T> TableView<T> table(TableColumn<T, String>... columns) {
         TableView<T> t = new TableView<>();
         t.getColumns().addAll(columns);
-        t.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        t.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         t.setPlaceholder(new Label("Nothing here yet"));
         VBox.setVgrow(t, Priority.ALWAYS);
         return t;

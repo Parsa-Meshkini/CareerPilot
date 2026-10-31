@@ -19,7 +19,7 @@
 /* ---------- type scale ---------- */
 .label, .text { -fx-text-fill: -cp-fg-primary; }
 .display  { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: -cp-fg-primary; }
-.title    { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -cp-fg-primary; }
+.label.title { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -cp-fg-primary; }
 .heading  { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -cp-fg-primary; }
 .body-strong { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -cp-fg-primary; }
 .caption  { -fx-font-size: 12px; -fx-text-fill: -cp-fg-secondary; }
@@ -36,6 +36,8 @@
     -fx-border-color: -cp-card-border; -fx-border-radius: 10; -fx-padding: 16;
 }
 .card.sunken { -fx-background-color: -cp-bg-sunken; }
+.card.attention { -fx-background-color: -cp-warning-bg; -fx-border-color: -cp-warning-solid; }
+.card.attention .label { -fx-text-fill: -cp-warning-fg; }
 .card.flush { -fx-padding: 0; }
 .card-title { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -cp-fg-primary; }
 .divider { -fx-background-color: -cp-border; -fx-min-height: 1; -fx-pref-height: 1; -fx-max-height: 1; }
@@ -308,3 +310,7 @@
 .sidebar .theme-toggle { -fx-background-color: transparent; -fx-text-fill: -cp-fg-secondary; -fx-alignment: CENTER_LEFT; }
 .sidebar .nav-button .icon, .sidebar .theme-toggle .icon { -fx-fill: -cp-nav-icon; }
 .sidebar .nav-button.active .icon { -fx-fill: -cp-nav-active-fg; }
+
+.titled-pane > .title { -fx-background-color: transparent; -fx-padding: 8 12; }
+.titled-pane > .title > .text { -fx-font-size: 13px; -fx-font-weight: bold; -fx-fill: -cp-fg-primary; }
+.titled-pane > .content { -fx-background-color: transparent; -fx-border-color: transparent; }
