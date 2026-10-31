@@ -12,6 +12,19 @@ import java.util.Map;
 final class HttpSupport {
     private HttpSupport() {}
 
+    /** One readable line from a vendor error body: the JSON error.message when there is one, else the collapsed text. */
+    static String errorText(String body) {
+        String text = body == null ? "" : body;
+        try {
+            String message = com.careerpilot.common.Json.MAPPER.readTree(text).path("error").path("message").asText("");
+            if (!message.isBlank()) text = message;
+        } catch (Exception notJson) {
+            // keep the raw text
+        }
+        text = text.replaceAll("\\s+", " ").strip();
+        return text.length() > 200 ? text.substring(0, 200) + "..." : text;
+    }
+
     static HttpClient client(int timeoutSeconds) {
         return HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(timeoutSeconds)).build();
     }
@@ -34,8 +47,7 @@ final class HttpSupport {
         int status = response.statusCode();
         if (status >= 400) {
             boolean retryable = status == 408 || status == 429 || status >= 500;
-            String text = response.body() == null ? "" : response.body();
-            throw new LlmProviderException(vendor + " HTTP " + status + ": " + text.substring(0, Math.min(300, text.length())), retryable);
+            throw new LlmProviderException(vendor + " HTTP " + status + ": " + errorText(response.body()), retryable);
         }
         return response.body();
     }

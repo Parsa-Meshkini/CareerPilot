@@ -62,4 +62,11 @@ class LlmClientTest extends IntegrationTest {
         mock.script("system.ping", "```json\n{\"ok\": true, \"echo\": \"x\"}\n```");
         assertTrue(llm.generateStructured(user, "system.ping", Map.of("word", "x")).data().get("ok").asBoolean());
     }
+
+    @Test
+    void vendorErrorBodiesBecomeOneReadableLine() {
+        String body = "{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota.\\nPlease check your plan.\",\n    \"status\": \"RESOURCE_EXHAUSTED\"\n  }\n}";
+        assertEquals("You exceeded your current quota. Please check your plan.", HttpSupport.errorText(body));
+        assertEquals("plain text error", HttpSupport.errorText("plain\n   text   error"));
+    }
 }

@@ -20,8 +20,10 @@ public final class CliRuntime {
 
     public static synchronized <T> T bean(Class<T> type) {
         if (context == null) {
+            // keep the terminal clean: log only errors unless the student asks for more with -Dlogging.level.com.careerpilot=INFO
+            System.setProperty("logging.level.com.careerpilot", System.getProperty("logging.level.com.careerpilot", "ERROR"));
             context = new SpringApplicationBuilder(CareerPilotCore.class).web(WebApplicationType.NONE).logStartupInfo(false)
-                    .properties("spring.main.banner-mode=off", "logging.level.root=ERROR", "logging.level.com.careerpilot=ERROR").run();
+                    .properties("spring.main.banner-mode=off", "logging.level.root=ERROR").run();
         }
         return context.getBean(type);
     }
