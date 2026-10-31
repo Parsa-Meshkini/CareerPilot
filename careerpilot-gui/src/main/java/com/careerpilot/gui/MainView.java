@@ -152,6 +152,7 @@ final class MainView extends StackPane {
         sidebarToggle.setOnAction(e -> toggleSidebar());
         title.getStyleClass().add("page-title");
         subtitle.getStyleClass().add("page-subtitle");
+        subtitle.setMinWidth(0);
         VBox titles = new VBox(2, title, subtitle);
         titles.setAlignment(Pos.CENTER_LEFT);
         Region spacer = new Region();
@@ -255,6 +256,7 @@ final class MainView extends StackPane {
         subtitle.setText(view.subtitle());
         subtitle.setVisible(!view.subtitle().isEmpty());
         subtitle.setManaged(!view.subtitle().isEmpty());
+        view.actions().forEach(n -> { if (n instanceof Button b) b.setMinWidth(Region.USE_PREF_SIZE); });
         actionsBox.getChildren().setAll(view.actions());
         content.getChildren().setAll(view);
         view.refresh();

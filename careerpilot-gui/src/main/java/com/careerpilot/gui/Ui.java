@@ -111,8 +111,11 @@ final class Ui {
         b.setWrapText(true);
         b.setMaxWidth(380);
         VBox box = new VBox(10, wrap, t, b);
-        if (actions.length > 0) box.getChildren().add(row(actions));
-        ((HBox) box.getChildren().get(box.getChildren().size() - 1)).setAlignment(Pos.CENTER);
+        if (actions.length > 0) {
+            HBox buttons = row(actions);
+            buttons.setAlignment(Pos.CENTER);
+            box.getChildren().add(buttons);
+        }
         box.getStyleClass().add("empty-state");
         box.setAlignment(Pos.CENTER);
         return box;

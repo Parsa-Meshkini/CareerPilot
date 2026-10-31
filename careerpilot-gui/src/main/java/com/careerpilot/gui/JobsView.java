@@ -10,14 +10,22 @@ import com.careerpilot.jobs.JobImportService;
 import com.careerpilot.jobs.JobMatch;
 import com.careerpilot.jobs.JobPosting;
 import com.careerpilot.jobs.MatchingService;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
@@ -30,128 +38,199 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-/** F04-F08: import (file, paste, extension), normalized duplicate-free list, AI analysis and match with skill gaps. */
+/** F04-F08: import (file, paste, extension), normalized duplicate-free list, AI analysis and match with skill gaps. A list on the left, the selected posting on the right. */
 final class JobsView extends View {
     private record Row(JobPosting job, JobMatch match) {}
 
     private final Consumer<String> navigate;
     private final TextField search = new TextField();
-    private final TableView<Row> table = Ui.table(
-            Ui.col("Score", 64, r -> r.match() == null ? "-" : r.match().getScore() + (r.match().isOutdated() ? "*" : "")),
-            Ui.chipCol("Pick", 100, r -> r.job().isShortlisted() ? "SHORTLISTED" : ""),
-            Ui.col("Title", 220, r -> r.job().getTitle()), Ui.col("Company", 130, r -> r.job().getCompany()),
-            Ui.col("Deadline", 96, r -> r.job().getDeadline() == null ? "" : r.job().getDeadline().toString()),
-            Ui.chipCol("Detail", 90, r -> r.job().getCompleteness().name()));
-    private final VBox detail = new VBox(10);
-    private final javafx.scene.control.ScrollPane detailScroll = new javafx.scene.control.ScrollPane(detail);
-    private final Label status = Ui.muted("");
+    private final TableView<Row> table = new TableView<>();
+    private final VBox detail = new VBox(14);
+    private int total;
 
     JobsView(AppContext app, Consumer<String> navigate) {
         super(app);
         this.navigate = navigate;
         search.setPromptText("Search title, company, location");
+        search.setAccessibleText("Search postings");
+        search.setPrefWidth(260);
         search.textProperty().addListener((o, a, b) -> refresh());
+
+        table.getColumns().addAll(fitColumn(), roleColumn(), deadlineColumn(), flagsColumn());
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        table.setPlaceholder(Ui.emptyState("Jobs", "No postings yet", "Paste a posting, import a CSV or JSON file, or send one from the browser extension.",
+                Ui.primary("Paste a posting", this::paste), Ui.button("Import CSV/JSON", this::importFile)));
         table.getSelectionModel().selectedItemProperty().addListener((o, a, row) -> showDetail(row));
-        detail.setPadding(new javafx.geometry.Insets(4, 8, 4, 8));
-        detailScroll.setFitToWidth(true);
-        VBox.setVgrow(detailScroll, Priority.ALWAYS);
+        VBox.setVgrow(table, Priority.ALWAYS);
+
+        detail.setPadding(new Insets(20));
+        javafx.scene.control.ScrollPane scroll = Ui.scroll(detail);
+        scroll.getStyleClass().add("detail-pane");
         showDetail(null);
-        SplitPane split = new SplitPane(table, new VBox(8, detailScroll, Ui.row(Ui.primary("Analyze with AI", this::analyze), Ui.button("Track application", this::track),
-                Ui.button("Dismiss", this::dismiss))));
-        split.setDividerPositions(0.6);
+        SplitPane split = new SplitPane(table, scroll);
+        split.setDividerPositions(0.56);
         VBox.setVgrow(split, Priority.ALWAYS);
-        getChildren().addAll(Ui.title("Jobs"),
-                Ui.row(search, Ui.button("Import CSV/JSON", this::importFile), Ui.button("Paste a posting", this::paste), Ui.button("Score all", this::scoreAll)),
-                status, split);
-        HBoxGrow.grow(search);
+        getChildren().add(split);
     }
 
-    /** Tiny helper so the search box stretches inside its row. */
-    private static final class HBoxGrow {
-        static void grow(javafx.scene.Node n) { javafx.scene.layout.HBox.setHgrow(n, Priority.ALWAYS); }
+    @Override String name() { return "Jobs"; }
+
+    @Override String subtitle() { return total == 0 ? "Ranked by fit with your goal." : total + " saved, ranked by fit with your goal."; }
+
+    @Override
+    java.util.List<Node> actions() {
+        return List.of(search, Ui.button("Import", this::importFile), Ui.button("Score all", this::scoreAll), Ui.primary("Paste a posting", this::paste));
     }
 
     @Override void selectFirstRow() { table.getSelectionModel().selectFirst(); }
 
-    @Override String name() { return "Jobs"; }
-
     private JobImportService imports() { return app.bean(JobImportService.class); }
+
+    // ---------- list ----------
+
+    private TableColumn<Row, Row> cell(String title, double width, java.util.function.Function<Row, Node> graphic, boolean numeric) {
+        TableColumn<Row, Row> c = new TableColumn<>(title);
+        c.setPrefWidth(width);
+        c.setCellValueFactory(v -> new javafx.beans.property.SimpleObjectProperty<>(v.getValue()));
+        c.setCellFactory(col -> new TableCell<>() {
+            @Override protected void updateItem(Row r, boolean empty) {
+                super.updateItem(r, empty);
+                setText(null);
+                setGraphic(empty || r == null ? null : graphic.apply(r));
+            }
+        });
+        if (numeric) c.getStyleClass().add("numeric");
+        return c;
+    }
+
+    private TableColumn<Row, Row> fitColumn() {
+        TableColumn<Row, Row> c = cell("Fit", 64, r -> new ScoreRing(r.match() == null ? null : r.match().getScore(), r.match() != null && r.match().isOutdated(), 34), false);
+        c.setMinWidth(64);
+        c.setMaxWidth(72);
+        return c;
+    }
+
+    private TableColumn<Row, Row> roleColumn() {
+        return cell("Role", 260, r -> {
+            Label t = new Label(r.job().getTitle());
+            t.getStyleClass().add("body-strong");
+            t.setTextOverrun(javafx.scene.control.OverrunStyle.ELLIPSIS);
+            Label m = new Label(r.job().getCompany() + (r.job().getLocation().isEmpty() ? "" : " \u2022 " + r.job().getLocation()));
+            m.getStyleClass().add("caption");
+            m.setTextOverrun(javafx.scene.control.OverrunStyle.ELLIPSIS);
+            VBox v = new VBox(1, t, m);
+            v.setAlignment(Pos.CENTER_LEFT);
+            return v;
+        }, false);
+    }
+
+    private TableColumn<Row, Row> deadlineColumn() {
+        TableColumn<Row, Row> c = cell("Deadline", 100, r -> {
+            Label l = new Label(r.job().getDeadline() == null ? "\u2013" : r.job().getDeadline().toString());
+            l.getStyleClass().addAll("mono", "muted");
+            return l;
+        }, false);
+        c.setMinWidth(96);
+        return c;
+    }
+
+    private TableColumn<Row, Row> flagsColumn() {
+        TableColumn<Row, Row> c = cell("Status", 130, r -> {
+            HBox h = new HBox(4);
+            h.setAlignment(Pos.CENTER_LEFT);
+            if (r.job().isShortlisted()) h.getChildren().add(Ui.chip("Shortlisted", "success"));
+            else if (r.job().getCompleteness() != JobPosting.Completeness.FULL) h.getChildren().add(Ui.chip("Summary only", "warning"));
+            return h;
+        }, false);
+        c.setMinWidth(110);
+        return c;
+    }
 
     @Override
     void refresh() {
         String q = search.getText();
-        Async.run(null, () -> {
+        Async.run(this, () -> {
             MatchingService matching = app.bean(MatchingService.class);
             List<Row> rows = new ArrayList<>();
             for (JobPosting j : imports().listJobs(app.user(), q, null, null, false)) rows.add(new Row(j, matching.getMatch(j)));
             rows.sort((a, b) -> Integer.compare(b.match() == null ? -1 : b.match().getScore(), a.match() == null ? -1 : a.match().getScore()));
             return rows;
         }, rows -> {
+            Row keep = selected();
             Ui.fill(table, rows);
-            status.setText(rows.size() + " posting(s). A * after a score means it is outdated because your goal changed.");
+            total = rows.size();
+            if (keep != null) rows.stream().filter(r -> r.job().getId().equals(keep.job().getId())).findFirst().ifPresent(r -> table.getSelectionModel().select(r));
+            if (!q.isBlank() && rows.isEmpty())
+                table.setPlaceholder(Ui.emptyState("Search", "No match for \u201c" + q + "\u201d", "Try a company name or a shorter title."));
+            else table.setPlaceholder(Ui.emptyState("Jobs", "No postings yet", "Paste a posting, import a CSV or JSON file, or send one from the browser extension.",
+                    Ui.primary("Paste a posting", this::paste), Ui.button("Import CSV/JSON", this::importFile)));
         });
     }
+
+    // ---------- detail ----------
 
     private void showDetail(Row row) {
         detail.getChildren().clear();
         if (row == null) {
-            Label hint = new Label("Select a posting to see its analysis, skill gaps and link.");
-            hint.getStyleClass().add("empty-state");
-            hint.setWrapText(true);
-            detail.getChildren().add(hint);
+            VBox empty = Ui.emptyState("Jobs", "Pick a posting", "Select one on the left to see how well it fits, which skills are missing, and the original link.");
+            empty.setPrefHeight(360);
+            detail.getChildren().add(empty);
             return;
         }
         JobPosting j = row.job();
         JobMatch m = row.match();
         JobAnalysis a = app.bean(JobAnalysisService.class).getAnalysis(j);
+        Integer score = m == null ? null : m.getScore();
 
         Label title = new Label(j.getTitle());
         title.getStyleClass().add("detail-title");
         title.setWrapText(true);
-        Label meta = new Label(j.getCompany() + (j.getLocation().isEmpty() ? "" : "  -  " + j.getLocation()) + "  -  " + j.getWorkModel().toLowerCase());
+        Label meta = new Label(j.getCompany() + (j.getLocation().isEmpty() ? "" : " \u2022 " + j.getLocation()) + (j.getWorkModel().isEmpty() ? "" : " \u2022 " + j.getWorkModel().toLowerCase()));
         meta.getStyleClass().add("detail-meta");
         meta.setWrapText(true);
-        javafx.scene.layout.HBox head = new javafx.scene.layout.HBox(12, new VBox(2, title, meta));
-        HBoxGrow.grow(head.getChildren().get(0));
-        if (m != null) {
-            Label score = new Label(String.valueOf(m.getScore()));
-            score.getStyleClass().addAll("score-badge", "chip-" + (m.getScore() >= 70 ? "success" : m.getScore() >= 45 ? "warning" : "danger"));
-            head.getChildren().add(score);
-        }
+        Label fit = new Label(ScoreRing.word(score));
+        fit.getStyleClass().addAll("fit-word", ScoreRing.band(score));
+        VBox titles = new VBox(3, title, meta, fit);
+        HBox.setHgrow(titles, Priority.ALWAYS);
+        HBox head = new HBox(16, new ScoreRing(score, m != null && m.isOutdated(), 72), titles);
+        head.setAlignment(Pos.CENTER_LEFT);
         detail.getChildren().add(head);
 
-        javafx.scene.layout.FlowPane facts = new javafx.scene.layout.FlowPane(6, 6);
-        if (j.getDeadline() != null) facts.getChildren().add(Ui.chip("deadline " + j.getDeadline(), "warning"));
+        FlowPane actions = new FlowPane(8, 8, Ui.primary(m == null ? "Score with AI" : "Analyze with AI", this::analyze), Ui.button("Track application", this::track), quiet("Dismiss", this::dismiss));
+        detail.getChildren().add(actions);
+
+        FlowPane facts = new FlowPane(6, 6);
+        if (j.getDeadline() != null) facts.getChildren().add(Ui.chip("Deadline " + j.getDeadline(), "warning"));
         if (!j.getWorkTerm().isEmpty()) facts.getChildren().add(Ui.chip(j.getWorkTerm(), "neutral"));
-        facts.getChildren().add(Ui.chip(j.getCompleteness() == JobPosting.Completeness.FULL ? "full description" : "summary only", j.getCompleteness() == JobPosting.Completeness.FULL ? "success" : "warning"));
+        facts.getChildren().add(Ui.chip(j.getCompleteness() == JobPosting.Completeness.FULL ? "Full description" : "Summary only", j.getCompleteness() == JobPosting.Completeness.FULL ? "success" : "warning"));
         facts.getChildren().add(Ui.chip((j.getMergedSources().isEmpty() ? j.getSourceType().name() : String.join(" + ", j.getMergedSources())).toLowerCase(), "neutral"));
-        if (m != null && m.isOutdated()) facts.getChildren().add(Ui.chip("score outdated: goal changed", "danger"));
+        if (m != null && m.isOutdated()) facts.getChildren().add(Ui.chip("Score outdated: your goal changed", "danger"));
         detail.getChildren().add(facts);
 
         if (!j.getSourceUrl().isEmpty()) detail.getChildren().add(linkButton("Open the original posting", j.getSourceUrl()));
         if (!j.getApplicationUrl().isEmpty() && !j.getApplicationUrl().equals(j.getSourceUrl())) detail.getChildren().add(linkButton("Open the application page", j.getApplicationUrl()));
 
         if (m != null) {
-            javafx.scene.layout.FlowPane have = new javafx.scene.layout.FlowPane(6, 6);
+            FlowPane have = new FlowPane(6, 6);
             m.getMatchedSkills().forEach(s -> have.getChildren().add(Ui.chip(s, "success")));
-            javafx.scene.layout.FlowPane gaps = new javafx.scene.layout.FlowPane(6, 6);
+            FlowPane gaps = new FlowPane(6, 6);
             m.getMissingSkills().forEach(s -> gaps.getChildren().add(Ui.chip(s, "warning")));
-            VBox fit = Ui.card("Fit  (" + m.getStrategyKey().replace('_', ' ') + ")");
-            fit.getChildren().add(Ui.muted("You have"));
-            fit.getChildren().add(have.getChildren().isEmpty() ? Ui.muted("none of the detected skills yet") : have);
-            fit.getChildren().add(Ui.muted("Gaps to close"));
-            fit.getChildren().add(gaps.getChildren().isEmpty() ? Ui.muted("no gaps found") : gaps);
-            m.getConstraintNotes().forEach(n -> fit.getChildren().add(Ui.chip(n, "danger")));
-            m.getTransferable().forEach(t -> fit.getChildren().add(Ui.muted("Transferable: " + t.get("skill") + " - " + t.get("reason"))));
+            VBox fitCard = Ui.card("How you fit  (" + m.getStrategyKey().replace('_', ' ') + ")");
+            fitCard.getChildren().add(section("You have"));
+            fitCard.getChildren().add(have.getChildren().isEmpty() ? Ui.muted("None of the detected skills yet.") : have);
+            fitCard.getChildren().add(section("Gaps to close"));
+            fitCard.getChildren().add(gaps.getChildren().isEmpty() ? Ui.muted("No gaps found.") : gaps);
+            m.getConstraintNotes().forEach(n -> fitCard.getChildren().add(Ui.chip(n, "danger")));
+            m.getTransferable().forEach(t -> fitCard.getChildren().add(Ui.muted("Transferable: " + t.get("skill") + " \u2013 " + t.get("reason"))));
             if (!m.getExplanation().isEmpty()) {
                 Label ex = new Label(m.getExplanation());
                 ex.setWrapText(true);
-                fit.getChildren().add(ex);
+                fitCard.getChildren().add(ex);
             }
-            m.getSuggestions().forEach(sg -> fit.getChildren().add(Ui.muted("To learn " + sg.get("skill") + ": " + sg.get("suggestion"))));
-            detail.getChildren().add(fit);
+            m.getSuggestions().forEach(sg -> fitCard.getChildren().add(Ui.muted("To learn " + sg.get("skill") + ": " + sg.get("suggestion"))));
+            detail.getChildren().add(fitCard);
         } else {
-            detail.getChildren().add(Ui.muted("Not scored yet. Use Score all, or Analyze with AI for a full explanation."));
+            detail.getChildren().add(Ui.card(null, Ui.muted("Not scored yet. Use Score all, or Score with AI for a full explanation.")));
         }
         if (a != null) {
             VBox ai = Ui.card("What the posting asks for");
@@ -163,11 +242,23 @@ final class JobsView extends View {
         }
         Label desc = new Label(j.getDescription().isEmpty() ? "(no description)" : j.getDescription());
         desc.setWrapText(true);
-        detail.getChildren().addAll(Ui.heading("Description"), desc);
+        detail.getChildren().addAll(section("Description"), desc);
     }
 
-    private javafx.scene.control.Button linkButton(String text, String url) {
-        javafx.scene.control.Button b = new javafx.scene.control.Button(text + "  " + (url.length() > 46 ? url.substring(0, 46) + "..." : url), Icons.box("Link"));
+    private static Label section(String text) {
+        Label l = new Label(text);
+        l.getStyleClass().add("section-label");
+        return l;
+    }
+
+    private static Button quiet(String text, Runnable action) {
+        Button b = Ui.button(text, action);
+        b.getStyleClass().add("quiet");
+        return b;
+    }
+
+    private Button linkButton(String text, String url) {
+        Button b = new Button(text + "  " + (url.length() > 46 ? url.substring(0, 46) + "..." : url), Icons.box("Link"));
         b.getStyleClass().add("link-button");
         b.setOnAction(e -> app.openLink(url));
         b.setMaxWidth(Double.MAX_VALUE);
@@ -204,6 +295,7 @@ final class JobsView extends View {
 
     private void paste() {
         Dialog<ButtonType> dialog = new Dialog<>();
+        Ui.style(dialog);
         dialog.setTitle("Paste a posting");
         TextArea text = new TextArea();
         text.setPromptText("Paste the full job posting. The AI fills in the title, company, deadline and more.");
@@ -234,6 +326,7 @@ final class JobsView extends View {
     /** The AI could not find the title or company: let the student type them and retry. */
     private void askBasics(String text, String url, ValidationException v) {
         Dialog<ButtonType> dialog = new Dialog<>();
+        Ui.style(dialog);
         dialog.setTitle("Fill in the basics");
         TextField title = new TextField(), company = new TextField();
         GridPane grid = new GridPane();
