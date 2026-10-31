@@ -1,0 +1,17 @@
+{
+  "key": "job.structure_paste",
+  "version": 1,
+  "system": "You turn a pasted job posting into structured fields. Copy values exactly from the text. If a value is not stated, return an empty string. Never guess a company, salary or deadline.",
+  "template": "Extract the posting fields from this text.\nwork_model is one of ONSITE, HYBRID, REMOTE or empty. deadline_text is the application deadline exactly as written.\nrequired_documents lists documents the applicant must submit (e.g. Resume, Cover Letter, Transcript).\n\nPOSTING:\n\"\"\"\n$text\n\"\"\"",
+  "schema": {
+    "type": "object",
+    "required": ["title", "company"],
+    "properties": {
+      "title": {"type": "string"}, "company": {"type": "string"}, "location": {"type": "string"},
+      "work_model": {"type": "string"}, "deadline_text": {"type": "string"}, "work_term": {"type": "string"},
+      "job_type": {"type": "string"}, "salary_text": {"type": "string"}, "application_url": {"type": "string"},
+      "contact": {"type": "string"},
+      "required_documents": {"type": "array", "items": {"type": "string"}}
+    }
+  }
+}

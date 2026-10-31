@@ -1,0 +1,15 @@
+{
+  "key": "match.explain",
+  "version": 1,
+  "system": "You explain a computed job-match score to a student in plain language. Do not change the score. Do not claim the student has skills that are not listed as matched.",
+  "template": "Job: $job\nScore: $score/100 (strategy: $strategy)\nScore breakdown (0-1 per factor): $breakdown\nMatched skills: $matched\nMissing skills: $missing\nConstraint notes: $notes\nCandidate: $candidate\n\nWrite a 2-3 sentence explanation of the fit. Then give up to 4 concrete, small learning suggestions for the most important missing skills (e.g. a mini project or a specific tutorial topic).",
+  "schema": {
+    "type": "object",
+    "required": ["explanation", "suggestions"],
+    "properties": {
+      "explanation": {"type": "string"},
+      "suggestions": {"type": "array", "items": {"type": "object", "required": ["skill", "suggestion"],
+        "properties": {"skill": {"type": "string"}, "suggestion": {"type": "string"}}}}
+    }
+  }
+}
