@@ -12,6 +12,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
@@ -55,6 +56,8 @@ final class Ui {
     /** Small rounded status label. kind: success, warning, danger, info or neutral. */
     static Label chip(String text, String kind) {
         Label l = new Label(text);
+        String glyph = switch (kind) { case "success" -> "Check"; case "warning", "danger" -> "Alert"; case "info" -> "Info"; default -> null; };
+        if (glyph != null) l.setGraphic(Icons.box(glyph, 11));  // a glyph as well as colour, so state is never colour alone
         l.getStyleClass().addAll("chip", "chip-" + kind);
         l.setMinWidth(Region.USE_PREF_SIZE);
         return l;
@@ -95,6 +98,89 @@ final class Ui {
         if (heading != null) box.getChildren().add(heading(heading));
         box.getChildren().addAll(content);
         return box;
+    }
+
+    /** An empty state: icon, one line saying what is missing, one line saying what to do, optional actions. */
+    static VBox emptyState(String icon, String title, String body, Node... actions) {
+        StackPane wrap = new StackPane(Icons.box(icon, 24));
+        wrap.getStyleClass().add("empty-icon-wrap");
+        Label t = new Label(title);
+        t.getStyleClass().add("empty-title");
+        Label b = new Label(body);
+        b.getStyleClass().add("empty-body");
+        b.setWrapText(true);
+        b.setMaxWidth(380);
+        VBox box = new VBox(10, wrap, t, b);
+        if (actions.length > 0) box.getChildren().add(row(actions));
+        ((HBox) box.getChildren().get(box.getChildren().size() - 1)).setAlignment(Pos.CENTER);
+        box.getStyleClass().add("empty-state");
+        box.setAlignment(Pos.CENTER);
+        return box;
+    }
+
+    /** A clickable summary tile (a real button, so it is reachable by keyboard). */
+    static Button statTile(String number, String caption, String context, Runnable action) {
+        Label n = new Label(number);
+        n.getStyleClass().add("stat-number");
+        Label c = new Label(caption);
+        c.getStyleClass().add("stat-caption");
+        Label x = new Label(context);
+        x.getStyleClass().add("stat-context");
+        VBox box = new VBox(2, n, c, x);
+        Button b = new Button("", box);
+        b.setContentDisplay(javafx.scene.control.ContentDisplay.GRAPHIC_ONLY);
+        b.getStyleClass().add("stat-tile");
+        b.setMaxWidth(Double.MAX_VALUE);
+        b.setAccessibleText(number + " " + caption + ". " + context);
+        b.setOnAction(e -> action.run());
+        return b;
+    }
+
+    /** One row of a "needs you" queue. kind: urgent, info or danger (the dot colour; the hint text says the same in words). */
+    static Button queueRow(String title, String hint, String kind, Runnable action) {
+        Region dot = new Region();
+        dot.getStyleClass().addAll("queue-dot", kind);
+        Label t = new Label(title);
+        t.getStyleClass().add("queue-title");
+        t.setMinWidth(0);
+        h_ellipsis(t);
+        Label h = new Label(hint);
+        h.getStyleClass().add("queue-hint");
+        h.setMinWidth(0);
+        h_ellipsis(h);
+        VBox text = new VBox(2, t, h);
+        HBox.setHgrow(text, Priority.ALWAYS);
+        StackPane chev = new StackPane(Icons.box("Chevron", 14));
+        chev.getStyleClass().add("chevron");
+        HBox box = new HBox(12, dot, text, chev);
+        box.setAlignment(Pos.CENTER_LEFT);
+        Button b = new Button("", box);
+        b.setContentDisplay(javafx.scene.control.ContentDisplay.GRAPHIC_ONLY);
+        b.getStyleClass().add("queue-row");
+        b.setMaxWidth(Double.MAX_VALUE);
+        b.setMaxHeight(Region.USE_PREF_SIZE);
+        b.setAccessibleText(title + ". " + hint);
+        b.setOnAction(e -> action.run());
+        return b;
+    }
+
+    private static void h_ellipsis(Label l) { l.setTextOverrun(javafx.scene.control.OverrunStyle.ELLIPSIS); }
+
+    static Region skeleton(double width, double height) {
+        Region r = new Region();
+        r.getStyleClass().add("skeleton");
+        r.setPrefSize(width, height);
+        r.setMinHeight(height);
+        return r;
+    }
+
+    /** Wraps a page body so it scrolls vertically and always uses the full width. */
+    static javafx.scene.control.ScrollPane scroll(Node body) {
+        javafx.scene.control.ScrollPane sp = new javafx.scene.control.ScrollPane(body);
+        sp.setFitToWidth(true);
+        sp.setHbarPolicy(javafx.scene.control.ScrollPane.ScrollBarPolicy.NEVER);
+        VBox.setVgrow(sp, Priority.ALWAYS);
+        return sp;
     }
 
     static Label muted(String text) {

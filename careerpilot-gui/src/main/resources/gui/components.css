@@ -244,10 +244,11 @@
 .section-label { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: -cp-fg-tertiary; }
 .lane { -fx-background-color: -cp-bg-sunken; -fx-background-radius: 10; -fx-padding: 8; }
 .lane-title { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -cp-fg-primary; }
-.button.lane-card {
+.button.lane-card, .button.stat-tile {
     -cp-btn-bg: -cp-bg-surface; -cp-btn-border: -cp-border; -cp-btn-bg-hover: -cp-bg-hover;
     -fx-background-radius: 8, 7; -fx-padding: 10 12; -fx-alignment: TOP_LEFT; -fx-max-width: 99999;
 }
+.button.stat-tile { -fx-padding: 14 16; -fx-background-radius: 10, 9; -fx-alignment: TOP_LEFT; }
 .button.lane-card.selected { -cp-btn-border: -cp-accent; -cp-btn-bg: -cp-accent-subtle; -fx-background-insets: 0, 1.5; }
 .button.lane-card:focused { -fx-background-radius: 10, 8, 7; }
 .lane-empty { -fx-font-size: 12px; -fx-text-fill: -cp-fg-tertiary; -fx-padding: 12 4; }
