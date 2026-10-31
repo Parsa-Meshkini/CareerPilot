@@ -17,6 +17,7 @@ import java.util.UUID;
         "spring.datasource.url=jdbc:h2:mem:cp-${random.uuid};DB_CLOSE_DELAY=-1",
         "spring.config.import=",
         "careerpilot.llm.provider=mock",
+        "spring.main.web-application-type=none",
         "careerpilot.storage-root=target/test-storage"
 })
 @Transactional
