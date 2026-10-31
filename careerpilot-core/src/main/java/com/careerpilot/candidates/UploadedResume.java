@@ -2,6 +2,7 @@ package com.careerpilot.candidates;
 
 import com.careerpilot.users.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +15,9 @@ public class UploadedResume {
     public enum ParseStatus { PENDING, PARSED, FAILED, FAILED_RETRYABLE }
 
     @Id
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
     @ManyToOne(optional = false)
     private User user;
     private String storageKey;

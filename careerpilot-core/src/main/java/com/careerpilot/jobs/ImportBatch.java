@@ -3,6 +3,7 @@ package com.careerpilot.jobs;
 import com.careerpilot.common.JsonConverters;
 import com.careerpilot.users.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +20,9 @@ public class ImportBatch {
     public enum Status { RECEIVED, PROCESSING, COMPLETED, PARTIAL_FAILED, FAILED }
 
     @Id
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
     @ManyToOne(optional = false)
     private User user;
     @Enumerated(EnumType.STRING)

@@ -4,6 +4,7 @@ import com.careerpilot.applications.Application;
 import com.careerpilot.common.JsonConverters;
 import com.careerpilot.users.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +22,9 @@ public class GeneratedDocument {
     public static final String PASSED = "PASSED", NEEDS_REVIEW = "NEEDS_REVIEW";
 
     @Id
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
     @ManyToOne(optional = false)
     private User user;
     @ManyToOne(optional = false)

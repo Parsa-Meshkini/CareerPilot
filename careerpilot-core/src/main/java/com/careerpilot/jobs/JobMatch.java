@@ -3,6 +3,7 @@ package com.careerpilot.jobs;
 import com.careerpilot.common.JsonConverters;
 import com.careerpilot.users.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +18,9 @@ import java.util.UUID;
 @Getter @Setter
 public class JobMatch {
     @Id
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
     @ManyToOne(optional = false)
     private User user;
     @OneToOne(optional = false)

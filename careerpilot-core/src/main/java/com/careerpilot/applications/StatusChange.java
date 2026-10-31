@@ -2,6 +2,7 @@ package com.careerpilot.applications;
 
 import com.careerpilot.users.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +16,9 @@ public class StatusChange {
     public static final String USER = "USER", EMAIL_EVENT = "EMAIL_EVENT", AGENT = "AGENT";
 
     @Id
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
     @ManyToOne(optional = false)
     private User user;
     @ManyToOne(optional = false)

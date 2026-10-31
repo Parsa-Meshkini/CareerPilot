@@ -1,6 +1,7 @@
 package com.careerpilot.users;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,9 @@ import java.util.UUID;
 @Getter @Setter
 public class User {
     @Id
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
     @Column(unique = true, nullable = false)
     private String email;
     private String displayName = "";

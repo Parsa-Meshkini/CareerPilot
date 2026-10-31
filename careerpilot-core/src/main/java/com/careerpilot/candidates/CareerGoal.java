@@ -3,6 +3,7 @@ package com.careerpilot.candidates;
 import com.careerpilot.common.JsonConverters;
 import com.careerpilot.users.User;
 import jakarta.persistence.*;
+import org.hibernate.annotations.UuidGenerator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +20,9 @@ public class CareerGoal {
     public enum WorkModel { ONSITE, HYBRID, REMOTE, ANY }
 
     @Id
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
     @OneToOne(optional = false)
     private User user;
     @Enumerated(EnumType.STRING)
