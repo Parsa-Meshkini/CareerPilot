@@ -25,10 +25,10 @@ import java.util.Map;
 
 /** F14: detect interview, rejection and offer emails from .eml files or the demo inbox, then confirm or dismiss. */
 final class EmailView extends View {
-    private final TableView<DetectedEmailEvent> table = Ui.table(Ui.chipCol("Status", 130, DetectedEmailEvent::getReviewStatus), Ui.col("Type", 170, DetectedEmailEvent::getEventType),
-            Ui.col("Conf.", 50, e -> String.format("%.2f", e.getConfidence())), Ui.col("By", 70, DetectedEmailEvent::getClassifier),
+    private final TableView<DetectedEmailEvent> table = Ui.table(Ui.chipCol("Status", 130, DetectedEmailEvent::getReviewStatus), Ui.col("Type", 150, e -> { String t = e.getEventType().replace('_', ' ').toLowerCase(); return Character.toUpperCase(t.charAt(0)) + t.substring(1); }),
+            Ui.col("Match", 64, e -> Math.round(e.getConfidence() * 100) + "%"),
             Ui.col("Subject", 260, e -> e.getEmail().getSubject()),
-            Ui.col("Application", 200, e -> e.getApplication() == null ? "(no match)" : e.getApplication().getJob().getTitle() + " at " + e.getApplication().getJob().getCompany()));
+            Ui.col("Application", 200, e -> e.getApplication() == null ? "No match" : e.getApplication().getJob().getTitle() + " at " + e.getApplication().getJob().getCompany()));
     private final CheckBox all = new CheckBox("Show resolved too");
     private final TextArea body = Ui.readOnlyText();
     private final ChoiceBox<Application> appChoice = new ChoiceBox<>();
@@ -45,18 +45,42 @@ final class EmailView extends View {
             @Override public Application fromString(String s) { return null; }
         });
         all.setOnAction(e -> refresh());
+        table.getColumns().get(0).setMinWidth(150);
+        table.getColumns().get(2).setMinWidth(72);
+        table.getColumns().get(3).setMinWidth(150);
         table.getSelectionModel().selectedItemProperty().addListener((o, a, e) -> show(e));
-        VBox detail = new VBox(8, body, Ui.row(Ui.label("Application"), appChoice), Ui.row(Ui.label("Event type"), typeChoice),
-                Ui.row(Ui.primary("Confirm", this::confirm), Ui.button("Dismiss", this::dismiss)));
+        table.setPlaceholder(Ui.emptyState("Email", "Nothing to review", "Upload exported .eml files or sync the demo inbox. Emails that need your confirmation appear here.",
+                Ui.primary("Upload .eml files", this::upload), Ui.button("Sync demo inbox", this::syncMock)));
+        body.setPromptText("Select an email to read it and confirm what it means for your application.");
+        VBox form = new VBox(10, labeled("Application", appChoice), labeled("What the email means", typeChoice),
+                Ui.row(Ui.primary("Confirm", this::confirm), Ui.button("Dismiss", this::dismiss)),
+                Ui.muted("Confirm updates your tracker. Dismiss keeps it as it is."));
+        appChoice.setMaxWidth(Double.MAX_VALUE);
+        typeChoice.setMaxWidth(Double.MAX_VALUE);
+        VBox detail = new VBox(12, body, Ui.card(null, form));
+        detail.setPadding(new javafx.geometry.Insets(0, 0, 0, 4));
+        VBox.setVgrow(body, Priority.ALWAYS);
         SplitPane split = new SplitPane(table, detail);
-        split.setDividerPositions(0.6);
+        split.setDividerPositions(0.62);
         VBox.setVgrow(split, Priority.ALWAYS);
-        getChildren().addAll(Ui.title("Email"),
-                Ui.muted("Emails are matched to your applications. Confident matches update the tracker automatically; the rest wait here for you. Gmail sign-in is not part of this build: use exported .eml files or the demo inbox."),
-                Ui.row(Ui.primary("Upload .eml files", this::upload), Ui.button("Sync demo inbox", this::syncMock), Ui.spacer(), all), status, split);
+        status.setWrapText(true);
+        getChildren().addAll(status, split);
+    }
+
+    private static VBox labeled(String text, javafx.scene.Node n) {
+        Label l = new Label(text);
+        l.getStyleClass().add("field-label");
+        return new VBox(4, l, n);
+    }
+
+    @Override
+    java.util.List<javafx.scene.Node> actions() {
+        return java.util.List.of(all, Ui.button("Sync demo inbox", this::syncMock), Ui.primary("Upload .eml files", this::upload));
     }
 
     @Override String name() { return "Email"; }
+
+    @Override String subtitle() { return "Confident matches update the tracker; the rest wait here for you."; }
 
     private EmailSyncService svc() { return app.bean(EmailSyncService.class); }
 

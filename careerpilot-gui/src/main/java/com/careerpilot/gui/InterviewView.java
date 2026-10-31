@@ -31,26 +31,41 @@ final class InterviewView extends View {
             @Override public String toString(Application a) { return a == null ? "" : a.getJob().getTitle() + " at " + a.getJob().getCompany() + " [" + a.getStateName() + "]"; }
             @Override public Application fromString(String s) { return null; }
         });
-        apps.setPrefWidth(420);
+        apps.setPrefWidth(480);
         apps.setOnAction(e -> loadPlan());
         question.setWrapText(true);
-        question.getStyleClass().add("heading");
+        question.getStyleClass().add("detail-title");
         answer.setPromptText("Type your answer. Use the situation, task, action and result.");
         answer.setPrefRowCount(5);
         answer.setWrapText(true);
         feedback.setPrefRowCount(8);
-        VBox left = new VBox(8, Ui.heading("Preparation plan"), Ui.muted("Questions come from the posting. STAR stories use only your verified facts."),
+        plan.setPromptText("No plan yet");
+        Label qBadge = new Label("Question");
+        qBadge.getStyleClass().add("section-label");
+        VBox left = new VBox(12, Ui.heading("Preparation plan"), Ui.muted("Questions come from the posting. STAR stories use only your verified facts."),
                 Ui.row(Ui.primary("Prepare plan", this::prepare)), plan);
-        VBox right = new VBox(8, Ui.heading("Mock interview"), Ui.row(Ui.primary("Start mock interview", this::start), Ui.button("Finish and get summary", this::finish)),
-                question, answer, Ui.row(Ui.primary("Submit answer", this::submit)), Ui.heading("Feedback"), feedback);
+        VBox mock = new VBox(10, qBadge, question, answer, Ui.row(Ui.primary("Submit answer", this::submit)));
+        VBox right = new VBox(12, Ui.heading("Mock interview"), Ui.row(Ui.primary("Start mock interview", this::start), Ui.button("Finish and get summary", this::finish)),
+                Ui.card(null, mock), Ui.heading("Feedback"), feedback);
+        VBox.setVgrow(plan, Priority.ALWAYS);
+        VBox.setVgrow(feedback, Priority.ALWAYS);
         HBox.setHgrow(left, Priority.ALWAYS);
         HBox.setHgrow(right, Priority.ALWAYS);
-        HBox body = new HBox(16, left, right);
+        left.setPrefWidth(400);
+        right.setPrefWidth(400);
+        HBox body = new HBox(20, Ui.card(null, left), right);
+        HBox.setHgrow(body.getChildren().get(0), Priority.ALWAYS);
         VBox.setVgrow(body, Priority.ALWAYS);
-        getChildren().addAll(Ui.title("Interview prep"), Ui.row(Ui.label("Application"), apps), body);
+        apps.setMaxWidth(Double.MAX_VALUE);
+        HBox pick = new HBox(12, Ui.label("Application"), apps);
+        pick.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        HBox.setHgrow(apps, Priority.ALWAYS);
+        getChildren().addAll(pick, body);
     }
 
     @Override String name() { return "Interview"; }
+
+    @Override String subtitle() { return "A plan from the posting, then a mock interview with feedback."; }
 
     @Override
     void refresh() {

@@ -46,6 +46,7 @@ final class AgentView extends View {
         HBox goalRow = new HBox(8, goal, Ui.primary("Run", this::start));
         goalRow.setAlignment(Pos.CENTER_LEFT);
 
+        runs.getColumns().get(0).setMinWidth(170);
         runs.setPlaceholder(Ui.emptyState("Agent", "No runs yet", "Give the agent a goal above. It plans, then asks before it does anything that changes your data."));
         runs.getSelectionModel().selectedItemProperty().addListener((o, a, r) -> { if (r != null) show(r); });
         heading.getStyleClass().add("heading");

@@ -41,7 +41,7 @@ final class ProfileView extends View {
     private final Spinner<Integer> minScore = new Spinner<>(0, 100, 60, 5);
     private final Label hints = Ui.muted(""), strategy = Ui.muted("");
     private final CheckBox pendingOnly = new CheckBox("Only facts waiting for review");
-    private final TableView<ProfileFact> facts = Ui.table(Ui.col("Type", 100, f -> f.getFactType().name()),
+    private final TableView<ProfileFact> facts = Ui.table(Ui.col("Type", 100, f -> { String t = f.getFactType().name().toLowerCase(); return Character.toUpperCase(t.charAt(0)) + t.substring(1); }),
             Ui.chipCol("State", 130, f -> f.isVerified() ? "verified" : (f.isNeedsReview() ? "needs a fix" : "to review")),
             Ui.col("Fact", 420, ProfileFact::toContextText), Ui.col("Note", 160, ProfileFact::getReviewNote));
 
@@ -54,50 +54,58 @@ final class ProfileView extends View {
         facts.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         pendingOnly.setOnAction(e -> loadFacts());
 
-        GridPane form = new GridPane();
-        form.setHgap(8);
-        form.setVgap(6);
-        form.getColumnConstraints().add(new javafx.scene.layout.ColumnConstraints(90, 90, 90));
-        int r = 0;
-        for (Object[] row : new Object[][]{{"Full name", fullName}, {"Headline", headline}, {"Location", location}, {"Email", email}, {"Phone", phone}}) {
-            form.addRow(r++, Ui.label((String) row[0]), (javafx.scene.Node) row[1]);
-            GridPane.setHgrow((javafx.scene.Node) row[1], Priority.ALWAYS);
-        }
-        form.addRow(r, Ui.label("Summary"), summary);
-
-        GridPane goal = new GridPane();
-        goal.setHgap(8);
-        goal.setVgap(6);
-        goal.getColumnConstraints().add(new javafx.scene.layout.ColumnConstraints(110, 110, 110));
-        goal.addRow(0, Ui.label("Goal"), goalType);
-        goal.addRow(1, Ui.label("Work term"), term);
-        goal.addRow(2, Ui.label("Target roles"), roles);
-        goal.addRow(3, Ui.label("Locations"), locations);
-        goal.addRow(4, Ui.label("Work model"), workModel);
-        goal.addRow(5, Ui.label("Min match score"), minScore);
+        VBox about = new VBox(12, field("Full name", fullName), field("Headline", headline), new HBox(12, grow(field("Location", location)), grow(field("Phone", phone))),
+                field("Email", email), field("Summary", summary), Ui.button("Save profile", this::saveProfile));
         term.setPromptText("e.g. Summer 2027");
         roles.setPromptText("comma separated");
-        GridPane.setHgrow(term, Priority.ALWAYS);
+        locations.setPromptText("comma separated");
+        VBox goal = new VBox(12, new HBox(12, grow(field("Goal", goalType)), grow(field("Work model", workModel))), field("Work term", term), field("Target roles", roles),
+                field("Locations", locations), field("Minimum match score", minScore), strategy, Ui.primary("Save goal", this::saveGoal));
+        hints.getStyleClass().addAll("notice", "notice-info");
+        hints.setGraphic(Icons.box("Info", 16));
+        hints.setWrapText(true);
+        hints.setMaxWidth(Double.MAX_VALUE);
+        goalType.setMaxWidth(Double.MAX_VALUE);
+        workModel.setMaxWidth(Double.MAX_VALUE);
+        VBox left = new VBox(16, hints, Ui.card("About you", about), Ui.card("Career goal", goal));
+        left.setPrefWidth(400);
+        left.setMinWidth(360);
+        ScrollPane leftScroll = Ui.scroll(left);
+        leftScroll.setPrefWidth(420);
+        leftScroll.setMinWidth(380);
 
-        VBox left = new VBox(10, Ui.heading("Profile"), form, Ui.button("Save profile", this::saveProfile), new javafx.scene.control.Separator(),
-                Ui.heading("Career goal"), goal, strategy, Ui.primary("Save goal", this::saveGoal), hints);
-        left.setPrefWidth(360);
-        ScrollPane leftScroll = new ScrollPane(left);
-        leftScroll.setFitToWidth(true);
-        leftScroll.setPrefWidth(390);
-        leftScroll.setMinWidth(390);
-
-        javafx.scene.layout.FlowPane actions = new javafx.scene.layout.FlowPane(8, 8, Ui.primary("Add fact", this::addFact), Ui.button("Import resume (PDF, DOCX, TXT)", this::importResume),
+        javafx.scene.layout.FlowPane actions = new javafx.scene.layout.FlowPane(8, 8, Ui.primary("Add fact", this::addFact), Ui.button("Import resume", this::importResume),
                 Ui.button("Verify selected", this::verifySelected), Ui.button("Delete selected", this::deleteSelected), pendingOnly);
-        VBox right = new VBox(10, Ui.heading("Facts"), Ui.muted("Only verified facts are ever used in your documents. Extracted facts must be checked first."), actions, facts);
+        facts.setPlaceholder(Ui.emptyState("Profile", "No facts yet", "Import a resume or add facts by hand. Only facts you verify are used in your documents.",
+                Ui.primary("Add fact", this::addFact), Ui.button("Import resume", this::importResume)));
+        Label trust = new Label("Only verified facts are ever used in your documents. Extracted facts must be checked first.", Icons.box("Shield", 16));
+        trust.getStyleClass().addAll("notice", "notice-success");
+        trust.setWrapText(true);
+        trust.setMaxWidth(Double.MAX_VALUE);
+        VBox right = new VBox(12, trust, actions, facts);
         HBox.setHgrow(right, Priority.ALWAYS);
-        VBox.setVgrow(right, Priority.ALWAYS);
-        HBox body = new HBox(18, leftScroll, right);
+        VBox.setVgrow(facts, Priority.ALWAYS);
+        HBox body = new HBox(20, leftScroll, right);
         VBox.setVgrow(body, Priority.ALWAYS);
-        getChildren().addAll(Ui.title("Profile & goal"), body);
+        getChildren().add(body);
+    }
+
+    private static VBox field(String label, javafx.scene.Node input) {
+        Label l = new Label(label);
+        l.getStyleClass().add("field-label");
+        VBox v = new VBox(4, l, input);
+        if (input instanceof javafx.scene.control.Control c) c.setAccessibleText(label);
+        return v;
+    }
+
+    private static <N extends javafx.scene.Node> N grow(N n) {
+        HBox.setHgrow(n, Priority.ALWAYS);
+        return n;
     }
 
     @Override String name() { return "Profile"; }
+
+    @Override String subtitle() { return "Your facts and your goal. Everything the agent writes is built from these."; }
 
     private CandidateService svc() { return app.bean(CandidateService.class); }
 
@@ -143,7 +151,7 @@ final class ProfileView extends View {
         data.put("email", email.getText());
         data.put("phone", phone.getText());
         data.put("summary", summary.getText());
-        Async.run(this, () -> svc().updateProfile(app.user(), data), p -> hints.setText("Profile saved."));
+        Async.run(this, () -> svc().updateProfile(app.user(), data), p -> Toast.show("Profile saved."));
     }
 
     private void saveGoal() {
@@ -154,11 +162,12 @@ final class ProfileView extends View {
         data.put("preferred_locations", locations.getText());
         data.put("work_model", workModel.getValue());
         data.put("min_match_score", minScore.getValue());
-        Async.run(this, () -> svc().updateCareerGoal(app.user(), data), g -> refresh());
+        Async.run(this, () -> svc().updateCareerGoal(app.user(), data), g -> { Toast.show("Goal saved. Scores are re-checked on Jobs."); refresh(); });
     }
 
     private void addFact() {
         Dialog<Map<String, Object>> dialog = new Dialog<>();
+        Ui.style(dialog);
         dialog.setTitle("Add a fact");
         ChoiceBox<FactType> type = new ChoiceBox<>();
         type.getItems().addAll(FactType.values());

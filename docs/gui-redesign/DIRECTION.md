@@ -116,7 +116,7 @@ Calm, plain, second person, present tense. Say what happened, then what to do ne
 | Error, LLM unavailable | "The AI model didn't answer. Your data is unchanged. Check the connection in Settings, then try again." |
 | Sign-in | "Your job search, organized. You submit; CareerPilot prepares and tracks." |
 
-Capitalisation: title style for page titles and buttons are sentence case in this app ("Add fact", "Paste a posting") as already used; applied consistently.
+Capitalisation: sentence case for buttons, titles and labels ("Add fact", "Paste a posting"), applied consistently.
 
 ## Token architecture (implemented in `tokens.css` and `components.css`)
 

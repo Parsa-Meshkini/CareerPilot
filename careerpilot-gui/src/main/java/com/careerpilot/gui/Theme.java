@@ -63,8 +63,6 @@ final class Theme {
 
     static void setMode(Mode m) { setMode(m, true); }
 
-    /** Kept so the current sidebar button compiles until the Phase 2 shell replaces it. */
-    static void toggle() { setMode(isDark() ? Mode.LIGHT : Mode.DARK); }
 
     /** Style classes and stylesheets for a scene root or a dialog pane. */
     static void attach(Parent root) {

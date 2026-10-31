@@ -298,19 +298,6 @@
 .icon.danger { -fx-fill: -cp-danger-fg; }
 .menu-bar { -fx-background-color: -cp-bg-canvas; }
 
-/* ---------- legacy aliases: removed once Phase 2/3 rebuild the views that still use them ---------- */
-.banner { -fx-background-color: -cp-warning-bg; -fx-text-fill: -cp-warning-fg; -fx-background-radius: 8; -fx-padding: 10 12; -fx-cursor: hand; }
-.banner-info { -fx-background-color: -cp-accent-subtle; -fx-text-fill: -cp-accent-fg; }
-.stat-card { -fx-background-color: -cp-bg-surface; -fx-border-color: -cp-border; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 14 16; }
-.score-badge { -fx-padding: 6 12; -fx-background-radius: 10; -fx-font-size: 18px; -fx-font-weight: bold; }
-.sidebar .brand { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -cp-fg-primary; }
-.sidebar .nav-button { -fx-background-color: transparent; -fx-text-fill: -cp-nav-fg; -fx-alignment: CENTER_LEFT; -fx-padding: 7 10; -fx-background-radius: 6; -fx-graphic-text-gap: 10; }
-.sidebar .nav-button:hover { -fx-background-color: -cp-bg-hover; }
-.sidebar .nav-button.active { -fx-background-color: -cp-bg-selected; -fx-text-fill: -cp-nav-active-fg; -fx-font-weight: bold; }
-.sidebar .theme-toggle { -fx-background-color: transparent; -fx-text-fill: -cp-fg-secondary; -fx-alignment: CENTER_LEFT; }
-.sidebar .nav-button .icon, .sidebar .theme-toggle .icon { -fx-fill: -cp-nav-icon; }
-.sidebar .nav-button.active .icon { -fx-fill: -cp-nav-active-fg; }
-
 .titled-pane > .title { -fx-background-color: transparent; -fx-padding: 8 12; }
 .titled-pane > .title > .text { -fx-font-size: 13px; -fx-font-weight: bold; -fx-fill: -cp-fg-primary; }
 .titled-pane > .content { -fx-background-color: transparent; -fx-border-color: transparent; }
