@@ -511,7 +511,7 @@ Only commits that change code, tests or build files count as code commits; docum
 | [d239791](https://github.com/Parsa-Meshkini/CareerPilot/commit/d23979148b14910930e6f3da73991ffdde17e5fe) | 2026-10-31 | Agent: approval card opens by itself, run status and plan; Settings: appearance control, switch, grouped cards; Insights: bar charts with written values, pipeline view, empty state | yes |
 | [7115b3a](https://github.com/Parsa-Meshkini/CareerPilot/commit/7115b3a76317f7a54bf70f1b586c02c1b0cf52ca) | 2026-10-31 | Final pass: Email and Agent columns, remove legacy styles, after screenshots, CHANGES write-up | yes |
 
-### Period 3 (Nov 3-9): 12 code commits (14 commits in total)
+### Period 3 (Nov 3-9): 12 code commits (15 commits in total)
 
 | Commit | Date | Message | Changes code |
 |---|---|---|---|
@@ -529,6 +529,7 @@ Only commits that change code, tests or build files count as code commits; docum
 | [6687cc7](https://github.com/Parsa-Meshkini/CareerPilot/commit/6687cc768110d8f862a5d1a2da436eb0e241c6c2) | 2026-11-03 | CLI: email connect-gmail signs in through the browser and syncs the mailbox | yes |
 | [242cc6c](https://github.com/Parsa-Meshkini/CareerPilot/commit/242cc6cb73ba74cc693da70a9768a6ea9534c4f9) | 2026-11-03 | GUI: Connect Gmail button on the Email page opens the consent screen in the browser and syncs | yes |
 | [5beb6cc](https://github.com/Parsa-Meshkini/CareerPilot/commit/5beb6cc098e1a7245485e148c77a3ad28e2a1cbe) | 2026-11-03 | Stage 2 UMLet class diagrams generated from the implemented Java classes (agent, state/observer, strategy/adapter, LLM/templates, period 3 features) | no (docs/assets) |
+| [0e51ded](https://github.com/Parsa-Meshkini/CareerPilot/commit/0e51dedbf81ec5d5a175a708c43d39e26425ac00) | 2026-11-03 | Stage 2 report generator with source-checked feature mapping, patterns, changes, commit tables, demo script and Gmail setup in the README | no (docs/assets) |
 
 
 ## 6.2 Checks performed
