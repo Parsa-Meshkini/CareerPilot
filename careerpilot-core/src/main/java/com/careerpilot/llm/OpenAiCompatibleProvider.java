@@ -13,6 +13,7 @@ public class OpenAiCompatibleProvider implements LlmProvider {
     private final String apiKey;
     private final String model;
     private final String baseUrl;
+    private final boolean officialOpenAi;
     private final int timeoutSeconds;
     private final HttpClient http;
 
@@ -25,22 +26,32 @@ public class OpenAiCompatibleProvider implements LlmProvider {
         this.model = model;
         String url = baseUrl == null || baseUrl.isBlank() ? "https://api.openai.com/v1" : baseUrl;
         this.baseUrl = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+        this.officialOpenAi = this.baseUrl.contains("api.openai.com");
         this.timeoutSeconds = timeoutSeconds;
         this.http = HttpSupport.client(timeoutSeconds);
     }
 
     @Override public String name() { return "openai_compatible"; }
 
-    @Override
-    public LlmResponse complete(LlmRequest request) {
+    Map<String, Object> body(LlmRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("model", model);
-        body.put("temperature", request.temperature);
-        body.put("max_tokens", request.maxOutputTokens);
+        if (officialOpenAi) {
+            // current OpenAI models reject max_tokens and a non-default temperature
+            body.put("max_completion_tokens", request.maxOutputTokens);
+        } else {
+            body.put("temperature", request.temperature);
+            body.put("max_tokens", request.maxOutputTokens);
+        }
         body.put("messages", List.of(Map.of("role", "system", "content", request.system),
                 Map.of("role", "user", "content", request.prompt)));
         if (request.jsonMode) body.put("response_format", Map.of("type", "json_object"));
+        return body;
+    }
 
+    @Override
+    public LlmResponse complete(LlmRequest request) {
+        Map<String, Object> body = body(request);
         String raw = HttpSupport.postJson(http, timeoutSeconds, baseUrl + "/chat/completions",
                 Map.of("Authorization", "Bearer " + apiKey), Json.write(body), "LLM endpoint");
         JsonNode payload = Json.read(raw, JsonNode.class);
