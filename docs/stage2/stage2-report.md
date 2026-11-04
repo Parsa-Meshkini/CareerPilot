@@ -18,12 +18,12 @@ CareerPilot is a desktop and command-line assistant for students looking for co-
 
 **AI/LLM integration.** One facade (`LlmClient`) calls Gemini (default, free tier) or any OpenAI-compatible endpoint through the `LlmProvider` adapter. Prompts are versioned JSON files in `careerpilot-core/src/main/resources/prompts`, answers are validated against a schema, token budgets are enforced per day and per run, and every feature has a deterministic fallback when the model is unavailable. The agent uses planning, tool use, memory and multi-step execution with approval.
 
-**Working functionality.** All 19 Stage 1 features are implemented and reachable from the CLI and the JavaFX GUI; F04 also needs the Chrome extension and the REST server. The Java modules are `careerpilot-core`, `careerpilot-cli`, `careerpilot-gui`, `careerpilot-server` plus `extension/`. Automated tests: core 122, server 3, CLI 7, GUI 1, extension (node) tests.
+**Working functionality.** All 19 Stage 1 features are implemented and reachable from the CLI and the JavaFX GUI; F04 also needs the Chrome extension and the REST server. The Java modules are `careerpilot-core`, `careerpilot-cli`, `careerpilot-gui`, `careerpilot-server` plus `extension/`. Automated tests: core 124, server 3, CLI 7, GUI 1, extension (node) tests.
 
 **Honest limitations.**
 
 - Gmail sign-in (F14) is verified only against a local stand-in for Google's endpoints. It has not been run with a real Google account, which needs the student's own OAuth client.
-- The free Gemini tier ran out of quota during end-to-end checks, so some AI paths were verified with the mock provider and the deterministic fallbacks, and the live-model checks are limited to the ones listed in Section 6.
+- On Nov 3 the default Gemini model answered HTTP 503 ("high demand") for every attempt, so the live end-to-end check was run through the OpenAI-compatible provider instead (Section 6.2). The Gemini provider itself was verified live in an earlier session.
 - LinkedIn extraction exists but is switched off by default (FEATURE_LINKEDIN_EXTRACTION=false).
 - Demonstration videos are not linked yet (Section 7).
 - The full deterministic test suite and KUMA agent validation belong to Stage 3.
@@ -427,7 +427,7 @@ No pattern from Stage 1 was dropped or replaced, so no pattern needed a replacem
 | Tool or platform | Model | Used for | Tokens and cost |
 |---|---|---|---|
 | Claude Code (CLI) | Claude Sonnet 5.5 and earlier Claude models | Implementation of core services, CLI, GUI, tests, UMLet generation, this report | TO FILL IN from the Anthropic console usage page |
-| Gemini API (runtime, not development) | gemini-2.5-flash | The product's own LLM calls during end-to-end checks | TO FILL IN from Google AI Studio; per-call usage is stored in the `LlmUsageRecord` table and shown by `careerpilot llm-check` |
+| Gemini API and OpenAI API (runtime, not development) | Gemini default model; OpenAI-compatible model for the Nov 3 live run | The product's own LLM calls during end-to-end checks | TO FILL IN from Google AI Studio; per-call usage is stored in the `LlmUsageRecord` table and shown by `careerpilot llm-check` |
 
 Token and money totals depend on the billing pages of those accounts, so they are left for the author to copy in; they were not estimated here.
 
@@ -511,7 +511,7 @@ Only commits that change code, tests or build files count as code commits; docum
 | [d239791](https://github.com/Parsa-Meshkini/CareerPilot/commit/d23979148b14910930e6f3da73991ffdde17e5fe) | 2026-10-31 | Agent: approval card opens by itself, run status and plan; Settings: appearance control, switch, grouped cards; Insights: bar charts with written values, pipeline view, empty state | yes |
 | [7115b3a](https://github.com/Parsa-Meshkini/CareerPilot/commit/7115b3a76317f7a54bf70f1b586c02c1b0cf52ca) | 2026-10-31 | Final pass: Email and Agent columns, remove legacy styles, after screenshots, CHANGES write-up | yes |
 
-### Period 3 (Nov 3-9): 12 code commits (15 commits in total)
+### Period 3 (Nov 3-9): 14 code commits (18 commits in total)
 
 | Commit | Date | Message | Changes code |
 |---|---|---|---|
@@ -530,14 +530,18 @@ Only commits that change code, tests or build files count as code commits; docum
 | [242cc6c](https://github.com/Parsa-Meshkini/CareerPilot/commit/242cc6cb73ba74cc693da70a9768a6ea9534c4f9) | 2026-11-03 | GUI: Connect Gmail button on the Email page opens the consent screen in the browser and syncs | yes |
 | [5beb6cc](https://github.com/Parsa-Meshkini/CareerPilot/commit/5beb6cc098e1a7245485e148c77a3ad28e2a1cbe) | 2026-11-03 | Stage 2 UMLet class diagrams generated from the implemented Java classes (agent, state/observer, strategy/adapter, LLM/templates, period 3 features) | no (docs/assets) |
 | [0e51ded](https://github.com/Parsa-Meshkini/CareerPilot/commit/0e51dedbf81ec5d5a175a708c43d39e26425ac00) | 2026-11-03 | Stage 2 report generator with source-checked feature mapping, patterns, changes, commit tables, demo script and Gmail setup in the README | no (docs/assets) |
+| [e07041e](https://github.com/Parsa-Meshkini/CareerPilot/commit/e07041ee66db604d0fd594d6663126c31f1140b8) | 2026-11-03 | Stage 2 report: refresh commit tables | no (docs/assets) |
+| [9cdf40c](https://github.com/Parsa-Meshkini/CareerPilot/commit/9cdf40cadd003ed51c6a69686a4a7124d06d587c) | 2026-11-03 | CI: quote the build step name; the unquoted colon made the workflow file invalid so no job ever started | yes |
+| [53e8abb](https://github.com/Parsa-Meshkini/CareerPilot/commit/53e8abba8497f352badb85a7e94fd9908d01f8f0) | 2026-11-03 | LLM: send max_completion_tokens and no temperature to the official OpenAI endpoint, whose current models reject max_tokens (found with a live key) | yes |
 
 
 ## 6.2 Checks performed
 
-- `mvn test` runs all modules: core 122 tests (services, state machine, agent loop with approval and undo, fabrication guard, email pipeline, interview, analytics, Gmail flow), server 3, CLI 7, GUI render test.
+- `mvn test` runs all modules: core 124 tests (services, state machine, agent loop with approval and undo, fabrication guard, email pipeline, interview, analytics, Gmail flow), server 3, CLI 7, GUI render test.
 - Extension unit tests with node (`extension/tests`).
 - Gmail flow tested end to end against a local HTTP server that plays Google: consent redirect with state check, code exchange, encrypted token on disk, message fetch, revoked grant, cancelled consent, missing configuration.
 - Earlier manual run with the real Gemini key: resume extraction, triage, agent run and email classification.
+- Live end-to-end run on Nov 3 with a real OpenAI-compatible model (isolated scratch database): resume extraction (12 facts), goal and strategy, CSV import with the bad row reported, automatic triage, analysis and match (92/100 for the best job), resume and cover letter (fabrication guard PASSED), package ZIP, lifecycle transitions with notifications, interview preparation plan, mock interview with rubric scores and summary, agent goal "prepare my interview" (2 steps, 2152 tokens), analytics (correctly refuses to propose changes with 0 outcomes), demo inbox email sync (3 emails, 1 not job related, 1 applied automatically, 1 for review). About 16,000 tokens in total.
 
 ## 6.3 Important defects found and corrected
 
@@ -546,6 +550,7 @@ Only commits that change code, tests or build files count as code commits; docum
 - Blank `DATABASE_URL=` lines in an old `.env` were treated as a value; blank now means unset.
 - Analytics fallback text claimed "your data does not justify a change" with too few outcomes; it now says so only from 10 outcomes.
 - CLI printed `null` for the median response time when there was no response yet.
+- Found with the live key: current OpenAI models reject `max_tokens` and a custom temperature; the provider now sends `max_completion_tokens` for the official endpoint (unit-tested).
 
 ## 6.4 Remaining limitations
 
