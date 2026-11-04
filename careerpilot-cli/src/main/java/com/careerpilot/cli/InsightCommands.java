@@ -70,7 +70,7 @@ public final class InsightCommands {
                 return 0;
             }
             Out.line("%s", r.narrative());
-            Out.line("Applied: %d   With an outcome: %d   Median days to response: %s", r.stats().applied(), r.stats().withOutcome(), r.stats().medianDaysToResponse());
+            Out.line("Applied: %d   With an outcome: %d   Median days to response: %s", r.stats().applied(), r.stats().withOutcome(), r.stats().medianDaysToResponse() == null ? "-" : r.stats().medianDaysToResponse());
             group("By match score", r.stats().byScoreBand());
             group("By source", r.stats().bySource());
             group("By role category", r.stats().byRoleCategory());
