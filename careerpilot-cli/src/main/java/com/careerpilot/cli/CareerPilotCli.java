@@ -17,7 +17,8 @@ import java.util.concurrent.Callable;
         description = "Adaptive AI career and application management agent. CareerPilot prepares and tracks; you always submit.",
         subcommands = {AuthCommands.Register.class, AuthCommands.Login.class, AuthCommands.Logout.class, AuthCommands.Whoami.class,
                 AuthCommands.ChangePassword.class, ProfileCommands.Profile.class, JobCommands.Jobs.class, AppCommands.Apps.class,
-                AppCommands.Docs.class, AgentCommands.Agent.class, EmailCommands.Email.class, CareerPilotCli.LlmCheck.class})
+                AppCommands.Docs.class, AgentCommands.Agent.class, EmailCommands.Email.class, InterviewCommands.Interview.class,
+                InsightCommands.Notifications.class, InsightCommands.Analytics.class, CareerPilotCli.LlmCheck.class})
 public class CareerPilotCli implements Callable<Integer> {
     @Option(names = "--json", scope = CommandLine.ScopeType.INHERIT, description = "print machine readable JSON where supported")
     void setJson(boolean on) { Out.json = on; }

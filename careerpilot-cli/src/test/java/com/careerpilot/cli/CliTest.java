@@ -189,4 +189,41 @@ class CliTest {
         assertTrue(out().contains("mock-1"));
         assertTrue(Files.exists(home.resolve("session")));
     }
+
+    @Test
+    void interviewPrepMockInterviewNotificationsAndAnalytics(@TempDir Path tmp) throws Exception {
+        signUp();
+        profile();
+        Path jobs = tmp.resolve("j.json");
+        Files.writeString(jobs, "[{\"title\":\"Backend Developer Co-op\",\"company\":\"Acme Corp\",\"work_term\":\"Summer 2027\",\"location\":\"Toronto\",\"deadline\":\""
+                + java.time.LocalDate.now().plusDays(3) + "\",\"description\":\"" + "We need Python and Django. Build REST APIs. ".repeat(10) + "\"}]");
+        run("jobs", "import-file", jobs.toString());
+        run("jobs", "list");
+        String jobId = out().lines().filter(l -> l.contains("Backend")).findFirst().orElseThrow().split("\\s+")[0];
+        run("apps", "create", jobId);
+        String appId = out().replaceAll("(?s).*\\((\\w{8})\\).*", "$1");
+
+        assertEquals(0, run("notifications", "remind", "--days", "7"));
+        assertTrue(out().contains("1 posting"));
+        assertEquals(0, run("notifications"));
+        assertTrue(out().contains("DEADLINE"));
+
+        mock.script("job.analyze", Map.of("required_skills", List.of("python"), "preferred_skills", List.of(), "responsibilities", List.of(), "seniority", "intern", "keywords", List.of(), "red_flags", List.of()));
+        mock.script("interview.plan", Map.of("questions", List.of(Map.of("category", "technical", "question", "How have you used Python?", "rationale", "Required")),
+                "star_stories", List.of(), "checklist", List.of("Research the company")));
+        assertEquals(0, run("interview", "prepare", appId));
+        assertTrue(out().contains("How have you used Python?"));
+
+        mock.script("interview.question", Map.of("question", "Tell me about a project you built."));
+        mock.script("interview.evaluate", Map.of("scores", Map.of("structure", 4, "relevance", 4, "specificity", 4, "impact", 4, "clarity", 4), "feedback", "Nice answer."));
+        assertEquals(0, run("interview", "mock", appId));
+        String session = out().lines().filter(l -> l.startsWith("Mock interview")).findFirst().orElseThrow().split("\\s+")[2];
+        assertEquals(0, run("interview", "answer", session, "short"));
+        assertTrue(out().contains("elaborate"));
+        assertEquals(0, run("interview", "answer", session, "At Acme I built a REST API with Docker, wrote the tests and shipped it in two weeks."));
+        assertTrue(out().contains("Nice answer."));
+
+        assertEquals(0, run("analytics"));
+        assertTrue(out().contains("Not enough data"));
+    }
 }
