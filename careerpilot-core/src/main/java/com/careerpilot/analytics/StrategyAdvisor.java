@@ -70,7 +70,7 @@ public class StrategyAdvisor {
         Map<Integer, String> explanations = new LinkedHashMap<>();
         for (int i = 0; i < proposals.size(); i++) explanations.put(i, proposals.get(i).rationale());
         String fallback = "You have applied to " + stats.applied() + " postings and " + stats.withOutcome() + " have an outcome. Interview rate: "
-                + Math.round(stats.overall().interviewRate() * 100) + "%. " + (proposals.isEmpty() ? "There is not enough evidence to recommend a change." : "");
+                + Math.round(stats.overall().interviewRate() * 100) + "%. " + (proposals.isEmpty() && stats.withOutcome() >= 10 ? "Your data does not justify a change right now." : "");
         if (proposals.isEmpty() && stats.withOutcome() < 10) return new Words(fallback, explanations);
         try {
             List<Map<String, Object>> listed = new ArrayList<>();
