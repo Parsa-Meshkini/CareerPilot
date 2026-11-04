@@ -32,6 +32,11 @@ public class PlaybookLibrary {
                 plan.add(step("match_job", "check fit and skill gaps", "job_id", AgentCommand.FOCUS_JOB, "deep", true));
                 plan.add(step("build_package", "generate tailored documents and the ZIP", "job_id", AgentCommand.FOCUS_JOB));
             }
+            case "PREPARE_INTERVIEW" -> {
+                plan.addAll(find);
+                plan.add(step("retrieve_context", "load verified profile and preferences"));
+                plan.add(step("prepare_interview", "build likely questions and STAR stories from verified facts", "job_id", AgentCommand.FOCUS_JOB));
+            }
             case "TRIAGE_BATCH" -> plan.addAll(triagePlaybook());
             default -> {
                 plan.add(step("retrieve_context", "load verified profile and preferences", "topic", run.getGoalText()));

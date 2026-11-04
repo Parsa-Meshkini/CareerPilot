@@ -32,7 +32,7 @@ public class ToolManager {
         this.actions = actions;
         for (CommandType t : List.of(SearchJobsCommand.TYPE, RetrieveContextCommand.TYPE, AnalyzeJobCommand.TYPE, MatchJobCommand.TYPE,
                 QuickScoreJobsCommand.TYPE, SelectForDeepAnalysisCommand.TYPE, DeepMatchJobsCommand.TYPE, RankJobsCommand.TYPE,
-                BuildPackageCommand.TYPE, UpdateApplicationStatusCommand.TYPE))
+                BuildPackageCommand.TYPE, UpdateApplicationStatusCommand.TYPE, PrepareInterviewCommand.TYPE))
             register(t);
     }
 

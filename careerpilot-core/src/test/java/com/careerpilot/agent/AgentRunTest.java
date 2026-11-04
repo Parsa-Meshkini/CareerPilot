@@ -174,6 +174,16 @@ class AgentRunTest extends IntegrationTest {
     // ---- tools ----
 
     @Test
+    void anInterviewGoalPlansAnInterviewPreparationAndRunsWithoutApproval() {
+        mock.script("interview.plan", Map.of("questions", List.of(Map.of("category", "technical", "question", "How have you used Django?", "rationale", "Required skill")),
+                "star_stories", List.of(), "checklist", List.of("Research the company")));
+        AgentRun run = agent.runGoal(user, "Get me ready for the Acme backend interview");
+        assertEquals("PREPARE_INTERVIEW", run.getGoalType());
+        assertEquals(AgentRun.COMPLETED, run.getStatus(), run.getSummary() + run.getError());
+        assertTrue(run.getSummary().contains("preparation plan"));
+    }
+
+    @Test
     void catalogHasNoSubmitEmailOrLoginTool() {
         var names = tools.catalog().keySet();
         assertTrue(names.contains("search_jobs"));

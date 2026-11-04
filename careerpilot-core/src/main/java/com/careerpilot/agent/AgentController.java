@@ -56,6 +56,7 @@ public class AgentController {
     public static String classifyGoal(String text) {
         String t = text.toLowerCase();
         if (Pattern.compile("\\btriage|shortlist|sort (my|the) (jobs|batch)\\b").matcher(t).find()) return "TRIAGE_BATCH";
+        if (Pattern.compile("\\binterview\\b|get me ready").matcher(t).find()) return "PREPARE_INTERVIEW";
         if (Pattern.compile("\\b(prepare|package|resume|cover letter|tailor|apply|application)\\b").matcher(t).find()) return "PREPARE_APPLICATION";
         return "FREE_FORM";
     }

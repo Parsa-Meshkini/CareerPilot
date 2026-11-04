@@ -3,6 +3,7 @@ package com.careerpilot.agent;
 import com.careerpilot.applications.ApplicationService;
 import com.careerpilot.candidates.CandidateService;
 import com.careerpilot.documents.PackageAssembler;
+import com.careerpilot.interviews.InterviewPrepService;
 import com.careerpilot.jobs.JobAnalysisService;
 import com.careerpilot.jobs.JobImportService;
 import com.careerpilot.jobs.JobMatchRepository;
@@ -23,10 +24,11 @@ public class AgentServices {
     public final ContextBuilder contexts;
     public final MemoryManager memory;
     public final CandidateService candidates;
+    public final InterviewPrepService interviews;
 
     public AgentServices(JobImportService imports, JobPostingRepository jobs, JobMatchRepository matches, JobAnalysisService analysis,
                          MatchingService matching, ApplicationService applications, PackageAssembler packages, ContextBuilder contexts,
-                         MemoryManager memory, CandidateService candidates) {
+                         MemoryManager memory, CandidateService candidates, InterviewPrepService interviews) {
         this.imports = imports;
         this.jobs = jobs;
         this.matches = matches;
@@ -37,5 +39,6 @@ public class AgentServices {
         this.contexts = contexts;
         this.memory = memory;
         this.candidates = candidates;
+        this.interviews = interviews;
     }
 }
