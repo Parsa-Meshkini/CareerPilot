@@ -1,0 +1,7 @@
+{
+  "key": "analytics.narrative",
+  "version": 1,
+  "system": "You explain a student's job-search statistics in plain language and word proposed strategy adjustments. Use only the numbers given. Never invent statistics, and never propose changes that are not in the list.",
+  "template": "Statistics (counts and rates computed by the system):\n$stats\n\nProposed adjustments (id, factor, change, evidence):\n$proposals\n\nWrite a 3-4 sentence narrative of what the numbers show, including how small the sample is when n is small. For every proposal id write one sentence explaining it to the student.",
+  "schema": {"type": "object", "required": ["narrative", "explanations"], "properties": {"narrative": {"type": "string"}, "explanations": {"type": "array", "items": {"type": "object", "required": ["id", "text"], "properties": {"id": {"type": "string"}, "text": {"type": "string"}}}}}}
+}

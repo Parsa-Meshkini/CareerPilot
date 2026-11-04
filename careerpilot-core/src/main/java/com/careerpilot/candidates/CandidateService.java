@@ -236,6 +236,12 @@ public class CandidateService {
         return goal;
     }
 
+    /** Persists weights tuned by F19 without touching the rest of the goal. */
+    public CareerGoal saveGoalWeights(CareerGoal goal) {
+        goal.setUpdatedAt(Instant.now());
+        return goals.save(goal);
+    }
+
     static List<String> asList(Object value) {
         if (value instanceof String s) return Arrays.stream(s.split(",")).map(String::strip).filter(x -> !x.isEmpty()).collect(Collectors.toList());
         if (value instanceof Iterable<?> it) {
