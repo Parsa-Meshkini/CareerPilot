@@ -104,6 +104,14 @@ Sign in from the popup (the same account as the GUI), open a posting list, and c
 4. **Tracker:** generate the resume and cover letter, build the package ZIP, and move the application through its states (with undo).
 5. **Email:** sync the demo inbox or upload `samples/emails/*.eml`, then confirm or dismiss the detected events.
 
+### 7. Gmail (optional)
+
+Without Google credentials the demo inbox and `.eml` upload cover the same pipeline. To read your own mailbox (read-only):
+
+1. In Google Cloud Console enable the Gmail API and create an OAuth client of type **Desktop app**.
+2. Put `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in your local `.env` (placeholders are in `.env.example`).
+3. Run `bin/careerpilot email connect-gmail` (or **Connect Gmail** on the Email page). Your browser opens Google's consent screen; CareerPilot never sees your password and stores only an encrypted refresh token under `~/.careerpilot/storage/vault`.
+
 ### Tests
 
 ```bash
@@ -118,7 +126,7 @@ The GUI render test writes a screenshot of every page to `careerpilot-gui/target
 | Stage | Scope | Status |
 |---|---|---|
 | **Stage 1** | Design: features, UML, patterns, traceability | Complete |
-| Stage 2 | Implementation in Java: core services, JavaFX GUI, CLI, agent, REST server and extension | All 19 features implemented; report, UML update and demo videos in progress |
+| Stage 2 | Implementation in Java: core services, JavaFX GUI, CLI, agent, REST server and extension | All 19 features implemented; `docs/stage2/stage2-report.pdf` (rebuild with `python tools/build_stage2_report.py --pdf`), updated UMLet class diagrams in `docs/stage2/uml`; demo videos pending |
 | Stage 3 | Testing, deployment, demonstration | Planned (report §16) |
 
 ## Stage 1 deliverables
