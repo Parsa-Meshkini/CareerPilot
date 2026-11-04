@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <help_text>fontsize=12
+</help_text>
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>20</x>
+      <y>10</y>
+      <w>2527</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>*CD-S2-1 Agent: Command and Facade (F09, F16)*
+fontsize=16
+AgentController is the facade over the plan-act-observe loop. Each tool is an AgentCommand that ToolManager runs and can undo.
+style=wordwrap</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>18</x>
+      <y>76</y>
+      <w>2491</w>
+      <h>800</h>
+    </coordinates>
+    <panel_attributes>agent package
+--
+layer=-10</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>636</x>
+      <y>110</y>
+      <w>534</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>*AgentController*
+&lt;&lt;Facade&gt;&gt;
+--
++ runGoal(User user, String goalText, String goalType,..): AgentRun
++ runGoal(User user, String goalText): AgentRun
++ resumeRun(User user, UUID runId, boolean approve, Stri..): AgentRun</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>30</x>
+      <y>110</y>
+      <w>512</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>*Planner*
+--
++ createPlan(AgentRun run, String contextSummary, List&lt;St..): Plan
++ replan(AgentRun run, Map&lt;String, Object&gt; observatio..): Replan</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>107</x>
+      <y>316</y>
+      <w>357</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>*PlaybookLibrary*
+&lt;&lt;fallback plans per goal type&gt;&gt;
+--
++ triagePlaybook(): List&lt;Map&lt;String, Object&gt;&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1264</x>
+      <y>110</y>
+      <w>527</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*Reasoner*
+--
++ evaluate(AgentRun run, int stepIndex, Map&lt;String, Obj..): Decision</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1282</x>
+      <y>316</y>
+      <w>490</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*ApprovalPolicy*
+--
++ requiresApproval(AgentCommand command, AgentRun run): boolean</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>632</x>
+      <y>316</y>
+      <w>542</w>
+      <h>136</h>
+    </coordinates>
+    <panel_attributes>*ToolManager*
+&lt;&lt;Invoker&gt;&gt;
+--
++ register(CommandType type): void
++ execute(AgentCommand command, int stepIndex, AgentAc..): Observation
++ execute(AgentCommand command, int stepIndex): Observation
++ undo(User user, UUID recordId): AgentActionRecord</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>736</x>
+      <y>522</y>
+      <w>334</w>
+      <h>184</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;abstract&gt;&gt;
+/AgentCommand/
+&lt;&lt;Command&gt;&gt;
+--
++ type(): CommandType
++ execute(): Observation
++ undo(Map&lt;String, Object&gt; undoData): void
++ name(): String
++ arguments(): Map&lt;String, Object&gt;
++ run(): AgentRun</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>185</x>
+      <y>776</y>
+      <w>201</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*MatchJobCommand*
+--
++ execute(): Observation</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>736</x>
+      <y>776</y>
+      <w>334</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>*RankJobsCommand*
+--
++ execute(): Observation
++ undo(Map&lt;String, Object&gt; undoData): void</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1360</x>
+      <y>776</y>
+      <w>334</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>*UpdateApplicationStatusCommand*
+--
++ execute(): Observation
++ undo(Map&lt;String, Object&gt; undoData): void</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2084</x>
+      <y>776</y>
+      <w>209</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*PrepareInterviewCommand*
+--
++ execute(): Observation</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1881</x>
+      <y>316</y>
+      <w>616</w>
+      <h>136</h>
+    </coordinates>
+    <panel_attributes>*MemoryManager*
+&lt;&lt;Memory&gt;&gt;
+--
++ remember(User user, AgentMemoryEntry.Kind kind, Strin..): AgentMemoryEntry
++ remember(User user, AgentMemoryEntry.Kind kind, Strin..): AgentMemoryEntry
++ recall(User user, String query, List&lt;AgentMemoryEnt..): List&lt;AgentMemoryEntry&gt;
++ recall(User user, String query, int limit): List&lt;AgentMemoryEntry&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1918</x>
+      <y>110</y>
+      <w>542</w>
+      <h>136</h>
+    </coordinates>
+    <panel_attributes>*AgentRun*
+&lt;&lt;entity&gt;&gt;
+--
++ touch(): void
++ withinBudget(): boolean
++ recordDecision(int stepIndex, String action, String rationa..): void
++ awaitApproval(int stepIndex, String description): void</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>386</x>
+      <y>667</y>
+      <w>349</w>
+      <h>112</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=-1</panel_attributes>
+    <additional_attributes>350;0;0;112</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>903</x>
+      <y>706</y>
+      <w>1</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;0;70</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1070</x>
+      <y>669</y>
+      <w>324</w>
+      <h>106</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;324;107</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1070</x>
+      <y>639</y>
+      <w>1014</w>
+      <h>156</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;1014;156</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>903</x>
+      <y>230</y>
+      <w>1</w>
+      <h>86</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;0;86</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>542</x>
+      <y>160</y>
+      <w>94</w>
+      <h>2</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>94;2;0;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1170</x>
+      <y>156</y>
+      <w>94</w>
+      <h>3</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;4;94;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1108</x>
+      <y>230</y>
+      <w>295</w>
+      <h>86</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;295;86</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1170</x>
+      <y>214</y>
+      <w>711</w>
+      <h>118</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;711;118</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>404</x>
+      <y>198</y>
+      <w>316</w>
+      <h>118</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;317;118</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>286</x>
+      <y>198</y>
+      <w>1</w>
+      <h>118</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;0;118</additional_attributes>
+  </element>
+</diagram>

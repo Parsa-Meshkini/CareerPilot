@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <help_text>fontsize=12
+</help_text>
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>20</x>
+      <y>10</y>
+      <w>2660</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>*CD-S2-5 Period 3 features: notifications, interview preparation, mock interview, analytics (F15, F17, F18, F19)*
+fontsize=16
+These services share ContextBuilder, FabricationGuard, LlmClient and MemoryManager with the rest of the system, and are triggered by the domain event bus.
+style=wordwrap</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>114</x>
+      <y>76</y>
+      <w>863</w>
+      <h>118</h>
+    </coordinates>
+    <panel_attributes>notifications
+--
+layer=-10</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>18</x>
+      <y>250</y>
+      <w>2428</w>
+      <h>150</h>
+    </coordinates>
+    <panel_attributes>interviews
+--
+layer=-10</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>178</x>
+      <y>424</y>
+      <w>2209</w>
+      <h>134</h>
+    </coordinates>
+    <panel_attributes>analytics
+--
+layer=-10</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>126</x>
+      <y>110</y>
+      <w>297</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*NotificationService*
+--
++ list(User user): List&lt;Notification&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>796</x>
+      <y>110</y>
+      <w>170</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*ReminderService*
+--
+ </panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>30</x>
+      <y>284</y>
+      <w>490</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*InterviewPrepService*
+--
++ preparePlan(User user, UUID applicationId): InterviewPrepPlan</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>610</x>
+      <y>284</y>
+      <w>542</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>*MockInterviewService*
+--
++ startSession(User user, UUID applicationId): MockInterviewSession
++ submitAnswer(User user, UUID sessionId, String answer): AnswerResult
++ finishSession(User user, UUID sessionId): MockInterviewSession</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>190</x>
+      <y>458</y>
+      <w>170</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*AnalyticsService*
+--
+ </panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>725</x>
+      <y>458</y>
+      <w>312</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*OutcomeAnalyzer*
+--
++ computeStats(User user): OutcomeStats</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1465</x>
+      <y>458</y>
+      <w>170</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*StrategyAdvisor*
+--
+ </panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1465</x>
+      <y>284</y>
+      <w>170</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>*InterviewPrepPlan*
+&lt;&lt;entity&gt;&gt;
+--
+ </panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2144</x>
+      <y>284</y>
+      <w>290</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>*MockInterviewSession*
+&lt;&lt;entity&gt;&gt;
+--
++ pendingTurn(): Map&lt;String, Object&gt;
++ answeredCount(): long</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2203</x>
+      <y>458</y>
+      <w>172</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>*StrategyAdjustment*
+&lt;&lt;entity&gt;&gt;
+--
+ </panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1364</x>
+      <y>110</y>
+      <w>371</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*FabricationGuard*
+--
++ check(List&lt;Claim&gt; claims): VerificationReport</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1985</x>
+      <y>110</y>
+      <w>608</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>*LlmClient*
+--
++ generateStructured(User user, String promptKey, Map&lt;String, ?&gt; ..): LlmResult
++ generateStructured(User user, String promptKey, Map&lt;String, ?&gt; ..): LlmResult
++ generateStructured(User user, String promptKey, Map&lt;String, ?&gt; ..): LlmResult</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1242</x>
+      <y>616</y>
+      <w>616</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>*MemoryManager*
+--
++ remember(User user, AgentMemoryEntry.Kind kind, Strin..): AgentMemoryEntry
++ remember(User user, AgentMemoryEntry.Kind kind, Strin..): AgentMemoryEntry
++ recall(User user, String query, List&lt;AgentMemoryEnt..): List&lt;AgentMemoryEntry&gt;
++ recall(User user, String query, int limit): List&lt;AgentMemoryEntry&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1948</x>
+      <y>616</y>
+      <w>682</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>*ContextBuilder*
+--
++ buildCandidateContext(User user, boolean requireGoal, boolean requ..): CandidateContext
++ buildCandidateContext(User user): CandidateContext</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>520</x>
+      <y>185</y>
+      <w>1465</w>
+      <h>114</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;115;1465;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>488</x>
+      <y>356</y>
+      <w>1540</w>
+      <h>260</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;1540;260</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>403</x>
+      <y>356</y>
+      <w>931</w>
+      <h>260</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;931;260</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1152</x>
+      <y>199</y>
+      <w>833</w>
+      <h>102</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;103;833;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>983</x>
+      <y>388</y>
+      <w>448</w>
+      <h>228</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;449;228</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>360</x>
+      <y>494</y>
+      <w>365</w>
+      <h>1</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;365;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>360</x>
+      <y>494</y>
+      <w>1105</w>
+      <h>1</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;1105;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>360</x>
+      <y>506</y>
+      <w>882</w>
+      <h>125</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;882;126</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1630</x>
+      <y>214</y>
+      <w>543</w>
+      <h>244</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;244;543;0</additional_attributes>
+  </element>
+</diagram>

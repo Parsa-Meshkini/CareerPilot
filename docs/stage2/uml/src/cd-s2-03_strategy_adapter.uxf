@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <help_text>fontsize=12
+</help_text>
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>20</x>
+      <y>10</y>
+      <w>3782</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>*CD-S2-3 Strategy and Adapter (F03, F04, F05, F08, F14)*
+fontsize=16
+Match scoring and email classification are interchangeable strategies; job sources, mail providers and LLM vendors sit behind adapter interfaces.
+style=wordwrap</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>18</x>
+      <y>76</y>
+      <w>1829</w>
+      <h>514</h>
+    </coordinates>
+    <panel_attributes>scoring strategies (jobs)
+--
+layer=-10</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>1965</x>
+      <y>282</y>
+      <w>1747</w>
+      <h>324</h>
+    </coordinates>
+    <panel_attributes>classification strategies (integrations)
+--
+layer=-10</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>22</x>
+      <y>630</y>
+      <w>3742</w>
+      <h>324</h>
+    </coordinates>
+    <panel_attributes>adapters
+--
+layer=-10</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>647</x>
+      <y>110</y>
+      <w>571</w>
+      <h>136</h>
+    </coordinates>
+    <panel_attributes>*MatchingService*
+&lt;&lt;Context&gt;&gt;
+--
++ selectStrategy(CareerGoal goal, boolean deep): MatchScoringStrategy
++ matchJob(User user, UUID jobId, boolean deep, TokenBu..): JobMatch
++ matchJob(User user, UUID jobId, boolean deep): JobMatch
++ rankJobs(User user, List&lt;UUID&gt; jobIds, Set&lt;UUID&gt; deep..): List&lt;JobMatch&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>30</x>
+      <y>316</y>
+      <w>527</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;abstract&gt;&gt;
+/MatchScoringStrategy/
+&lt;&lt;Strategy&gt;&gt;
+--
++ key(): String
++ score(CandidateContext ctx, JobPosting job, Analys..): MatchResult</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>30</x>
+      <y>506</y>
+      <w>527</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*CoopInternshipStrategy*
+--
++ score(CandidateContext ctx, JobPosting job, Analys..): MatchResult</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>669</x>
+      <y>506</y>
+      <w>527</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*EntryLevelStrategy*
+--
++ score(CandidateContext ctx, JobPosting job, Analys..): MatchResult</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1308</x>
+      <y>506</y>
+      <w>527</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*CareerSwitchStrategy*
+--
++ score(CandidateContext ctx, JobPosting job, Analys..): MatchResult</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1977</x>
+      <y>316</y>
+      <w>445</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+*EmailClassificationStrategy*
+&lt;&lt;Strategy&gt;&gt;
+--
++ classify(EmailMessage email, User user): Classification</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1977</x>
+      <y>506</y>
+      <w>445</w>
+      <h>88</h>
+    </coordinates>
+    <panel_attributes>*RuleBasedClassifier*
+--
++ classify(EmailMessage email, User user): Classification
++ extractSchedule(String text, int defaultYear): String</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2616</x>
+      <y>506</y>
+      <w>445</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*LlmEmailClassifier*
+--
++ classify(EmailMessage email, User user): Classification</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>3255</x>
+      <y>506</y>
+      <w>445</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*HybridClassifier*
+--
++ classify(EmailMessage email, User user): Classification</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>34</x>
+      <y>664</y>
+      <w>519</w>
+      <h>136</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+*JobSourceAdapter*
+&lt;&lt;Target&gt;&gt;
+--
++ sourceType(): SourceType
++ parse(Map&lt;String, Object&gt; payload, User user): List&lt;RawJobRecord&gt;
++ validate(RawJobRecord raw): default List&lt;String&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>34</x>
+      <y>870</y>
+      <w>519</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*ManualJobImportAdapter*
+--
++ parse(Map&lt;String, Object&gt; payload, User user): List&lt;RawJobRecord&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>673</x>
+      <y>870</y>
+      <w>519</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*YorkBrowserImportAdapter*
+--
++ parse(Map&lt;String, Object&gt; payload, User user): List&lt;RawJobRecord&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1312</x>
+      <y>870</y>
+      <w>519</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*MockJobSourceAdapter*
+--
++ parse(Map&lt;String, Object&gt; payload, User user): List&lt;RawJobRecord&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1925</x>
+      <y>664</y>
+      <w>549</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+*EmailProviderAdapter*
+&lt;&lt;Target&gt;&gt;
+--
++ providerName(): String
++ fetchNewMessages(EmailAccount account, Instant since): List&lt;RawEmail&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1925</x>
+      <y>870</y>
+      <w>549</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*GmailAdapter*
+--
++ fetchNewMessages(EmailAccount account, Instant since): List&lt;RawEmail&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2564</x>
+      <y>870</y>
+      <w>549</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*EmlFileAdapter*
+--
++ fetchNewMessages(EmailAccount account, Instant since): List&lt;RawEmail&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>3203</x>
+      <y>870</y>
+      <w>549</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*MockEmailAdapter*
+--
++ fetchNewMessages(EmailAccount account, Instant since): List&lt;RawEmail&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>293</x>
+      <y>436</y>
+      <w>1</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;0;70</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>524</x>
+      <y>436</y>
+      <w>269</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;269;70</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>557</x>
+      <y>410</y>
+      <w>751</w>
+      <h>97</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;751;98</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2199</x>
+      <y>420</y>
+      <w>1</w>
+      <h>86</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;0;86</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2390</x>
+      <y>420</y>
+      <w>315</w>
+      <h>86</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;316;86</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2422</x>
+      <y>398</y>
+      <w>833</w>
+      <h>113</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;833;113</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>293</x>
+      <y>800</y>
+      <w>1</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;0;70</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>543</x>
+      <y>800</y>
+      <w>257</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;257;70</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>553</x>
+      <y>767</y>
+      <w>759</w>
+      <h>103</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;759;103</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2199</x>
+      <y>784</y>
+      <w>1</w>
+      <h>86</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;0;86</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2410</x>
+      <y>784</y>
+      <w>301</w>
+      <h>86</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;302;86</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2474</x>
+      <y>763</y>
+      <w>750</w>
+      <h>106</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;751;107</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2422</x>
+      <y>543</y>
+      <w>833</w>
+      <h>5</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>833;0;0;5</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>3061</x>
+      <y>542</y>
+      <w>194</w>
+      <h>1</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>194;0;0;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>487</x>
+      <y>246</y>
+      <w>225</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>226;0;0;70</additional_attributes>
+  </element>
+</diagram>

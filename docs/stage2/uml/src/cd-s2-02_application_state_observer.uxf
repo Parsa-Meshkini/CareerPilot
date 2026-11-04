@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.1">
+  <help_text>fontsize=12
+</help_text>
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>Text</id>
+    <coordinates>
+      <x>20</x>
+      <y>10</y>
+      <w>2111</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>*CD-S2-2 Application lifecycle State and Observer event bus (F13, F15)*
+fontsize=16
+ApplicationState subclasses own the legal transitions. DomainEventBus delivers events to EventListener implementations without the publisher knowing them.
+style=wordwrap</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>18</x>
+      <y>76</y>
+      <w>1967</w>
+      <h>562</h>
+    </coordinates>
+    <panel_attributes>applications
+--
+layer=-10</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLPackage</id>
+    <coordinates>
+      <x>73</x>
+      <y>662</y>
+      <w>2019</w>
+      <h>292</h>
+    </coordinates>
+    <panel_attributes>events and listeners
+--
+layer=-10</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>735</x>
+      <y>110</y>
+      <w>349</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>*Application*
+&lt;&lt;Context&gt;&gt;
+--
++ state(): ApplicationState
++ allowedActions(): List&lt;String&gt;
++ perform(String action, Instant when): void</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>691</x>
+      <y>300</y>
+      <w>438</w>
+      <h>184</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;abstract&gt;&gt;
+/ApplicationState/
+&lt;&lt;State&gt;&gt;
+--
++ name(): String
++ terminal(): boolean
++ markPrepared(Application app): void
++ submit(Application app): void
++ scheduleInterview(Application app, Instant when): void
++ receiveOffer(Application app): void</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>230</x>
+      <y>554</y>
+      <w>170</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*SavedState*
+--
+ </panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>825</x>
+      <y>554</y>
+      <w>170</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*AppliedState*
+--
+ </panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1327</x>
+      <y>554</y>
+      <w>170</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*RejectedState*
+--
+ </panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1803</x>
+      <y>554</y>
+      <w>170</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*OfferState*
+--
+ </panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>30</x>
+      <y>110</y>
+      <w>571</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>*ApplicationService*
+--
++ transition(User user, UUID applicationId, String action..): StatusChange
++ transition(User user, UUID applicationId, String action): StatusChange
++ undoTransition(User user, UUID changeId): Application
++ addInterview(User user, UUID applicationId, Map&lt;String, O..): Interview</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>85</x>
+      <y>696</y>
+      <w>460</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>*DomainEventBus*
+&lt;&lt;Subject&gt;&gt;
+--
++ subscribe(Class&lt;E&gt; type, EventListener&lt;E&gt; listener): void
++ publish(DomainEvent event): List&lt;Exception&gt;</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>813</x>
+      <y>696</y>
+      <w>194</w>
+      <h>104</h>
+    </coordinates>
+    <panel_attributes>&lt;&lt;interface&gt;&gt;
+*EventListener*
+&lt;&lt;Observer&gt;&gt;
+--
++ handle(E event): void</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>107</x>
+      <y>870</y>
+      <w>416</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*ApplicationStatusUpdater*
+--
++ handle(Events.ApplicationEventDetected event): void</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>702</x>
+      <y>870</y>
+      <w>416</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*InterviewScheduler*
+--
++ handle(Events.ApplicationEventDetected event): void</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1219</x>
+      <y>870</y>
+      <w>386</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*MemoryRecorder*
+--
++ handle(Events.ApplicationStatusChanged e): void</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1695</x>
+      <y>870</y>
+      <w>386</w>
+      <h>72</h>
+    </coordinates>
+    <panel_attributes>*InterviewPrepTrigger*
+--
++ handle(Events.ApplicationStatusChanged e): void</panel_attributes>
+    <additional_attributes></additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>400</x>
+      <y>464</y>
+      <w>290</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=-1</panel_attributes>
+    <additional_attributes>290;0;0;97</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>910</x>
+      <y>484</y>
+      <w>1</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;0;70</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1129</x>
+      <y>478</y>
+      <w>198</w>
+      <h>78</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;198;78</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1129</x>
+      <y>436</y>
+      <w>674</w>
+      <h>136</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;674;136</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>450</x>
+      <y>773</y>
+      <w>362</w>
+      <h>96</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>362;0;0;96</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>910</x>
+      <y>800</y>
+      <w>1</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;0;70</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1007</x>
+      <y>778</y>
+      <w>290</w>
+      <h>91</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;291;91</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1007</x>
+      <y>763</y>
+      <w>688</w>
+      <h>111</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;.
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;688;111</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>315</x>
+      <y>230</y>
+      <w>1</w>
+      <h>466</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;0;466</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>315</x>
+      <y>230</y>
+      <w>1</w>
+      <h>640</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;640;0;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>315</x>
+      <y>800</y>
+      <w>1</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;70;0;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>363</x>
+      <y>230</y>
+      <w>516</w>
+      <h>640</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>517;640;0;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>511</x>
+      <y>800</y>
+      <w>263</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>263;70;0;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>545</x>
+      <y>781</y>
+      <w>673</w>
+      <h>97</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>674;97;0;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>545</x>
+      <y>771</y>
+      <w>1149</w>
+      <h>115</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>1150;115;0;0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>545</x>
+      <y>748</y>
+      <w>267</w>
+      <h>1</h>
+    </coordinates>
+    <panel_attributes>lt=-&gt;
+layer=-1</panel_attributes>
+    <additional_attributes>0;0;268;0</additional_attributes>
+  </element>
+</diagram>
