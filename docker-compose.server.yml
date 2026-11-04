@@ -1,0 +1,11 @@
+# Runs the REST server (Stage 2, Java) in Docker: docker compose -f docker-compose.server.yml up --build
+services:
+  server:
+    build: .
+    env_file: .env
+    environment:
+      SERVER_ADDRESS: 0.0.0.0
+    ports: ["8000:8000"]
+    volumes: [careerpilot-data:/data]
+volumes:
+  careerpilot-data:
