@@ -75,7 +75,7 @@ final class EmailView extends View {
 
     @Override
     java.util.List<javafx.scene.Node> actions() {
-        return java.util.List.of(all, Ui.button("Sync demo inbox", this::syncMock), Ui.primary("Upload .eml files", this::upload));
+        return java.util.List.of(all, Ui.button("Sync demo inbox", this::syncMock), Ui.button("Connect Gmail", this::connectGmail), Ui.primary("Upload .eml files", this::upload));
     }
 
     @Override String name() { return "Email"; }
@@ -137,6 +137,14 @@ final class EmailView extends View {
     private void syncMock() {
         Async.run(this, () -> {
             EmailAccount account = svc().connectMock(app.user());
+            return svc().syncAccount(app.user(), account.getId());
+        }, this::summary);
+    }
+
+    private void connectGmail() {
+        Async.run(this, () -> {
+            var connector = app.bean(com.careerpilot.integrations.GmailConnector.class);
+            EmailAccount account = connector.connect(app.user(), url -> javafx.application.Platform.runLater(() -> app.openLink(url)), 180);
             return svc().syncAccount(app.user(), account.getId());
         }, this::summary);
     }
