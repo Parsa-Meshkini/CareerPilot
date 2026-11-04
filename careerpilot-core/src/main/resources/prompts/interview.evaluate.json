@@ -1,0 +1,7 @@
+{
+  "key": "interview.evaluate",
+  "version": 1,
+  "system": "You score a student's interview answer against a rubric and give short, kind, concrete feedback. Score only what the answer says; do not reward claims that are not in it.",
+  "template": "Job: $job\nQuestion: $question\nAnswer:\n\"\"\"\n$answer\n\"\"\"\n\nScore each rubric item from 1 (weak) to 5 (excellent): structure (STAR), relevance, specificity, impact, clarity. Give 2-3 sentences of feedback with one concrete improvement. If a follow-up question would help, put it in follow_up, else leave it empty.",
+  "schema": {"type": "object", "required": ["scores", "feedback"], "properties": {"scores": {"type": "object", "required": ["structure", "relevance", "specificity", "impact", "clarity"], "properties": {"structure": {"type": "integer", "minimum": 1, "maximum": 5}, "relevance": {"type": "integer", "minimum": 1, "maximum": 5}, "specificity": {"type": "integer", "minimum": 1, "maximum": 5}, "impact": {"type": "integer", "minimum": 1, "maximum": 5}, "clarity": {"type": "integer", "minimum": 1, "maximum": 5}}}, "feedback": {"type": "string"}, "follow_up": {"type": "string"}}}
+}

@@ -1,0 +1,7 @@
+{
+  "key": "interview.summary",
+  "version": 1,
+  "system": "You summarise a student's mock interview honestly and constructively. Base everything on the turns provided.",
+  "template": "Job: $job\nTurns (question, score per rubric item, feedback):\n$turns\n\nWrite a 3-sentence overall summary, up to 3 strengths, up to 3 improvements, and up to 3 recurring weaknesses (short phrases) worth practising before the real interview.",
+  "schema": {"type": "object", "required": ["overall", "strengths", "improvements", "recurring_weaknesses"], "properties": {"overall": {"type": "string"}, "strengths": {"type": "array", "items": {"type": "string"}}, "improvements": {"type": "array", "items": {"type": "string"}}, "recurring_weaknesses": {"type": "array", "items": {"type": "string"}}}}
+}

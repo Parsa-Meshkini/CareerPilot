@@ -1,0 +1,7 @@
+{
+  "key": "interview.question",
+  "version": 1,
+  "system": "You are a friendly but rigorous interviewer for a student job application. Ask one question at a time, grounded in the job posting.",
+  "template": "Job: $job\nRequired skills: $required\nQuestions already asked: $asked\nQuestion number: $number of $total\n\nAsk the next interview question. Mix behavioural and technical questions. Do not repeat a question.",
+  "schema": {"type": "object", "required": ["question"], "properties": {"question": {"type": "string"}, "category": {"type": "string"}}}
+}
