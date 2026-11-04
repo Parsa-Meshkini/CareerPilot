@@ -62,7 +62,7 @@ mvn -q install -DskipTests        # builds core, server, CLI and GUI
 bin/careerpilot-gui               # or: mvn -q -pl careerpilot-gui javafx:run
 ```
 
-Create an account on the sign-in screen, then work through Profile, Jobs, Tracker, Agent and Email.
+Create an account on the sign-in screen, then work through Profile, Jobs, Tracker, Interview, Agent, Email and Insights.
 
 ### 4. CLI
 
@@ -78,6 +78,10 @@ bin/careerpilot agent run "Prepare my application for the Acme backend co-op"
 bin/careerpilot agent approve <run id>                               # you approve each side-effecting step
 bin/careerpilot docs package <application id> --out acme.zip
 bin/careerpilot email upload samples/emails/*.eml && bin/careerpilot email events
+bin/careerpilot notifications && bin/careerpilot notifications remind --days 7   # F15 feed and deadline reminders
+bin/careerpilot interview prepare <application id>                   # F17 questions and STAR stories
+bin/careerpilot interview mock <application id> --interactive        # F18 mock interview with scored feedback
+bin/careerpilot analytics                                            # F19 statistics and proposed strategy changes
 bin/careerpilot llm-check                                            # confirms the key and model respond
 ```
 
@@ -114,7 +118,7 @@ The GUI render test writes a screenshot of every page to `careerpilot-gui/target
 | Stage | Scope | Status |
 |---|---|---|
 | **Stage 1** | Design: features, UML, patterns, traceability | Complete |
-| Stage 2 | Implementation in Java: core services, JavaFX GUI, CLI, agent, REST server and extension | In progress (F01-F14, F16 working; F15, F17-F19 planned) |
+| Stage 2 | Implementation in Java: core services, JavaFX GUI, CLI, agent, REST server and extension | All 19 features implemented; report, UML update and demo videos in progress |
 | Stage 3 | Testing, deployment, demonstration | Planned (report §16) |
 
 ## Stage 1 deliverables
@@ -176,7 +180,7 @@ CareerPilot is a modular monolith in Java (Stage 2). One shared core is used by 
 
 ```
 pom.xml                  Maven parent (Spring Boot 3, Java 17)
-careerpilot-core/        domain, services, LLM subsystem, agent, integrations (+ the automated test suite)
+careerpilot-core/        domain, services, LLM subsystem, agent, integrations, notifications, interviews, analytics (+ the automated test suite)
 careerpilot-server/      REST API for the Chrome extension
 careerpilot-cli/         picocli command-line interface
 careerpilot-gui/         JavaFX desktop application
