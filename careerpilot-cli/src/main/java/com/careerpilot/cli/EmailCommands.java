@@ -29,7 +29,7 @@ public final class EmailCommands {
     static UUID eventId(User u, String text) { return Ids.resolve(text, sync().listEvents(u, null), DetectedEmailEvent::getId); }
 
     @Command(name = "email", description = "Detect interview, rejection and offer emails and review them (F14).",
-            subcommands = {Upload.class, SyncMock.class, Events.class, Confirm.class, Dismiss.class})
+            subcommands = {Upload.class, SyncMock.class, ConnectGmail.class, Events.class, Confirm.class, Dismiss.class})
     public static class Email implements Callable<Integer> {
         @Override public Integer call() { new picocli.CommandLine(this).usage(Out.out); return 0; }
     }
@@ -61,6 +61,20 @@ public final class EmailCommands {
         @Override public Integer call() {
             User u = CliRuntime.currentUser();
             EmailAccount account = sync().connectMock(u);
+            summary(sync().syncAccount(u, account.getId()));
+            return 0;
+        }
+    }
+
+    @Command(name = "connect-gmail", description = "Sign in to Gmail (read-only) in your browser and sync the mailbox.")
+    static class ConnectGmail implements Callable<Integer> {
+        @Option(names = "--timeout", description = "Seconds to wait for the sign-in.") int timeout = 180;
+
+        @Override public Integer call() {
+            User u = CliRuntime.currentUser();
+            EmailAccount account = CliRuntime.bean(com.careerpilot.integrations.GmailConnector.class).connect(u,
+                    url -> Out.line("Open this address in your browser and allow read-only access:%n%s", url), timeout);
+            Out.line("Connected %s.", account.getAddress());
             summary(sync().syncAccount(u, account.getId()));
             return 0;
         }
