@@ -140,7 +140,8 @@ class EmailTest extends IntegrationTest {
         assertEquals(3, sample.size());
         assertEquals("demo@example.com", sample.get(0).headers().get("To"));
         assertEquals("MOCK", registry.get("MOCK").providerName());
-        assertThrows(ValidationException.class, () -> registry.get("GMAIL"));
+        assertEquals("GMAIL", registry.get("GMAIL").providerName());
+        assertThrows(ValidationException.class, () -> registry.get("OUTLOOK"));
     }
 
     // ---- classification strategies ----

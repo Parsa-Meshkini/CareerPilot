@@ -47,6 +47,23 @@ public class AppProperties {
         private double autoApplyThreshold = 0.85;
         public double getAutoApplyThreshold() { return autoApplyThreshold; }
         public void setAutoApplyThreshold(double v) { this.autoApplyThreshold = v; }
+
+        /** Gmail OAuth (installed-app flow). Left blank, the GMAIL provider reports that it is not configured. */
+        private String googleClientId = "";
+        private String googleClientSecret = "";
+        private String googleAuthUrl = "https://accounts.google.com/o/oauth2/v2/auth";
+        private String googleTokenUrl = "https://oauth2.googleapis.com/token";
+        private String gmailApiBase = "https://gmail.googleapis.com/gmail/v1/users/me";
+        public String getGoogleClientId() { return googleClientId; }
+        public void setGoogleClientId(String v) { this.googleClientId = v; }
+        public String getGoogleClientSecret() { return googleClientSecret; }
+        public void setGoogleClientSecret(String v) { this.googleClientSecret = v; }
+        public String getGoogleAuthUrl() { return googleAuthUrl; }
+        public void setGoogleAuthUrl(String v) { this.googleAuthUrl = v; }
+        public String getGoogleTokenUrl() { return googleTokenUrl; }
+        public void setGoogleTokenUrl(String v) { this.googleTokenUrl = v; }
+        public String getGmailApiBase() { return gmailApiBase; }
+        public void setGmailApiBase(String v) { this.gmailApiBase = v; }
     }
 
     public static class Features {

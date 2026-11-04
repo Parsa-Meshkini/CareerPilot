@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-/** Simple factory: provider name to adapter. Gmail OAuth would register here; see integrations notes in the report. */
+/** Simple factory: provider name to adapter. GMAIL, EML and MOCK register here. */
 @Component
 public class EmailProviderRegistry {
     private final Map<String, EmailProviderAdapter> adapters = new TreeMap<>();

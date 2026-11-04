@@ -36,11 +36,12 @@ public class EmailSyncService {
     private final DetectedEventRepository events;
     private final ApplicationRepository applications;
     private final EmlFileAdapter emlAdapter;
+    private final CredentialVault vault;
     private final double threshold;
 
     public EmailSyncService(EmailProviderRegistry registry, EmailNormalizer normalizer, EmailEventDetector detector, ApplicationMatcher matcher,
                             DomainEventBus bus, EmailAccountRepository accounts, EmailMessageRepository messages, DetectedEventRepository events,
-                            ApplicationRepository applications, EmlFileAdapter emlAdapter, AppProperties props) {
+                            ApplicationRepository applications, EmlFileAdapter emlAdapter, CredentialVault vault, AppProperties props) {
         this.registry = registry;
         this.normalizer = normalizer;
         this.detector = detector;
@@ -51,6 +52,7 @@ public class EmailSyncService {
         this.events = events;
         this.applications = applications;
         this.emlAdapter = emlAdapter;
+        this.vault = vault;
         this.threshold = props.getEmail().getAutoApplyThreshold();
     }
 
@@ -62,6 +64,15 @@ public class EmailSyncService {
             a.setAddress(address);
             return accounts.save(a);
         });
+    }
+
+    /** Stores a freshly authorised Gmail mailbox: the account row, and its refresh token in the vault. */
+    public EmailAccount registerGmail(User user, String address, String refreshToken) {
+        EmailAccount account = accountFor(user, "GMAIL", address);
+        account.setStatus(EmailAccount.ACTIVE);
+        accounts.save(account);
+        vault.put(GmailAdapter.vaultKey(account), refreshToken);
+        return account;
     }
 
     public EmailAccount connectMock(User user) { return accountFor(user, "MOCK", "demo@careerpilot.local"); }
@@ -133,6 +144,7 @@ public class EmailSyncService {
         events.deleteByEmail_Account(account);
         messages.deleteByAccount(account);
         accounts.delete(account);
+        vault.delete(GmailAdapter.vaultKey(account));
     }
 
     // ---- pipeline ----
