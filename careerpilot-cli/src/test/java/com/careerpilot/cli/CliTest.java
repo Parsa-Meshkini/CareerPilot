@@ -122,6 +122,10 @@ class CliTest {
         assertEquals(0, run("apps", "undo", change));
         assertEquals(0, run("apps", "list", "--json"));
         assertTrue(out().contains("\"state\" : \"APPLIED\""));
+        // an application id undoes that application's latest change
+        assertEquals(0, run("apps", "act", appId, "reject"));
+        assertEquals(0, run("apps", "undo", appId));
+        assertTrue(out().contains("Restored state APPLIED"));
     }
 
     @Test

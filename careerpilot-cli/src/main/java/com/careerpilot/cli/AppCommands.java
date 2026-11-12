@@ -96,13 +96,22 @@ public final class AppCommands {
         }
     }
 
-    @Command(name = "undo", description = "Undo the most recent status change of an application.")
+    @Command(name = "undo", description = "Undo a status change. Give a change id (see 'apps show'), or an application id to undo its latest change.")
     static class Undo implements Callable<Integer> {
-        @Parameters(index = "0", description = "change id") String change;
+        @Parameters(index = "0", description = "change id, or application id for its latest change") String change;
 
         @Override public Integer call() {
             User u = CliRuntime.currentUser();
-            UUID id = Ids.resolve(change, apps().listApplications(u, null).stream().flatMap(a -> apps().timeline(u, a.getId()).stream()).toList(), StatusChange::getId);
+            var mine = apps().listApplications(u, null);
+            var byApp = mine.stream().filter(x -> x.getId().toString().startsWith(change.toLowerCase())).toList();
+            UUID id;
+            if (byApp.size() == 1) {
+                var timeline = apps().timeline(u, byApp.get(0).getId());
+                if (timeline.isEmpty()) throw new IllegalStateException("nothing to undo: this application has no status changes yet");
+                id = timeline.get(timeline.size() - 1).getId();
+            } else {
+                id = Ids.resolve(change, mine.stream().flatMap(a -> apps().timeline(u, a.getId()).stream()).toList(), StatusChange::getId);
+            }
             Application a = apps().undoTransition(u, id);
             Out.line("Restored state %s.", a.getStateName());
             return 0;

@@ -22,6 +22,7 @@ public final class CliRuntime {
         if (context == null) {
             // keep the terminal clean: log only errors unless the student asks for more with -Dlogging.level.com.careerpilot=INFO
             System.setProperty("logging.level.com.careerpilot", System.getProperty("logging.level.com.careerpilot", "ERROR"));
+            System.setProperty("logging.level.org.apache.pdfbox", "ERROR");  // first-run font cache notices are not for the student
             context = new SpringApplicationBuilder(CareerPilotCore.class).web(WebApplicationType.NONE).logStartupInfo(false)
                     .properties("spring.main.banner-mode=off", "logging.level.root=ERROR").run();
         }
