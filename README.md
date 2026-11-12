@@ -225,3 +225,7 @@ python tools/build_report.py --pdf
 | Name | Role |
 |---|---|
 | Parsa Meshkini | Full-stack |
+
+## License
+
+Released under the [MIT License](LICENSE).
