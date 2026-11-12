@@ -10,7 +10,7 @@ subtitle: "EECS 3311 Fall 2026, Course Project Stage 2"
 | **Course** | EECS 3311 Software Design, Fall 2026 |
 | **Repository** | <https://github.com/Parsa-Meshkini/CareerPilot> |
 | **Team** | Parsa Meshkini |
-| **Generated** | 2026-11-03 by tools/build_stage2_report.py |
+| **Generated** | 2026-11-11 by tools/build_stage2_report.py |
 
 # 1. Project overview and implementation status
 
@@ -44,7 +44,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `updateProfile`, `addFact`, `verifyFacts`, `rejectFacts`, `completenessHints` |
 | Design patterns | Repository (Spring Data) |
 | Where to use it | GUI Profile page; CLI `profile show/set/fact-*` |
-| Video link/timestamp | see Demonstration index (Section 7), row F01 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** The view calls CandidateService, which validates the fact JSON with FactValidator against its FactType, stores it as an unverified ProfileFact, and only facts the student verifies are returned to the AI context. Stage 1 had one subclass per fact kind; one entity plus an enum with validated JSON replaced them.
 
@@ -60,7 +60,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `importResume`, `parseResume`, `extractText`, `extractFacts`, `generateStructured` |
 | Design patterns | Facade (LlmClient); Adapter (LlmProvider) |
 | Where to use it | GUI Profile > Import resume; CLI `profile resume FILE` |
-| Video link/timestamp | see Demonstration index (Section 7), row F02 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** importResume stores the file through StorageService and queues parseResume on TaskQueue. ResumeParser extracts text (PDFBox, POI or plain) and asks LlmClient for facts, which are saved unverified for the student to review.
 
@@ -76,7 +76,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `updateCareerGoal`, `selectStrategy` |
 | Design patterns | Strategy |
 | Where to use it | GUI Profile > Goal; CLI `profile goal-set/goal-show` |
-| Video link/timestamp | see Demonstration index (Section 7), row F03 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** The goal type chosen by the student selects which MatchScoringStrategy MatchingService uses and seeds the StrategyWeights that F19 later adjusts.
 
@@ -92,7 +92,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `createBatch`, `processBatch`, `parse` |
 | Design patterns | Adapter; Observer (JobsImported) |
 | Where to use it | Chrome extension (extension/content, popup, api); REST `/api/import`; CLI `jobs import-york` |
-| Video link/timestamp | see Demonstration index (Section 7), row F04 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** The content script reads the postings on the page, the service worker posts them to ApiController with the student's token, JobImportService creates an ImportBatch and processes it in the background through the York adapter, then publishes JobsImported which triggers F09.
 
@@ -108,7 +108,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `importManual`, `importRecord`, `parse`, `structure_paste` |
 | Design patterns | Adapter; Facade |
 | Where to use it | GUI Jobs > Import; CLI `jobs import-paste/import-file` |
-| Video link/timestamp | see Demonstration index (Section 7), row F05 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** Pasted text goes to LlmClient (job.structure_paste prompt) to extract title, company and description; CSV or JSON files are read by the adapters directly. Both end in JobImportService.importRecord.
 
@@ -124,7 +124,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `normalize`, `findDuplicate` |
 | Design patterns | Repository |
 | Where to use it | Runs inside every import |
-| Video link/timestamp | see Demonstration index (Section 7), row F06 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** importRecord calls JobNormalizer.normalize (clean text, deadline, work model, fingerprint) then DuplicateDetector.findDuplicate; a duplicate is merged and counted in the batch instead of saved again.
 
@@ -140,7 +140,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `analyzeJob`, `generateStructured`, `validate`, `fallbackKeywordAnalysis` |
 | Design patterns | Facade; Adapter |
 | Where to use it | GUI Jobs detail; CLI `jobs analyze` |
-| Video link/timestamp | see Demonstration index (Section 7), row F07 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** analyzeJob sends the posting through LlmClient, which loads the versioned prompt, checks the token budget, calls the provider, validates the JSON against the schema, retries transient and schema failures with backoff, and records usage. If the model is down a keyword analysis is used and the result is marked as such.
 
@@ -156,7 +156,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `matchJob`, `selectStrategy`, `score`, `rankJobs`, `buildCandidateContext` |
 | Design patterns | Strategy |
 | Where to use it | GUI Jobs (bearing ring, detail); CLI `jobs match/score/show` |
-| Video link/timestamp | see Demonstration index (Section 7), row F08 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** ContextBuilder gathers verified facts and the goal; MatchingService picks the strategy for the goal type and scores deterministically (quick or deep with the analysis); the AI only writes the explanation and transferable-skill hints, never the score.
 
@@ -172,7 +172,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `handle`, `startTriage`, `runGoal`, `createPlan`, `execute`, `evaluate`, `remember` |
 | Design patterns | Command; Observer; Facade |
 | Where to use it | Automatic after an import; GUI Agent page; CLI `agent runs/show` |
-| Video link/timestamp | see Demonstration index (Section 7), row F09 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** TriageTrigger listens for JobsImported and starts a run through AgentController. The plan (hand-written playbook, or the LLM's plan when valid) is executed one AgentCommand at a time by ToolManager; after each step Reasoner decides to continue, replan or stop, and every action is recorded in AgentActionRecord.
 
@@ -188,7 +188,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `generate`, `check`, `renderDocx`, `renderPdf`, `regenerateFromEdit` |
 | Design patterns | Template Method; Facade |
 | Where to use it | GUI Tracker > Documents; CLI `docs resume` |
-| Video link/timestamp | see Demonstration index (Section 7), row F10 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** DocumentService calls the generator's final generate(): build context, ask the LLM, run FabricationGuard.check on every claim against verified facts, remove violating claims, then render. Subclasses only supply the prompt variables, claim extraction and block layout.
 
@@ -204,7 +204,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `generate`, `check` |
 | Design patterns | Template Method; Facade |
 | Where to use it | GUI Tracker > Documents; CLI `docs cover-letter` |
-| Video link/timestamp | see Demonstration index (Section 7), row F11 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** Same template as F10 with a different prompt, claim extractor and layout.
 
@@ -220,7 +220,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `buildPackage`, `download` |
 | Design patterns | Command; Template Method (uses) |
 | Where to use it | GUI Tracker > Build package; CLI `docs package/download` |
-| Video link/timestamp | see Demonstration index (Section 7), row F12 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** PackageAssembler generates any missing documents, adds the job description and a checklist, zips them through StorageService and records an ApplicationPackage; the agent reaches it through BuildPackageCommand.
 
@@ -236,7 +236,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `createApplication`, `transition`, `undoTransition` |
 | Design patterns | State; Observer |
 | Where to use it | GUI Tracker board; CLI `apps create/act/undo` |
-| Video link/timestamp | see Demonstration index (Section 7), row F13 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** transition asks the current ApplicationState object whether the action is legal and for the next state, saves a StatusChange (which makes undo possible), and publishes ApplicationStatusChanged.
 
@@ -252,7 +252,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `syncAccount`, `importEmlFiles`, `detect`, `classify`, `match`, `confirmEvent`, `fetchNewMessages`, `connect` |
 | Design patterns | Adapter; Strategy |
 | Where to use it | GUI Email page; CLI `email upload/sync-mock/connect-gmail/events/confirm` |
-| Video link/timestamp | see Demonstration index (Section 7), row F14 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** A provider adapter returns RawEmails; EmailNormalizer cleans them; EmailEventDetector runs the HybridClassifier (rules first, LLM when rules are unsure); ApplicationMatcher links the email to an application; a confident match is published as an event and the rest wait for the student to confirm.
 
@@ -268,7 +268,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `publish`, `subscribe`, `checkDeadlines`, `add`, `markAllRead` |
 | Design patterns | Observer; State; Command (undo) |
 | Where to use it | GUI Dashboard feed; CLI `notifications`, `remind` |
-| Video link/timestamp | see Demonstration index (Section 7), row F15 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** Detected email events are published on DomainEventBus; ApplicationStatusUpdater moves the application, InterviewScheduler records the interview, MemoryRecorder saves what happened for the agent, and NotificationService stores a de-duplicated notification. ReminderService raises deadline notifications.
 
@@ -284,7 +284,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `runGoal`, `resumeRun`, `createPlan`, `requiresApproval`, `execute`, `undo`, `recall` |
 | Design patterns | Command; Facade |
 | Where to use it | GUI Agent page; CLI `agent run/approve/reject/undo/memory` |
-| Video link/timestamp | see Demonstration index (Section 7), row F16 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** A goal in plain words becomes a typed run; steps with side effects stop at ApprovalPolicy until the student approves, rejects (the agent replans and remembers the preference) or undoes; MemoryManager recalls preferences into later plans.
 
@@ -300,7 +300,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `preparePlan`, `latest`, `check` |
 | Design patterns | Facade; Observer (auto-trigger) |
 | Where to use it | GUI Interview page; CLI `interview prepare/show`; agent tool prepare_interview |
-| Video link/timestamp | see Demonstration index (Section 7), row F17 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** InterviewPrepTrigger reacts to an interview status change; InterviewPrepService builds the context, asks the LLM for questions and STAR stories, and FabricationGuard rejects stories that use facts the student has not verified; a deterministic plan is used when the model fails.
 
@@ -316,7 +316,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `startSession`, `submitAnswer`, `finishSession`, `abandon` |
 | Design patterns | Facade |
 | Where to use it | GUI Interview page; CLI `interview mock/answer/finish` |
-| Video link/timestamp | see Demonstration index (Section 7), row F18 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** startSession asks for a first question; each submitAnswer is scored against a rubric by the LLM and the next question depends on the weak areas so far; finishSession writes a summary and stores feedback in agent memory. Sessions can be resumed.
 
@@ -332,7 +332,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `getInsights`, `computeStats`, `proposeAdjustments`, `accept`, `reject`, `revert` |
 | Design patterns | Strategy; Observer (MemoryRecorder feeds data) |
 | Where to use it | GUI Insights page; CLI `analytics` |
-| Video link/timestamp | see Demonstration index (Section 7), row F19 |
+| Video link/timestamp | Video: TO BE RECORDED, timestamp pending |
 
 **How the classes collaborate.** OutcomeAnalyzer computes response and interview rates by score band, source and role; StrategyAdvisor proposes bounded weight changes only with enough evidence; the LLM writes the explanation; nothing changes until the student accepts, and accepted changes can be reverted.
 
@@ -426,10 +426,12 @@ No pattern from Stage 1 was dropped or replaced, so no pattern needed a replacem
 
 | Tool or platform | Model | Used for | Tokens and cost |
 |---|---|---|---|
-| Claude Code (CLI) | Claude Sonnet 5.5 and earlier Claude models | Implementation of core services, CLI, GUI, tests, UMLet generation, this report | TO FILL IN from the Anthropic console usage page |
-| Gemini API and OpenAI API (runtime, not development) | Gemini default model; OpenAI-compatible model for the Nov 3 live run | The product's own LLM calls during end-to-end checks | TO FILL IN from Google AI Studio; per-call usage is stored in the `LlmUsageRecord` table and shown by `careerpilot llm-check` |
+| Claude Code (CLI) | Claude Sonnet 5.5 | Implementation of core services, CLI, GUI, tests, UMLet generation, this report, final audit | 113.7M tokens in 442 calls (0.9K uncached input, 0.75M output, 2.30M cache writes, 110.7M cache reads); about USD 24.29 |
+| Claude Code (CLI) | Claude Opus 5.5 | Design and harder implementation work in earlier sessions | 34.3M tokens in 171 calls (0.4K uncached input, 0.31M output, 1.41M cache writes, 32.6M cache reads); about USD 19.70 |
+| Gemini API (runtime, not development) | Gemini default model | The product's own LLM calls during early end-to-end checks | 12 calls logged with 0 tokens (the free-tier quota ran out and the model answered HTTP 503); no charge |
+| OpenAI-compatible API (runtime, not development) | gpt-6-luna | The product's own LLM calls during the Nov 3 to Nov 6 live end-to-end checks | 14 calls, 21,558 input and 9,231 output tokens (30,789 total); cost not computed because no price list for this model was available, see the billing page of that account |
 
-Token and money totals depend on the billing pages of those accounts, so they are left for the author to copy in; they were not estimated here.
+**How the numbers were obtained.** The Claude Code rows are summed from the local Claude Code session transcripts for this project (every distinct API response, duplicates removed) and priced at the list rates in the local cost tracker: Sonnet 5.5 USD 2 / 10 / 2.50 / 0.10 and Opus 5.5 USD 4 / 20 / 5 / 0.20 per million input / output / cache-write / cache-read tokens. Total development cost is about USD 43.99 (147.9M tokens). These are estimates from list prices, not invoice figures, and they cover only the transcripts still stored on the author's machine. The runtime rows are read from the `LlmUsageRecord` table of the application's own database (`careerpilot llm-check` shows the same records).
 
 **Representative interactions.**
 
@@ -511,7 +513,7 @@ Only commits that change code, tests or build files count as code commits; docum
 | [d239791](https://github.com/Parsa-Meshkini/CareerPilot/commit/d23979148b14910930e6f3da73991ffdde17e5fe) | 2026-10-31 | Agent: approval card opens by itself, run status and plan; Settings: appearance control, switch, grouped cards; Insights: bar charts with written values, pipeline view, empty state | yes |
 | [7115b3a](https://github.com/Parsa-Meshkini/CareerPilot/commit/7115b3a76317f7a54bf70f1b586c02c1b0cf52ca) | 2026-10-31 | Final pass: Email and Agent columns, remove legacy styles, after screenshots, CHANGES write-up | yes |
 
-### Period 3 (Nov 3-9): 14 code commits (18 commits in total)
+### Period 3 (Nov 3-9): 14 code commits (19 commits in total)
 
 | Commit | Date | Message | Changes code |
 |---|---|---|---|
@@ -533,6 +535,7 @@ Only commits that change code, tests or build files count as code commits; docum
 | [e07041e](https://github.com/Parsa-Meshkini/CareerPilot/commit/e07041ee66db604d0fd594d6663126c31f1140b8) | 2026-11-03 | Stage 2 report: refresh commit tables | no (docs/assets) |
 | [9cdf40c](https://github.com/Parsa-Meshkini/CareerPilot/commit/9cdf40cadd003ed51c6a69686a4a7124d06d587c) | 2026-11-03 | CI: quote the build step name; the unquoted colon made the workflow file invalid so no job ever started | yes |
 | [53e8abb](https://github.com/Parsa-Meshkini/CareerPilot/commit/53e8abba8497f352badb85a7e94fd9908d01f8f0) | 2026-11-03 | LLM: send max_completion_tokens and no temperature to the official OpenAI endpoint, whose current models reject max_tokens (found with a live key) | yes |
+| [fa75259](https://github.com/Parsa-Meshkini/CareerPilot/commit/fa7525928391f9a30bb72236292438e10fed311c) | 2026-11-03 | Stage 2 report: record the live end-to-end verification, the OpenAI parameter defect and current test counts | no (docs/assets) |
 
 
 ## 6.2 Checks performed
@@ -559,7 +562,7 @@ See Section 1. The unit tests use the mock LLM, so wording quality of live answe
 
 # 7. Demonstration index
 
-Each feature needs a labelled video segment showing the input, the running application, the output, where AI is involved and one error case. The videos are recorded by the author from the script in `docs/stage2/demo-script.md`; the links and timestamps below are filled in after recording.
+Each feature needs a labelled video segment showing the input, the running application, the output, where AI is involved and one error case. The videos are recorded by the author from the script in `docs/stage2/demo-script.md`; the links and timestamps below come from `docs/stage2/video-links.json`.
 
 | Feature | How it is invoked | Video |
 |---|---|---|
