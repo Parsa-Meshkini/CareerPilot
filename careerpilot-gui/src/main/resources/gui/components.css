@@ -257,13 +257,13 @@
 
 /* ---------- charts (Insights) ---------- */
 .bar-track { -fx-background-color: -cp-bg-hover; -fx-background-radius: 4; -fx-min-height: 10; -fx-pref-height: 10; -fx-max-height: 10; }
-.bar-fill { -fx-background-color: -cp-accent; -fx-background-radius: 4; }
-.bar-fill.second { -fx-background-color: -cp-border-control; }
+.bar-fill { -fx-background-color: linear-gradient(to right, -cp-signal-500, -cp-violet-500); -fx-background-radius: 4; }
+.bar-fill.second { -fx-background-color: linear-gradient(to right, -cp-teal-600, -cp-green-400); }
 .funnel-step { -fx-background-color: -cp-accent-subtle; -fx-background-radius: 6; }
 .funnel-step.last { -fx-background-color: -cp-success-bg; }
 .legend-swatch { -fx-background-radius: 3; -fx-min-width: 10; -fx-min-height: 10; -fx-pref-width: 10; -fx-pref-height: 10; }
-.legend-swatch.primary { -fx-background-color: -cp-accent; }
-.legend-swatch.secondary { -fx-background-color: -cp-border-control; }
+.legend-swatch.primary { -fx-background-color: -cp-signal-500; }
+.legend-swatch.secondary { -fx-background-color: -cp-teal-600; }
 
 /* ---------- toast, dialogs, tooltips ---------- */
 .toast { -fx-background-color: -cp-toast-bg; -fx-background-radius: 10; -fx-padding: 10 12 10 16; -fx-effect: dropshadow(gaussian, -cp-shadow-2, 18, 0.05, 0, 6); -fx-graphic-text-gap: 10; }
@@ -282,7 +282,7 @@
 .kbd { -fx-background-color: -cp-bg-hover; -fx-background-radius: 4; -fx-padding: 1 6; -fx-font-size: 12px; -fx-text-fill: -cp-fg-secondary; -fx-font-family: "SF Mono", "Menlo", "Consolas", "Monospaced"; }
 
 /* ---------- sign-in ---------- */
-.login-hero { -fx-background-color: -cp-bg-brand; }
+.login-hero { -fx-background-color: linear-gradient(to bottom right, -cp-signal-950, -cp-signal-900 55%, -cp-violet-700); }
 .login-hero .brand-word, .login-hero .hero-title { -fx-text-fill: -cp-fg-on-brand; }
 .login-hero .hero-title { -fx-font-size: 28px; -fx-font-weight: bold; }
 .login-hero .hero-body { -fx-text-fill: -cp-fg-on-brand-soft; -fx-font-size: 15px; }
@@ -301,3 +301,34 @@
 .titled-pane > .title { -fx-background-color: transparent; -fx-padding: 8 12; }
 .titled-pane > .title > .text { -fx-font-size: 13px; -fx-font-weight: bold; -fx-fill: -cp-fg-primary; }
 .titled-pane > .content { -fx-background-color: transparent; -fx-border-color: transparent; }
+
+/* ---------- colour and depth: hero banner, tinted tile badges, lane accents ---------- */
+.hero-banner {
+    -fx-background-color: linear-gradient(to bottom right, -cp-hero-from, -cp-hero-to);
+    -fx-background-radius: 16; -fx-padding: 22 26;
+    -fx-effect: dropshadow(gaussian, -cp-shadow-2, 18, 0.0, 0, 6);
+}
+.hero-eyebrow { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: rgba(255,255,255,0.82); }
+.hero-headline { -fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -cp-white; }
+.hero-line { -fx-font-size: 14px; -fx-text-fill: rgba(255,255,255,0.92); }
+.hero-banner .icon { -fx-fill: -cp-white; }
+.hero-glyph { -fx-background-color: rgba(255,255,255,0.18); -fx-background-radius: 14; -fx-min-width: 64; -fx-min-height: 64; -fx-pref-width: 64; -fx-pref-height: 64; -fx-max-width: 64; -fx-max-height: 64; }
+.button.hero-primary { -cp-btn-bg: -cp-white; -cp-btn-border: -cp-white; -cp-btn-bg-hover: -cp-signal-50; -cp-btn-fg: -cp-signal-700; -fx-font-weight: bold; }
+.button.hero-primary .icon { -fx-fill: -cp-signal-700; }
+.button.hero-ghost { -cp-btn-bg: rgba(10,14,30,0.35); -cp-btn-border: rgba(255,255,255,0.7); -cp-btn-bg-hover: rgba(10,14,30,0.5); -cp-btn-fg: -cp-white; -fx-font-weight: bold; }
+
+.tile-badge { -fx-background-radius: 10; -fx-min-width: 32; -fx-min-height: 32; -fx-pref-width: 32; -fx-pref-height: 32; -fx-max-width: 32; -fx-max-height: 32; }
+.tile-badge.tone-blue   { -fx-background-color: -cp-tone-blue-bg; }   .tile-badge.tone-blue .icon   { -fx-fill: -cp-tone-blue-fg; }
+.tile-badge.tone-violet { -fx-background-color: -cp-tone-violet-bg; } .tile-badge.tone-violet .icon { -fx-fill: -cp-tone-violet-fg; }
+.tile-badge.tone-teal   { -fx-background-color: -cp-tone-teal-bg; }   .tile-badge.tone-teal .icon   { -fx-fill: -cp-tone-teal-fg; }
+.tile-badge.tone-green  { -fx-background-color: -cp-tone-green-bg; }  .tile-badge.tone-green .icon  { -fx-fill: -cp-tone-green-fg; }
+.tile-badge.tone-amber  { -fx-background-color: -cp-tone-amber-bg; }  .tile-badge.tone-amber .icon  { -fx-fill: -cp-tone-amber-fg; }
+.tile-badge.tone-red    { -fx-background-color: -cp-tone-red-bg; }    .tile-badge.tone-red .icon    { -fx-fill: -cp-tone-red-fg; }
+.button.stat-tile { -fx-effect: dropshadow(gaussian, -cp-shadow-1, 8, 0.0, 0, 2); }
+.button.stat-tile:hover { -fx-effect: dropshadow(gaussian, -cp-shadow-2, 12, 0.0, 0, 4); }
+
+.lane-accent { -fx-min-height: 4; -fx-pref-height: 4; -fx-max-height: 4; -fx-background-radius: 2; }
+.lane-accent.tone-blue { -fx-background-color: -cp-tone-blue; }     .lane-accent.tone-violet { -fx-background-color: -cp-tone-violet; }
+.lane-accent.tone-teal { -fx-background-color: -cp-tone-teal; }     .lane-accent.tone-green { -fx-background-color: -cp-tone-green; }
+.lane-accent.tone-amber { -fx-background-color: -cp-tone-amber; }   .lane-accent.tone-red { -fx-background-color: -cp-tone-red; }
+.lane-accent.tone-neutral { -fx-background-color: -cp-border-control; }

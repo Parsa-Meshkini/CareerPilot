@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
@@ -177,7 +178,10 @@ final class TrackerView extends View {
             }
             apps.forEach(a -> cards.getChildren().add(card(a)));
             ScrollPane sp = Ui.scroll(cards);
-            VBox lanePane = new VBox(8, head, sp);
+            Region accent = new Region();
+            accent.getStyleClass().addAll("lane-accent", "tone-" + switch (lane) {
+                case "SAVED" -> "neutral"; case "PREPARED" -> "blue"; case "APPLIED" -> "violet"; case "INTERVIEW" -> "teal"; case "OFFER" -> "green"; default -> "red"; });
+            VBox lanePane = new VBox(8, accent, head, sp);
             lanePane.getStyleClass().add("lane");
             lanePane.setPrefWidth(150);
             lanePane.setMinWidth(140);

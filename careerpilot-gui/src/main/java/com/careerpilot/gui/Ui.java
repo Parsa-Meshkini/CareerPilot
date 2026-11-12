@@ -123,18 +123,66 @@ final class Ui {
 
     /** A clickable summary tile (a real button, so it is reachable by keyboard). */
     static Button statTile(String number, String caption, String context, Runnable action) {
+        return statTile(number, caption, context, null, "blue", action);
+    }
+
+    /** Stat tile with a tinted icon badge. tone: blue, violet, teal, green, amber or red. */
+    static Button statTile(String number, String caption, String context, String icon, String tone, Runnable action) {
         Label n = new Label(number);
         n.getStyleClass().add("stat-number");
         Label c = new Label(caption);
         c.getStyleClass().add("stat-caption");
         Label x = new Label(context);
         x.getStyleClass().add("stat-context");
-        VBox box = new VBox(2, n, c, x);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox top = new HBox(8, n, spacer);
+        top.setAlignment(Pos.CENTER_LEFT);
+        if (icon != null) top.getChildren().add(badge(icon, tone));
+        VBox box = new VBox(2, top, c, x);
         Button b = new Button("", box);
         b.setContentDisplay(javafx.scene.control.ContentDisplay.GRAPHIC_ONLY);
         b.getStyleClass().add("stat-tile");
         b.setMaxWidth(Double.MAX_VALUE);
         b.setAccessibleText(number + " " + caption + ". " + context);
+        b.setOnAction(e -> action.run());
+        return b;
+    }
+
+    /** A rounded square with an icon in a soft tint of one hue. Decorative; the text beside it carries the meaning. */
+    static StackPane badge(String icon, String tone) {
+        StackPane p = new StackPane(Icons.box(icon, 16));
+        p.getStyleClass().addAll("tile-badge", "tone-" + tone);
+        p.setFocusTraversable(false);
+        return p;
+    }
+
+    /** Gradient welcome banner: a small label, a headline, one sentence of status and up to two actions. */
+    static HBox hero(String eyebrow, String headline, String line, String glyph, Button... actions) {
+        Label e = new Label(eyebrow);
+        e.getStyleClass().add("hero-eyebrow");
+        Label h = new Label(headline);
+        h.getStyleClass().add("hero-headline");
+        Label l = new Label(line);
+        l.getStyleClass().add("hero-line");
+        l.setWrapText(true);
+        HBox buttons = new HBox(10);
+        buttons.getChildren().addAll(actions);
+        VBox text = new VBox(4, e, h, l);
+        if (actions.length > 0) { VBox.setMargin(buttons, new Insets(10, 0, 0, 0)); text.getChildren().add(buttons); }
+        HBox.setHgrow(text, Priority.ALWAYS);
+        StackPane g = new StackPane(Icons.box(glyph, 30));
+        g.getStyleClass().add("hero-glyph");
+        HBox box = new HBox(18, text, g);
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.getStyleClass().add("hero-banner");
+        return box;
+    }
+
+    /** Hero button: kind is "hero-primary" (white) or "hero-ghost" (translucent). */
+    static Button heroButton(String text, boolean primary, Runnable action) {
+        Button b = new Button(text);
+        b.getStyleClass().add(primary ? "hero-primary" : "hero-ghost");
         b.setOnAction(e -> action.run());
         return b;
     }

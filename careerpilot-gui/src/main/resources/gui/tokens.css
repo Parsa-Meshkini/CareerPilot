@@ -49,6 +49,9 @@
     -cp-green-50:  #E2F4E9;  -cp-green-300: #62D393;  -cp-green-400: #4CC58A;  -cp-green-600: #1F8A55;  -cp-green-700: #17653F;  -cp-green-950: #10291C;
     -cp-amber-50:  #FFF1CF;  -cp-amber-300: #F4BB50;  -cp-amber-400: #E6A93C;  -cp-amber-600: #B7791F;  -cp-amber-700: #855400;  -cp-amber-950: #33270C;
     -cp-red-50:    #FDE7E9;  -cp-red-300:   #FF8F99;  -cp-red-400:   #F0707D;  -cp-red-600:   #C23B4B;  -cp-red-700:   #B0202F;  -cp-red-950:   #3A141A;
+    /* secondary hues, used only for tinted icon badges, lane accents and the hero gradient */
+    -cp-violet-50:  #F0E9FF;  -cp-violet-300: #B79CFF;  -cp-violet-500: #7C4DF0;  -cp-violet-600: #6A3DDC;  -cp-violet-700: #5A2FC4;  -cp-violet-950: #231650;
+    -cp-teal-50:    #DDF5F3;  -cp-teal-300:   #5EDAD0;  -cp-teal-600:   #0F8A82;  -cp-teal-700:   #0B6B65;  -cp-teal-950:   #0B2B29;
     -cp-black: #000000;
     -cp-white: #FFFFFF;
 
@@ -89,6 +92,17 @@
 
     -cp-shadow-1: rgba(18, 24, 39, 0.07);
     -cp-shadow-2: rgba(18, 24, 39, 0.16);
+
+    /* tones: a soft fill and a strong glyph colour per hue (badges, lane accents) */
+    -cp-tone-blue-bg:   -cp-signal-50;  -cp-tone-blue-fg:   -cp-signal-700;  -cp-tone-blue:   -cp-signal-500;
+    -cp-tone-violet-bg: -cp-violet-50;  -cp-tone-violet-fg: -cp-violet-700;  -cp-tone-violet: -cp-violet-500;
+    -cp-tone-teal-bg:   -cp-teal-50;    -cp-tone-teal-fg:   -cp-teal-700;    -cp-tone-teal:   -cp-teal-600;
+    -cp-tone-green-bg:  -cp-green-50;   -cp-tone-green-fg:  -cp-green-700;   -cp-tone-green:  -cp-green-600;
+    -cp-tone-amber-bg:  -cp-amber-50;   -cp-tone-amber-fg:  -cp-amber-700;   -cp-tone-amber:  -cp-amber-400;
+    -cp-tone-red-bg:    -cp-red-50;     -cp-tone-red-fg:    -cp-red-700;     -cp-tone-red:    -cp-red-400;
+    /* hero banner: the same deep gradient in both appearances, white text (7.6:1 and 6.2:1 at its two ends) */
+    -cp-hero-from: -cp-signal-700;
+    -cp-hero-to:   -cp-violet-600;
 
     /* ---------- layer 3: map onto AtlantaFX Primer so built-in controls follow ---------- */
     -color-base-0: -cp-ink-25;   -color-base-1: -cp-ink-75;   -color-base-2: -cp-ink-200;  -color-base-3: -cp-ink-300;
@@ -157,6 +171,13 @@
 
     -cp-shadow-1: rgba(0, 0, 0, 0.35);
     -cp-shadow-2: rgba(0, 0, 0, 0.55);
+
+    -cp-tone-blue-bg:   -cp-signal-950;  -cp-tone-blue-fg:   -cp-signal-300;  -cp-tone-blue:   -cp-signal-500;
+    -cp-tone-violet-bg: -cp-violet-950;  -cp-tone-violet-fg: -cp-violet-300;  -cp-tone-violet: -cp-violet-500;
+    -cp-tone-teal-bg:   -cp-teal-950;    -cp-tone-teal-fg:   -cp-teal-300;    -cp-tone-teal:   -cp-teal-600;
+    -cp-tone-green-bg:  -cp-green-950;   -cp-tone-green-fg:  -cp-green-300;   -cp-tone-green:  -cp-green-400;
+    -cp-tone-amber-bg:  -cp-amber-950;   -cp-tone-amber-fg:  -cp-amber-300;   -cp-tone-amber:  -cp-amber-400;
+    -cp-tone-red-bg:    -cp-red-950;     -cp-tone-red-fg:    -cp-red-300;     -cp-tone-red:    -cp-red-400;
 
     -color-base-0: -cp-night-100;  -color-base-1: -cp-night-200;  -color-base-2: #A0ABC1;  -color-base-3: -cp-night-300;
     -color-base-4: #6F7C98;        -color-base-5: #4A5775;        -color-base-6: -cp-night-600;  -color-base-7: -cp-night-700;

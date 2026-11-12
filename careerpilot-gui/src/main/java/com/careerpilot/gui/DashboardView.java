@@ -35,6 +35,7 @@ final class DashboardView extends View {
     private record Item(int rank, String title, String hint, String kind, String page) {}
 
     private final Consumer<String> navigate;
+    private final HBox hero = new HBox();
     private final HBox tiles = new HBox(12);
     private final VBox queue = new VBox(8);
     private final Label queueCount = new Label();
@@ -47,7 +48,7 @@ final class DashboardView extends View {
         queueCount.getStyleClass().add("count-pill");
         HBox queueHead = new HBox(8, Ui.heading("Needs you"), queueCount);
         queueHead.setAlignment(Pos.CENTER_LEFT);
-        VBox body = new VBox(20, tiles, new VBox(10, queueHead, queue), new VBox(10, Ui.heading("Shortlist"), shortlist));
+        VBox body = new VBox(20, hero, tiles, new VBox(10, queueHead, queue), new VBox(10, Ui.heading("Shortlist"), shortlist));
         getChildren().add(Ui.scroll(body));
         showLoading();
     }
@@ -99,12 +100,13 @@ final class DashboardView extends View {
             JobPosting nextDue = jobs.stream().filter(j -> j.getDeadline() != null && !j.getDeadline().isBefore(today))
                     .min(Comparator.comparing(JobPosting::getDeadline)).orElse(null);
             long interviews = apps.stream().filter(a -> a.getStateName().equals("INTERVIEW")).count();
+            showHero(jobs.size(), picks.size(), apps.size(), interviews, review.size(), runs.stream().anyMatch(r -> r.getStatus().equals(AgentRun.AWAITING_APPROVAL) || r.getStatus().equals(AgentRun.AWAITING_INPUT)));
             tiles.getChildren().setAll(
-                    tile(Ui.statTile(String.valueOf(jobs.size()), "Saved postings", picks.size() + " shortlisted", () -> navigate.accept("Jobs"))),
-                    tile(Ui.statTile(String.valueOf(apps.size()), "Applications", interviews + " at interview stage", () -> navigate.accept("Tracker"))),
+                    tile(Ui.statTile(String.valueOf(jobs.size()), "Saved postings", picks.size() + " shortlisted", "Jobs", "blue", () -> navigate.accept("Jobs"))),
+                    tile(Ui.statTile(String.valueOf(apps.size()), "Applications", interviews + " at interview stage", "Tracker", "violet", () -> navigate.accept("Tracker"))),
                     tile(Ui.statTile(nextDue == null ? "–" : ChronoUnit.DAYS.between(today, nextDue.getDeadline()) + "d", "Next deadline",
-                            nextDue == null ? "No open deadlines" : nextDue.getTitle() + " at " + nextDue.getCompany(), () -> navigate.accept("Jobs"))),
-                    tile(Ui.statTile(String.valueOf(review.size()), "Emails to review", review.isEmpty() ? "All clear" : "Waiting for you", () -> navigate.accept("Email"))));
+                            nextDue == null ? "No open deadlines" : nextDue.getTitle() + " at " + nextDue.getCompany(), "Alert", "amber", () -> navigate.accept("Jobs"))),
+                    tile(Ui.statTile(String.valueOf(review.size()), "Emails to review", review.isEmpty() ? "All clear" : "Waiting for you", "Email", review.isEmpty() ? "green" : "teal", () -> navigate.accept("Email"))));
 
             // the queue
             List<Item> items = new ArrayList<>();
@@ -140,6 +142,29 @@ final class DashboardView extends View {
                 picks.stream().sorted(Comparator.comparingInt((JobPosting j) -> matches.containsKey(j.getId()) ? -matches.get(j.getId()).getScore() : 1)).forEach(j -> shortlist.getChildren().add(shortlistRow(j, matches.get(j.getId()))));
             }
         });
+    }
+
+    /** Welcome banner: greets by name and says in one sentence where things stand, with the two most useful next steps. */
+    private void showHero(int saved, int shortlisted, int applications, long interviews, int emails, boolean agentWaiting) {
+        int hour = java.time.LocalTime.now().getHour();
+        String part = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+        String name = app.user().getDisplayName() == null || app.user().getDisplayName().isBlank() ? "" : ", " + app.user().getDisplayName().trim().split("\\s+")[0];
+        String line;
+        if (saved == 0) line = "Import a few postings and the agent will rank them against your goal.";
+        else if (agentWaiting) line = "The agent has a step waiting for your approval.";
+        else if (interviews > 0) line = interviews + (interviews == 1 ? " interview is" : " interviews are") + " coming up. Practise with a mock interview.";
+        else line = saved + " saved postings, " + shortlisted + " shortlisted, " + applications + (applications == 1 ? " application" : " applications") + " in progress"
+                + (emails > 0 ? ", " + emails + " email" + (emails == 1 ? "" : "s") + " to review." : ".");
+        Button primary = agentWaiting ? Ui.heroButton("Review agent step", true, () -> navigate.accept("Agent"))
+                : saved == 0 ? Ui.heroButton("Import postings", true, () -> navigate.accept("Jobs"))
+                : Ui.heroButton("Open shortlist", true, () -> navigate.accept("Jobs"));
+        Button second = interviews > 0 ? Ui.heroButton("Mock interview", false, () -> navigate.accept("Interview"))
+                : Ui.heroButton("Ask the agent", false, () -> navigate.accept("Agent"));
+        HBox h = Ui.hero(java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.ofPattern("EEEE, MMMM d", java.util.Locale.ENGLISH)).toUpperCase(), part + name, line, "Mark", primary, second);
+        hero.getStyleClass().setAll(h.getStyleClass());
+        hero.setSpacing(h.getSpacing());
+        hero.setAlignment(h.getAlignment());
+        hero.getChildren().setAll(h.getChildren());
     }
 
     private static Node tile(Button b) {

@@ -54,9 +54,9 @@ final class InsightsView extends View {
             @SuppressWarnings("unchecked") List<Application> apps = (List<Application>) d[2];
             body.getChildren().clear();
 
-            HBox tiles = new HBox(12, plainTile(String.valueOf(r.stats().applied()), "Applied", "applications submitted"),
-                    plainTile(String.valueOf(r.stats().withOutcome()), "With an outcome", "response, interview or decision"),
-                    plainTile(r.stats().medianDaysToResponse() == null ? "–" : r.stats().medianDaysToResponse() + "d", "Median time to response", "from applying to the first reply"));
+            HBox tiles = new HBox(12, plainTile(String.valueOf(r.stats().applied()), "Applied", "applications submitted", "Tracker", "violet"),
+                    plainTile(String.valueOf(r.stats().withOutcome()), "With an outcome", "response, interview or decision", "Check", "green"),
+                    plainTile(r.stats().medianDaysToResponse() == null ? "–" : r.stats().medianDaysToResponse() + "d", "Median time to response", "from applying to the first reply", "Info", "teal"));
             body.getChildren().add(tiles);
             Label story = new Label(r.narrative());
             story.setWrapText(true);
@@ -87,14 +87,18 @@ final class InsightsView extends View {
         });
     }
 
-    private static Node plainTile(String number, String caption, String context) {
+    private static Node plainTile(String number, String caption, String context, String icon, String tone) {
         Label n = new Label(number);
         n.getStyleClass().add("stat-number");
         Label c = new Label(caption);
         c.getStyleClass().add("stat-caption");
         Label x = new Label(context);
         x.getStyleClass().add("stat-context");
-        VBox v = new VBox(2, n, c, x);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox top = new HBox(8, n, spacer, Ui.badge(icon, tone));
+        top.setAlignment(Pos.CENTER_LEFT);
+        VBox v = new VBox(2, top, c, x);
         v.getStyleClass().add("card");
         HBox.setHgrow(v, Priority.ALWAYS);
         v.setMaxWidth(Double.MAX_VALUE);
