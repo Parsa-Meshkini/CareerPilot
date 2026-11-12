@@ -126,7 +126,7 @@ The GUI render test writes a screenshot of every page to `careerpilot-gui/target
 | Stage | Scope | Status |
 |---|---|---|
 | **Stage 1** | Design: features, UML, patterns, traceability | Complete |
-| Stage 2 | Implementation in Java: core services, JavaFX GUI, CLI, agent, REST server and extension | All 19 features implemented; `docs/stage2/stage2-report.pdf` (rebuild with `python tools/build_stage2_report.py --pdf`), updated UMLet class diagrams in `docs/stage2/uml`; recording script in `docs/stage2/video-narration-script.md`; demo video links are listed in the report's Section 7 and `docs/stage2/video-links.json` |
+| Stage 2 | Implementation in Java: core services, JavaFX GUI, CLI, agent, REST server and extension | All 19 features implemented; `docs/stage2/stage2-report.pdf` (rebuild with `python tools/build_stage2_report.py --pdf`), updated UMLet class diagrams in `docs/stage2/uml`; demo video links are listed in the report's Section 7 and `docs/stage2/video-links.json` |
 | Stage 3 | Testing, deployment, demonstration | Planned (report §16) |
 
 ## Stage 1 deliverables
