@@ -1,6 +1,8 @@
 # Demo recording script
 
-Record with the screen recorder of your choice (QuickTime: File > New Screen Recording). Hide `.env` and any terminal showing the key. Upload as unlisted or public videos, paste the links and timestamps into the table in the report (`tools/build_stage2_report.py`, `DEMO_INDEX_HEAD` section), then rebuild the PDF.
+The full spoken, timed narration is in [`video-narration-script.md`](video-narration-script.md). This file is the short per-feature checklist.
+
+Record with the screen recorder of your choice (QuickTime: File > New Screen Recording). Hide `.env` and any terminal showing the key. Upload as unlisted or public videos, put each link and timestamp into `docs/stage2/video-links.json` (format: `{"F01": {"url": "https://...", "time": "0:42"}, ...}`; one entry per feature F01-F19, several features may share one URL with different times), then run `python tools/build_stage2_report.py --pdf`.
 
 Before recording: `cp .env.example .env`, set a key (or `LLM_PROVIDER=mock` to show the offline fallbacks), `mvn -q -DskipTests install`, and use `samples/`.
 

@@ -15,6 +15,22 @@ OUT = ROOT / "docs" / "stage2"
 REPO = "https://github.com/Parsa-Meshkini/CareerPilot"
 SRC = {p.stem: p for p in list(ROOT.glob("careerpilot-*/src/main/java/**/*.java"))}
 VIDEO = "see Demonstration index (Section 7)"
+LINKS_FILE = OUT / "video-links.json"
+
+
+def video_cell(fid):
+    """Link and timestamp for a feature from docs/stage2/video-links.json, or a clear placeholder.
+
+    The file maps a feature id to {"url": "<link>", "time": "m:ss"}; the url should open the video at that time.
+    """
+    import json
+    try:
+        entry = json.loads(LINKS_FILE.read_text(encoding="utf-8")).get(fid)
+    except (OSError, ValueError):
+        entry = None
+    if entry and entry.get("url"):
+        return f"[Watch {fid} at {entry.get('time', '0:00')}]({entry['url']})"
+    return "Video: TO BE RECORDED, timestamp pending"
 
 # id, name, stage1, status, type, classes, methods, patterns, ui, flow
 FEATURES = [
@@ -203,7 +219,7 @@ def build_md():
         fid, name, s1, status, typ, classes, methods, pats, ui, flow = f
         a(f"## {fid} {name}\n\n| Field | Entry |\n|---|---|\n| Feature ID and name | {fid} - {name} |\n| Stage 1 reference | {s1} |\n| Status or change | {status} |\n"
           f"| Type | {typ} |\n| Implemented classes | {', '.join('`'+c+'`' for c in classes.split())} |\n| Key methods | {', '.join('`'+m+'`' for m in methods.split())} |\n"
-          f"| Design patterns | {pats} |\n| Where to use it | {ui} |\n| Video link/timestamp | {VIDEO}, row {fid} |\n\n**How the classes collaborate.** {flow}\n")
+          f"| Design patterns | {pats} |\n| Where to use it | {ui} |\n| Video link/timestamp | {video_cell(fid)} |\n\n**How the classes collaborate.** {flow}\n")
     a("# 3. Implemented design patterns\n\nSeven distinct patterns are implemented. Class diagrams generated from the code (UMLet sources in `docs/stage2/uml/src`) follow the table.\n")
     for name, problem, parts, where, why in PATTERNS:
         a(f"## 3.{PATTERNS.index((name, problem, parts, where, why))+1} {name}\n\n- **Problem addressed.** {problem}\n- **Participants.** {parts}\n- **Source files and methods.** {where}\n- **How it follows the pattern and why it helps.** {why}\n")
@@ -222,7 +238,7 @@ def build_md():
     a(VERIFICATION)
     a(DEMO_INDEX_HEAD)
     for f in FEATURES:
-        a(f"| {f[0]} {f[1]} | {f[8]} | Video: TO BE RECORDED, timestamp pending |")
+        a(f"| {f[0]} {f[1]} | {f[8]} | {video_cell(f[0])} |")
     a("")
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "stage2-report.md").write_text("\n".join(L), encoding="utf-8")
@@ -250,10 +266,12 @@ AI_TOOLS = """# 5. AI tools and collaboration log
 
 | Tool or platform | Model | Used for | Tokens and cost |
 |---|---|---|---|
-| Claude Code (CLI) | Claude Sonnet 5.5 and earlier Claude models | Implementation of core services, CLI, GUI, tests, UMLet generation, this report | TO FILL IN from the Anthropic console usage page |
-| Gemini API and OpenAI API (runtime, not development) | Gemini default model; OpenAI-compatible model for the Nov 3 live run | The product's own LLM calls during end-to-end checks | TO FILL IN from Google AI Studio; per-call usage is stored in the `LlmUsageRecord` table and shown by `careerpilot llm-check` |
+| Claude Code (CLI) | Claude Sonnet 5.5 | Implementation of core services, CLI, GUI, tests, UMLet generation, this report, final audit | 113.7M tokens in 442 calls (0.9K uncached input, 0.75M output, 2.30M cache writes, 110.7M cache reads); about USD 24.29 |
+| Claude Code (CLI) | Claude Opus 5.5 | Design and harder implementation work in earlier sessions | 34.3M tokens in 171 calls (0.4K uncached input, 0.31M output, 1.41M cache writes, 32.6M cache reads); about USD 19.70 |
+| Gemini API (runtime, not development) | Gemini default model | The product's own LLM calls during early end-to-end checks | 12 calls logged with 0 tokens (the free-tier quota ran out and the model answered HTTP 503); no charge |
+| OpenAI-compatible API (runtime, not development) | gpt-6-luna | The product's own LLM calls during the Nov 3 to Nov 6 live end-to-end checks | 14 calls, 21,558 input and 9,231 output tokens (30,789 total); cost not computed because no price list for this model was available, see the billing page of that account |
 
-Token and money totals depend on the billing pages of those accounts, so they are left for the author to copy in; they were not estimated here.
+**How the numbers were obtained.** The Claude Code rows are summed from the local Claude Code session transcripts for this project (every distinct API response, duplicates removed) and priced at the list rates in the local cost tracker: Sonnet 5.5 USD 2 / 10 / 2.50 / 0.10 and Opus 5.5 USD 4 / 20 / 5 / 0.20 per million input / output / cache-write / cache-read tokens. Total development cost is about USD 43.99 (147.9M tokens). These are estimates from list prices, not invoice figures, and they cover only the transcripts still stored on the author's machine. The runtime rows are read from the `LlmUsageRecord` table of the application's own database (`careerpilot llm-check` shows the same records).
 
 **Representative interactions.**
 
@@ -289,7 +307,7 @@ See Section 1. The unit tests use the mock LLM, so wording quality of live answe
 
 DEMO_INDEX_HEAD = """# 7. Demonstration index
 
-Each feature needs a labelled video segment showing the input, the running application, the output, where AI is involved and one error case. The videos are recorded by the author from the script in `docs/stage2/demo-script.md`; the links and timestamps below are filled in after recording.
+Each feature needs a labelled video segment showing the input, the running application, the output, where AI is involved and one error case. The videos are recorded by the author from the script in `docs/stage2/demo-script.md`; the links and timestamps below come from `docs/stage2/video-links.json`.
 
 | Feature | How it is invoked | Video |
 |---|---|---|"""
