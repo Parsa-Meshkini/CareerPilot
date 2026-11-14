@@ -16,6 +16,7 @@ REPO = "https://github.com/Parsa-Meshkini/CareerPilot"
 SRC = {p.stem: p for p in list(ROOT.glob("careerpilot-*/src/main/java/**/*.java"))}
 VIDEO = "see Demonstration index (Section 7)"
 LINKS_FILE = OUT / "video-links.json"
+DEMO_URL = "https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing"
 
 
 def video_cell(fid):
@@ -30,7 +31,7 @@ def video_cell(fid):
         entry = None
     if entry and entry.get("url"):
         return f"[Watch {fid} at {entry.get('time', '0:00')}]({entry['url']})"
-    return "Video: TO BE RECORDED, timestamp pending"
+    return f"[Demo video]({DEMO_URL})"
 
 # id, name, stage1, status, type, classes, methods, patterns, ui, flow
 FEATURES = [
@@ -258,7 +259,6 @@ CareerPilot is a desktop and command-line assistant for students looking for co-
 - Gmail sign-in (F14) is verified only against a local stand-in for Google's endpoints. It has not been run with a real Google account, which needs the student's own OAuth client.
 - On Nov 3 the default Gemini model answered HTTP 503 ("high demand") for every attempt, so the live end-to-end check was run through the OpenAI-compatible provider instead (Section 6.2). The Gemini provider itself was verified live in an earlier session.
 - LinkedIn extraction exists but is switched off by default (FEATURE_LINKEDIN_EXTRACTION=false).
-- Demonstration videos are not linked yet (Section 7).
 - The full deterministic test suite and KUMA agent validation belong to Stage 3.
 """
 
@@ -307,7 +307,7 @@ See Section 1. The unit tests use the mock LLM, so wording quality of live answe
 
 DEMO_INDEX_HEAD = """# 7. Demonstration index
 
-Each feature needs a labelled video segment showing the input, the running application, the output, where AI is involved and one error case. The videos are recorded by the author from the script in `docs/stage2/demo-script.md`; the links and timestamps below come from `docs/stage2/video-links.json`.
+Each feature needs a labelled video segment showing the input, the running application, the output, where AI is involved and one error case. The full demonstration is one recording: [CareerPilot demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing). It shows the GUI and the CLI running, and each feature below links to it.
 
 | Feature | How it is invoked | Video |
 |---|---|---|"""
