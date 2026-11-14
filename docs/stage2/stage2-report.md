@@ -10,7 +10,7 @@ subtitle: "EECS 3311 Fall 2026, Course Project Stage 2"
 | **Course** | EECS 3311 Software Design, Fall 2026 |
 | **Repository** | <https://github.com/Parsa-Meshkini/CareerPilot> |
 | **Team** | Parsa Meshkini |
-| **Generated** | 2026-11-12 by tools/build_stage2_report.py |
+| **Generated** | 2026-11-13 by tools/build_stage2_report.py |
 
 # 1. Project overview and implementation status
 
@@ -43,7 +43,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `updateProfile`, `addFact`, `verifyFacts`, `rejectFacts`, `completenessHints` |
 | Design patterns | Repository (Spring Data) |
 | Where to use it | GUI Profile page; CLI `profile show/set/fact-*` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** The view calls CandidateService, which validates the fact JSON with FactValidator against its FactType, stores it as an unverified ProfileFact, and only facts the student verifies are returned to the AI context. Stage 1 had one subclass per fact kind; one entity plus an enum with validated JSON replaced them.
 
@@ -59,7 +59,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `importResume`, `parseResume`, `extractText`, `extractFacts`, `generateStructured` |
 | Design patterns | Facade (LlmClient); Adapter (LlmProvider) |
 | Where to use it | GUI Profile > Import resume; CLI `profile resume FILE` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** importResume stores the file through StorageService and queues parseResume on TaskQueue. ResumeParser extracts text (PDFBox, POI or plain) and asks LlmClient for facts, which are saved unverified for the student to review.
 
@@ -75,7 +75,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `updateCareerGoal`, `selectStrategy` |
 | Design patterns | Strategy |
 | Where to use it | GUI Profile > Goal; CLI `profile goal-set/goal-show` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** The goal type chosen by the student selects which MatchScoringStrategy MatchingService uses and seeds the StrategyWeights that F19 later adjusts.
 
@@ -91,7 +91,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `createBatch`, `processBatch`, `parse` |
 | Design patterns | Adapter; Observer (JobsImported) |
 | Where to use it | Chrome extension (extension/content, popup, api); REST `/api/import`; CLI `jobs import-york` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** The content script reads the postings on the page, the service worker posts them to ApiController with the student's token, JobImportService creates an ImportBatch and processes it in the background through the York adapter, then publishes JobsImported which triggers F09.
 
@@ -107,7 +107,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `importManual`, `importRecord`, `parse`, `structure_paste` |
 | Design patterns | Adapter; Facade |
 | Where to use it | GUI Jobs > Import; CLI `jobs import-paste/import-file` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** Pasted text goes to LlmClient (job.structure_paste prompt) to extract title, company and description; CSV or JSON files are read by the adapters directly. Both end in JobImportService.importRecord.
 
@@ -123,7 +123,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `normalize`, `findDuplicate` |
 | Design patterns | Repository |
 | Where to use it | Runs inside every import |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** importRecord calls JobNormalizer.normalize (clean text, deadline, work model, fingerprint) then DuplicateDetector.findDuplicate; a duplicate is merged and counted in the batch instead of saved again.
 
@@ -139,7 +139,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `analyzeJob`, `generateStructured`, `validate`, `fallbackKeywordAnalysis` |
 | Design patterns | Facade; Adapter |
 | Where to use it | GUI Jobs detail; CLI `jobs analyze` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** analyzeJob sends the posting through LlmClient, which loads the versioned prompt, checks the token budget, calls the provider, validates the JSON against the schema, retries transient and schema failures with backoff, and records usage. If the model is down a keyword analysis is used and the result is marked as such.
 
@@ -155,7 +155,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `matchJob`, `selectStrategy`, `score`, `rankJobs`, `buildCandidateContext` |
 | Design patterns | Strategy |
 | Where to use it | GUI Jobs (bearing ring, detail); CLI `jobs match/score/show` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** ContextBuilder gathers verified facts and the goal; MatchingService picks the strategy for the goal type and scores deterministically (quick or deep with the analysis); the AI only writes the explanation and transferable-skill hints, never the score.
 
@@ -171,7 +171,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `handle`, `startTriage`, `runGoal`, `createPlan`, `execute`, `evaluate`, `remember` |
 | Design patterns | Command; Observer; Facade |
 | Where to use it | Automatic after an import; GUI Agent page; CLI `agent runs/show` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** TriageTrigger listens for JobsImported and starts a run through AgentController. The plan (hand-written playbook, or the LLM's plan when valid) is executed one AgentCommand at a time by ToolManager; after each step Reasoner decides to continue, replan or stop, and every action is recorded in AgentActionRecord.
 
@@ -187,7 +187,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `generate`, `check`, `renderDocx`, `renderPdf`, `regenerateFromEdit` |
 | Design patterns | Template Method; Facade |
 | Where to use it | GUI Tracker > Documents; CLI `docs resume` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** DocumentService calls the generator's final generate(): build context, ask the LLM, run FabricationGuard.check on every claim against verified facts, remove violating claims, then render. Subclasses only supply the prompt variables, claim extraction and block layout.
 
@@ -203,7 +203,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `generate`, `check` |
 | Design patterns | Template Method; Facade |
 | Where to use it | GUI Tracker > Documents; CLI `docs cover-letter` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** Same template as F10 with a different prompt, claim extractor and layout.
 
@@ -219,7 +219,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `buildPackage`, `download` |
 | Design patterns | Command; Template Method (uses) |
 | Where to use it | GUI Tracker > Build package; CLI `docs package/download` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** PackageAssembler generates any missing documents, adds the job description and a checklist, zips them through StorageService and records an ApplicationPackage; the agent reaches it through BuildPackageCommand.
 
@@ -235,7 +235,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `createApplication`, `transition`, `undoTransition` |
 | Design patterns | State; Observer |
 | Where to use it | GUI Tracker board; CLI `apps create/act/undo` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** transition asks the current ApplicationState object whether the action is legal and for the next state, saves a StatusChange (which makes undo possible), and publishes ApplicationStatusChanged.
 
@@ -251,7 +251,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `syncAccount`, `importEmlFiles`, `detect`, `classify`, `match`, `confirmEvent`, `fetchNewMessages`, `connect` |
 | Design patterns | Adapter; Strategy |
 | Where to use it | GUI Email page; CLI `email upload/sync-mock/connect-gmail/events/confirm` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** A provider adapter returns RawEmails; EmailNormalizer cleans them; EmailEventDetector runs the HybridClassifier (rules first, LLM when rules are unsure); ApplicationMatcher links the email to an application; a confident match is published as an event and the rest wait for the student to confirm.
 
@@ -267,7 +267,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `publish`, `subscribe`, `checkDeadlines`, `add`, `markAllRead` |
 | Design patterns | Observer; State; Command (undo) |
 | Where to use it | GUI Dashboard feed; CLI `notifications`, `remind` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** Detected email events are published on DomainEventBus; ApplicationStatusUpdater moves the application, InterviewScheduler records the interview, MemoryRecorder saves what happened for the agent, and NotificationService stores a de-duplicated notification. ReminderService raises deadline notifications.
 
@@ -283,7 +283,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `runGoal`, `resumeRun`, `createPlan`, `requiresApproval`, `execute`, `undo`, `recall` |
 | Design patterns | Command; Facade |
 | Where to use it | GUI Agent page; CLI `agent run/approve/reject/undo/memory` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** A goal in plain words becomes a typed run; steps with side effects stop at ApprovalPolicy until the student approves, rejects (the agent replans and remembers the preference) or undoes; MemoryManager recalls preferences into later plans.
 
@@ -299,7 +299,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `preparePlan`, `latest`, `check` |
 | Design patterns | Facade; Observer (auto-trigger) |
 | Where to use it | GUI Interview page; CLI `interview prepare/show`; agent tool prepare_interview |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** InterviewPrepTrigger reacts to an interview status change; InterviewPrepService builds the context, asks the LLM for questions and STAR stories, and FabricationGuard rejects stories that use facts the student has not verified; a deterministic plan is used when the model fails.
 
@@ -315,7 +315,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `startSession`, `submitAnswer`, `finishSession`, `abandon` |
 | Design patterns | Facade |
 | Where to use it | GUI Interview page; CLI `interview mock/answer/finish` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** startSession asks for a first question; each submitAnswer is scored against a rubric by the LLM and the next question depends on the weak areas so far; finishSession writes a summary and stores feedback in agent memory. Sessions can be resumed.
 
@@ -331,7 +331,7 @@ Every Stage 1 feature (F01-F19) is accounted for; there are no new features beyo
 | Key methods | `getInsights`, `computeStats`, `proposeAdjustments`, `accept`, `reject`, `revert` |
 | Design patterns | Strategy; Observer (MemoryRecorder feeds data) |
 | Where to use it | GUI Insights page; CLI `analytics` |
-| Video link/timestamp | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| Video link/timestamp | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
 
 **How the classes collaborate.** OutcomeAnalyzer computes response and interview rates by score band, source and role; StrategyAdvisor proposes bounded weight changes only with enough evidence; the LLM writes the explanation; nothing changes until the student accepts, and accepted changes can be reverted.
 
@@ -565,22 +565,22 @@ Each feature needs a labelled video segment showing the input, the running appli
 
 | Feature | How it is invoked | Video |
 |---|---|---|
-| F01 Candidate profile and verified facts | GUI Profile page; CLI `profile show/set/fact-*` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F02 Resume import and AI fact extraction | GUI Profile > Import resume; CLI `profile resume FILE` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F03 Career goal and strategy configuration | GUI Profile > Goal; CLI `profile goal-set/goal-show` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F04 Browser-extension batch job import | Chrome extension (extension/content, popup, api); REST `/api/import`; CLI `jobs import-york` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F05 Manual job import (paste or file) | GUI Jobs > Import; CLI `jobs import-paste/import-file` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F06 Job normalization and duplicate detection | Runs inside every import | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F07 AI job description analysis | GUI Jobs detail; CLI `jobs analyze` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F08 Candidate-job matching and skill-gap analysis | GUI Jobs (bearing ring, detail); CLI `jobs match/score/show` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F09 Agent batch triage and shortlist | Automatic after an import; GUI Agent page; CLI `agent runs/show` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F10 Tailored resume with fabrication guard | GUI Tracker > Documents; CLI `docs resume` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F11 Tailored cover letter | GUI Tracker > Documents; CLI `docs cover-letter` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F12 Application package builder and ZIP export | GUI Tracker > Build package; CLI `docs package/download` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F13 Application lifecycle tracking and undo | GUI Tracker board; CLI `apps create/act/undo` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F14 Email monitoring and application event detection | GUI Email page; CLI `email upload/sync-mock/connect-gmail/events/confirm` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F15 Event-driven updates, reminders and notifications | GUI Dashboard feed; CLI `notifications`, `remind` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F16 Goal-driven agent workspace | GUI Agent page; CLI `agent run/approve/reject/undo/memory` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F17 Interview preparation plan | GUI Interview page; CLI `interview prepare/show`; agent tool prepare_interview | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F18 AI mock interview and feedback | GUI Interview page; CLI `interview mock/answer/finish` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
-| F19 Outcome analytics and adaptive strategy | GUI Insights page; CLI `analytics` | [Demo video](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F01 Candidate profile and verified facts | GUI Profile page; CLI `profile show/set/fact-*` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F02 Resume import and AI fact extraction | GUI Profile > Import resume; CLI `profile resume FILE` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F03 Career goal and strategy configuration | GUI Profile > Goal; CLI `profile goal-set/goal-show` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F04 Browser-extension batch job import | Chrome extension (extension/content, popup, api); REST `/api/import`; CLI `jobs import-york` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F05 Manual job import (paste or file) | GUI Jobs > Import; CLI `jobs import-paste/import-file` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F06 Job normalization and duplicate detection | Runs inside every import | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F07 AI job description analysis | GUI Jobs detail; CLI `jobs analyze` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F08 Candidate-job matching and skill-gap analysis | GUI Jobs (bearing ring, detail); CLI `jobs match/score/show` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F09 Agent batch triage and shortlist | Automatic after an import; GUI Agent page; CLI `agent runs/show` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F10 Tailored resume with fabrication guard | GUI Tracker > Documents; CLI `docs resume` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F11 Tailored cover letter | GUI Tracker > Documents; CLI `docs cover-letter` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F12 Application package builder and ZIP export | GUI Tracker > Build package; CLI `docs package/download` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F13 Application lifecycle tracking and undo | GUI Tracker board; CLI `apps create/act/undo` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F14 Email monitoring and application event detection | GUI Email page; CLI `email upload/sync-mock/connect-gmail/events/confirm` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F15 Event-driven updates, reminders and notifications | GUI Dashboard feed; CLI `notifications`, `remind` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F16 Goal-driven agent workspace | GUI Agent page; CLI `agent run/approve/reject/undo/memory` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F17 Interview preparation plan | GUI Interview page; CLI `interview prepare/show`; agent tool prepare_interview | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F18 AI mock interview and feedback | GUI Interview page; CLI `interview mock/answer/finish` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |
+| F19 Outcome analytics and adaptive strategy | GUI Insights page; CLI `analytics` | [https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing](https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/view?usp=sharing) |

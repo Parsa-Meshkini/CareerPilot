@@ -20,7 +20,7 @@ DEMO_URL = "https://drive.google.com/file/d/1NThfqULr6I2PLUaawXwYJkWKZ8aottcT/vi
 
 
 def video_cell(fid):
-    """Link and timestamp for a feature from docs/stage2/video-links.json, or a clear placeholder.
+    """Link and timestamp for a feature from docs/stage2/video-links.json, or the full demo video URL.
 
     The file maps a feature id to {"url": "<link>", "time": "m:ss"}; the url should open the video at that time.
     """
@@ -31,7 +31,7 @@ def video_cell(fid):
         entry = None
     if entry and entry.get("url"):
         return f"[Watch {fid} at {entry.get('time', '0:00')}]({entry['url']})"
-    return f"[Demo video]({DEMO_URL})"
+    return f"[{DEMO_URL}]({DEMO_URL})"
 
 # id, name, stage1, status, type, classes, methods, patterns, ui, flow
 FEATURES = [
